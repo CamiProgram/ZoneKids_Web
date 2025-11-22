@@ -51,7 +51,7 @@ public class User {
     private LocalDateTime fechaCreacion;
 
     @UpdateTimestamp // Fecha automática al actualizar
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDateTime fechaActualizacion;
 
     // Getters y Setters generados por Lombok (@Getter, @Setter)
