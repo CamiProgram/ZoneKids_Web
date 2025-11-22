@@ -1,0 +1,108 @@
+.product-card { 
+  border: 1px solid #eee; 
+  background-color: #fff; 
+  text-align: center; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); 
+  display: flex; 
+  flex-direction: column; 
+  transition: all 0.3s ease-in-out; 
+  position: relative; 
+}
+.product-card:hover { 
+  transform: scale(1.03); 
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); 
+  z-index: 10; 
+}
+
+/* Estilos para etiquetas */
+.product-badges { 
+  position: absolute; 
+  top: 10px; 
+  left: 10px; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 5px; 
+  z-index: 5; 
+}
+.badge-nuevo, .badge-oferta { 
+  padding: 3px 8px; 
+  border-radius: 4px; 
+  font-size: 12px; 
+  font-weight: 700; 
+  color: white; 
+}
+.badge-nuevo { background-color: #0d6efd; }
+.badge-oferta { background-color: #dc3545; }
+
+.product-image { width: 100%; height: 250px; object-fit: cover; }
+.product-info { padding: 16px; flex-grow: 1; display: flex; flex-direction: column; }
+.product-name-link { text-decoration: none; color: #333; }
+.product-name { font-size: 18px; font-weight: 600; margin: 10px 0; flex-grow: 1; }
+
+/* Estilos para precios */
+.product-price-wrapper { 
+  display: flex; 
+  justify-content: center; 
+  align-items: baseline; 
+  gap: 10px; 
+  margin: 10px 0; 
+}
+.product-price { 
+  font-size: 20px; 
+  font-weight: 700; 
+  color: #00aaff; 
+}
+.product-price-original { 
+  font-size: 14px; 
+  color: #888; 
+  text-decoration: line-through; 
+}
+
+.add-to-cart-button { 
+  background-color: #28a745; 
+  color: white; 
+  border: none; 
+  padding: 10px 18px; 
+  cursor: pointer; 
+  border-radius: 4px; 
+  font-size: 16px; 
+  font-weight: 600; 
+  margin-top: 10px; 
+  transition: background-color 0.3s ease; 
+}
+.add-to-cart-button:hover { background-color: #218838; }
+
+/* Estilos para ofertas y bajo stock */
+.product-card--oferta {
+  animation: fade-orange-border 2s infinite;
+}
+
+.product-card--low-stock {
+  border: 2px solid red;
+}
+
+.low-stock-badge {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: red;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  z-index: 10;
+}
+
+@keyframes fade-orange-border {
+  0% {
+    border: 2px solid orange;
+  }
+  50% {
+    border: 2px solid rgba(255, 165, 0, 0.2);
+  }
+  100% {
+    border: 2px solid orange;
+  }
+}

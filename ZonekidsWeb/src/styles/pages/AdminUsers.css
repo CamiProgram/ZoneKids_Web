@@ -1,0 +1,93 @@
+.admin-table-container {
+  background-color: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.admin-table-container h2 { margin-bottom: 24px; }
+.btn-create {
+  background-color: #198754;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+.admin-search-bar {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.table-responsive-wrapper {
+  overflow-x: auto; /* Permite scroll horizontal en tablas */
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.admin-table th,
+.admin-table td {
+  padding: 14px;
+  border: 1px solid #ddd;
+  text-align: left;
+  vertical-align: middle;
+}
+.admin-table th { background-color: #f8f9fa; }
+.btn-edit {
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-right: 6px;
+}
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.stock-low { color: #dc3545; font-weight: 700; }
+
+@media (max-width: 768px) {
+  .admin-table thead {
+    display: none; /* Oculta la fila de cabecera */
+  }
+  .admin-table, .admin-table tbody, .admin-table tr, .admin-table td {
+    display: block;
+    width: 100%;
+  }
+  .admin-table tr {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  .admin-table td {
+    text-align: right; /* Alinea el contenido a la derecha */
+    padding-left: 50%; /* Deja espacio para la etiqueta */
+    position: relative;
+    border: none;
+    border-bottom: 1px solid #eee;
+  }
+  .admin-table td:before {
+    content: attr(data-label); /* Usa la data-label como cabecera */
+    position: absolute;
+    left: 10px;
+    width: 45%;
+    padding-right: 10px;
+    text-align: left;
+    font-weight: bold;
+  }
+  .btn-edit, .btn-delete {
+    margin-top: 5px;
+  }
+}
