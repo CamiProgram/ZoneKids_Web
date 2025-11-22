@@ -1,7 +1,6 @@
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\enums\RoleEnum.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\entities\DetalleOrden.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\services\ProductoServices.java
-C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\controllers\UsuarioController.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\repositories\UserRepository.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\dto\DetalleOrdenRequestDto.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\dto\OrdenResponseDto.java
@@ -25,7 +24,6 @@ C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\controllers\ProductoController.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\config\SecurityConfig.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\config\AdminUserConfig.java
-C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\config\SwaggerConfig.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\security\JwtAuthenticationFilter.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\FullrestApplication.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\dto\OrdenRequestDto.java

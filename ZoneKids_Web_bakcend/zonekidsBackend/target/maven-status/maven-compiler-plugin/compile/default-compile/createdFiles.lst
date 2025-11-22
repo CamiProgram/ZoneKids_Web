@@ -5,7 +5,6 @@ com\zonekids\springboot\api\zonekidsBackend\services\StorageException.class
 com\zonekids\springboot\api\zonekidsBackend\controllers\AuthController.class
 com\zonekids\springboot\api\zonekidsBackend\security\JwtUtils.class
 com\zonekids\springboot\api\zonekidsBackend\security\CustomUserDetailsService.class
-com\zonekids\springboot\api\zonekidsBackend\config\SwaggerConfig.class
 com\zonekids\springboot\api\zonekidsBackend\config\OpenApiConfig.class
 com\zonekids\springboot\api\zonekidsBackend\repositories\ProductoRepository.class
 com\zonekids\springboot\api\zonekidsBackend\dto\AuthResponseDto.class
@@ -28,7 +27,6 @@ com\zonekids\springboot\api\zonekidsBackend\config\WebConfig.class
 com\zonekids\springboot\api\zonekidsBackend\dto\ProductoResponseDto.class
 com\zonekids\springboot\api\zonekidsBackend\services\ProductoServiceImpl.class
 com\zonekids\springboot\api\zonekidsBackend\services\FileSystemStorageService.class
-com\zonekids\springboot\api\zonekidsBackend\controllers\UsuarioController.class
 com\zonekids\springboot\api\zonekidsBackend\entities\Orden.class
 com\zonekids\springboot\api\zonekidsBackend\repositories\OrdenRepository.class
 com\zonekids\springboot\api\zonekidsBackend\dto\LoginRequestDto.class
