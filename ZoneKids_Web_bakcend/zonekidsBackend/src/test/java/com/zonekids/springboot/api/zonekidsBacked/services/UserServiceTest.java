@@ -1,6 +1,7 @@
 package com.zonekids.springboot.api.zonekidsBacked.services;
 
 import com.zonekids.springboot.api.zonekidsBackend.entities.User;
+import com.zonekids.springboot.api.zonekidsBackend.enums.RoleEnum;
 import com.zonekids.springboot.api.zonekidsBackend.repositories.UserRepository;
 import com.zonekids.springboot.api.zonekidsBackend.services.UserServiceImpl;
 
@@ -18,6 +19,10 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Tests unitarios para UserServiceImpl
+ * Verifica la lógica de negocio del servicio de usuarios
+ */
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
@@ -25,70 +30,167 @@ class UserServiceTest {
     private UserRepository userRepository;
 
     @InjectMocks
-    private UserServiceImpl userService; // Asegúrate que el nombre de la clase coincida
+    private UserServiceImpl userService;
 
-    private User user1;
-    private User user2;
+    private User adminUser;
+    private User clienteUser;
+    private User vendedorUser;
 
     @BeforeEach
     void setUp() {
-        user1 = new User();
-        user1.setId(1L);
-        user1.setNombre("Admin Test");
-        user1.setEmail("admin@test.com");
-        user1.setRol("super-admin");
+        // Usuario ADMIN
+        adminUser = new User();
+        adminUser.setId(1L);
+        adminUser.setNombre("Admin Test");
+        adminUser.setEmail("admin@test.com");
+        adminUser.setRol(RoleEnum.ADMIN);
+        adminUser.setEstado("activo");
 
-        user2 = new User();
-        user2.setId(2L);
-        user2.setNombre("Cliente Test");
-        user2.setEmail("cliente@test.com");
-        user2.setRol("cliente");
+        // Usuario CLIENTE
+        clienteUser = new User();
+        clienteUser.setId(2L);
+        clienteUser.setNombre("Cliente Test");
+        clienteUser.setEmail("cliente@test.com");
+        clienteUser.setRol(RoleEnum.CLIENTE);
+        clienteUser.setEstado("activo");
+
+        // Usuario VENDEDOR
+        vendedorUser = new User();
+        vendedorUser.setId(3L);
+        vendedorUser.setNombre("Vendedor Test");
+        vendedorUser.setEmail("vendedor@test.com");
+        vendedorUser.setRol(RoleEnum.VENDEDOR);
+        vendedorUser.setEstado("activo");
     }
 
+    /**
+     * Test: Obtener todos los usuarios
+     */
     @Test
     void testFindAllUsers() {
-        when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
+        when(userRepository.findAll()).thenReturn(Arrays.asList(adminUser, clienteUser, vendedorUser));
 
         List<User> users = userService.findAllUsers();
 
         assertNotNull(users);
-        assertEquals(2, users.size());
+        assertEquals(3, users.size());
         verify(userRepository, times(1)).findAll();
     }
 
+    /**
+     * Test: Obtener usuario por email existente
+     */
     @Test
     void testFindUserByEmail_Exists() {
-        String emailExistente = "admin@test.com";
-        when(userRepository.findByEmail(emailExistente)).thenReturn(Optional.of(user1));
+        String email = "admin@test.com";
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(adminUser));
 
-        Optional<User> userOpt = userService.findUserByEmail(emailExistente);
+        Optional<User> userOpt = userService.findUserByEmail(email);
 
         assertTrue(userOpt.isPresent());
-        assertEquals(emailExistente, userOpt.get().getEmail());
-        verify(userRepository, times(1)).findByEmail(emailExistente);
+        assertEquals(email, userOpt.get().getEmail());
+        assertEquals(RoleEnum.ADMIN, userOpt.get().getRol());
+        verify(userRepository, times(1)).findByEmail(email);
     }
-    
+
+    /**
+     * Test: Obtener usuario por email no existente
+     */
+    @Test
+    void testFindUserByEmail_NotExists() {
+        String email = "inexistente@test.com";
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        Optional<User> userOpt = userService.findUserByEmail(email);
+
+        assertFalse(userOpt.isPresent());
+        verify(userRepository, times(1)).findByEmail(email);
+    }
+
+    /**
+     * Test: Guardar un nuevo usuario
+     */
     @Test
     void testSaveUser() {
         User userNuevo = new User();
-        userNuevo.setNombre("Nuevo User");
+        userNuevo.setNombre("Nuevo Usuario");
         userNuevo.setEmail("nuevo@test.com");
-        userNuevo.setContrasena("pass123");
-        userNuevo.setRol("cliente");
+        userNuevo.setContrasena("password123");
+        userNuevo.setRol(RoleEnum.CLIENTE);
+        userNuevo.setEstado("activo");
 
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
-             User u = invocation.getArgument(0);
-             u.setId(3L);
-             // Aquí iría la lógica simulada de encriptación si la pruebas
-             return u;
+            User u = invocation.getArgument(0);
+            u.setId(4L);
+            return u;
         });
 
         User userGuardado = userService.saveUser(userNuevo);
 
         assertNotNull(userGuardado);
-        assertEquals(3L, userGuardado.getId());
+        assertEquals(4L, userGuardado.getId());
         assertEquals("nuevo@test.com", userGuardado.getEmail());
-        // Podrías verificar si la contraseña fue "encriptada" si implementas esa lógica
+        assertEquals(RoleEnum.CLIENTE, userGuardado.getRol());
         verify(userRepository, times(1)).save(userNuevo);
+    }
+
+    /**
+     * Test: Obtener usuario por ID
+     */
+    @Test
+    void testFindUserById() {
+        Long userId = 1L;
+        when(userRepository.findById(userId)).thenReturn(Optional.of(adminUser));
+
+        Optional<User> userOpt = userService.findUserById(userId);
+
+        assertTrue(userOpt.isPresent());
+        assertEquals(userId, userOpt.get().getId());
+        assertEquals(RoleEnum.ADMIN, userOpt.get().getRol());
+        verify(userRepository, times(1)).findById(userId);
+    }
+
+    /**
+     * Test: Eliminar usuario por ID
+     */
+    @Test
+    void testDeleteUserById() {
+        Long userId = 2L;
+
+        userService.deleteUserById(userId);
+
+        verify(userRepository, times(1)).deleteById(userId);
+    }
+
+    /**
+     * Test: Verificar que usuario ADMIN tiene el rol correcto
+     */
+    @Test
+    void testUserAdminRole() {
+        when(userRepository.findByEmail("admin@test.com")).thenReturn(Optional.of(adminUser));
+
+        Optional<User> userOpt = userService.findUserByEmail("admin@test.com");
+
+        assertTrue(userOpt.isPresent());
+        assertEquals(RoleEnum.ADMIN, userOpt.get().getRol());
+        assertEquals("Rol debe ser ADMIN", RoleEnum.ADMIN.getValor(), userOpt.get().getRol().getValor());
+    }
+
+    /**
+     * Test: Verificar que usuario inactivo no puede acceder
+     */
+    @Test
+    void testInactiveUserState() {
+        User inactiveUser = new User();
+        inactiveUser.setId(99L);
+        inactiveUser.setEmail("inactivo@test.com");
+        inactiveUser.setEstado("inactivo");
+
+        when(userRepository.findByEmail("inactivo@test.com")).thenReturn(Optional.of(inactiveUser));
+
+        Optional<User> userOpt = userService.findUserByEmail("inactivo@test.com");
+
+        assertTrue(userOpt.isPresent());
+        assertEquals("inactivo", userOpt.get().getEstado());
     }
 }
