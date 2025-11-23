@@ -16,6 +16,11 @@ export const CheckoutPage = () => {
     address: '',
     payment: 'tarjeta',
   });
+  const [couponCode, setCouponCode] = useState('');
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [freeShipping, setFreeShipping] = useState(false);
+  const [couponError, setCouponError] = useState('');
+  const [couponSuccess, setCouponSuccess] = useState('');
   const [orderData, setOrderData] = useState(null);
   const [showVoucher, setShowVoucher] = useState(false);
 
@@ -33,6 +38,11 @@ export const CheckoutPage = () => {
       initialQuantities[item.id] = item.cantidad || 1;
     });
     setQuantities(initialQuantities);
+    // Resetear cupón cuando cambia el carrito
+    setCouponCode('');
+    setCouponDiscount(0);
+    setFreeShipping(false);
+    setCouponError('');
   }, [cartItems]);
 
   // Cambiar cantidad de producto
@@ -53,19 +63,63 @@ export const CheckoutPage = () => {
   };
 
   // Constantes de cálculo
-  const IVA_RATE = 0.19; // 19% IVA en Colombia
-  const shippingCost = 4000;
+  const IVA_RATE = 0.05; // 5% IVA
+  const BASE_SHIPPING = 3000;
+  const shippingCost = freeShipping ? 0 : BASE_SHIPPING;
   const subtotal = calculateTotal();
   const iva = subtotal * IVA_RATE;
   const subtotalWithIVA = subtotal + iva;
-  const total = subtotalWithIVA + shippingCost;
+  const discountAmount = subtotalWithIVA * (couponDiscount / 100);
+  const finalTotal = (subtotalWithIVA - discountAmount) + shippingCost;
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Validar código de descuento
+  const applyCoupon = () => {
+    setCouponError('');
+    const code = couponCode.trim().toUpperCase();
+    
+    if (code === 'PROFEVIVIAN') {
+      setFreeShipping(true);
+      setCouponDiscount(0);
+      setCouponError('✓ Envío gratis aplicado');
+    } else if (code === 'SACO7') {
+      setFreeShipping(false);
+      setCouponDiscount(50);
+      setCouponError('✓ 50% de descuento aplicado');
+    } else if (code === '') {
+      setCouponError('');
+      setFreeShipping(false);
+      setCouponDiscount(0);
+    } else {
+      setCouponError('❌ Código de descuento inválido');
+      setFreeShipping(false);
+      setCouponDiscount(0);
+    }
+  };
+
+  // Validar cantidad disponible
+  const checkStockAvailability = () => {
+    for (let item of cartItems) {
+      const qty = quantities[item.id] || item.cantidad || 1;
+      if (item.cantidad && qty > item.cantidad) {
+        return `⚠️ Stock insuficiente para ${item.nombre}. Disponibles: ${item.cantidad}`;
+      }
+    }
+    return null;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Verificar stock disponible
+    const stockError = checkStockAvailability();
+    if (stockError) {
+      alert(stockError);
+      return;
+    }
     
     // Crear datos de la orden
     const order = {
@@ -86,8 +140,12 @@ export const CheckoutPage = () => {
       subtotal,
       iva,
       subtotalWithIVA,
+      discountPercentage: couponDiscount,
+      discountAmount,
+      freeShipping,
       shipping: shippingCost,
-      total,
+      couponCode: couponCode.toUpperCase(),
+      total: finalTotal,
     };
 
     setOrderData(order);
@@ -359,12 +417,45 @@ export const CheckoutPage = () => {
             </div>
           ))}
 
+          {/* Sección de cupón */}
+          <div className="coupon-section">
+            <h4>Aplicar cupón (opcional)</h4>
+            <div className="coupon-input-group">
+              <input
+                type="text"
+                placeholder="Ingresa tu código de cupón"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                className="coupon-input"
+              />
+              <button 
+                type="button"
+                onClick={applyCoupon}
+                className="apply-coupon-btn"
+              >
+                Aplicar
+              </button>
+            </div>
+            {couponError && <p className="coupon-error">{couponError}</p>}
+            {couponDiscount > 0 && (
+              <p className="coupon-success">✓ Cupón aplicado: {couponDiscount}% de descuento</p>
+            )}
+            {freeShipping && (
+              <p className="coupon-success">✓ Envío gratis activado</p>
+            )}
+          </div>
+
           <div className="cart-total">
             <p>Subtotal: ${subtotal.toLocaleString('es-CO')}</p>
-            <p>IVA (19%): ${iva.toLocaleString('es-CO')}</p>
+            <p>IVA (5%): ${iva.toLocaleString('es-CO')}</p>
             <p>Subtotal + IVA: ${subtotalWithIVA.toLocaleString('es-CO')}</p>
-            <p>Envío: ${shippingCost.toLocaleString('es-CO')}</p>
-            <h4>Total: ${total.toLocaleString('es-CO')}</h4>
+            
+            {discountAmount > 0 && (
+              <p className="discount-line">Descuento ({couponDiscount}%): -${discountAmount.toLocaleString('es-CO')}</p>
+            )}
+            
+            <p>Envío: {freeShipping ? <span className="free-shipping">GRATIS</span> : `$${shippingCost.toLocaleString('es-CO')}`}</p>
+            <h4>Total: ${finalTotal.toLocaleString('es-CO')}</h4>
           </div>
         </div>
 
@@ -411,7 +502,7 @@ export const CheckoutPage = () => {
             </select>
 
             <button type="submit" className="checkout-button">
-              💳 Pagar ${total.toLocaleString('es-CO')}
+              💳 Pagar ${finalTotal.toLocaleString('es-CO')}
             </button>
           </form>
         </div>
