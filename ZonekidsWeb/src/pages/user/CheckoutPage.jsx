@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { productService } from '../../services/productService';
 import '../../styles/pages/checkoutPage.css';
 
 export const CheckoutPage = () => {
@@ -13,9 +14,11 @@ export const CheckoutPage = () => {
   const [form, setForm] = useState({
     name: user?.nombre || '',
     email: user?.email || '',
+    rut: '',
     address: '',
     payment: 'tarjeta',
   });
+  const [formErrors, setFormErrors] = useState({});
   const [couponCode, setCouponCode] = useState('');
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [freeShipping, setFreeShipping] = useState(false);
@@ -74,7 +77,61 @@ export const CheckoutPage = () => {
   const finalTotal = (subtotalWithIVA - discountAmount) + shippingCost;
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    let processedValue = value;
+    let error = '';
+
+    // Validaciones en tiempo real
+    if (name === 'name') {
+      // Solo letras, espacios y acentos
+      processedValue = value.replace(/[^a-záéíóúàèìòùñA-ZÁÉÍÓÚÀÈÌÒÙÑ\s]/g, '');
+      if (processedValue.length === 0 && value.length > 0) {
+        error = 'El nombre solo puede contener letras';
+      } else if (processedValue.length < 3) {
+        error = 'El nombre debe tener al menos 3 caracteres';
+      }
+    } else if (name === 'email') {
+      // Validar formato de email
+      const emailRegex = /^[^\s@]*@?[^\s@]*\.?[^\s@]*$/;
+      if (!emailRegex.test(value)) {
+        error = 'Formato de email inválido';
+      } else if (value.includes('@') && value.includes('.')) {
+        error = '';
+      } else if (value.length > 0 && (!value.includes('@') || !value.includes('.'))) {
+        error = 'Email incompleto (debe contener @ y .)';
+      }
+    } else if (name === 'rut') {
+      // Solo números y guión, formato: 12345678-9
+      processedValue = value.replace(/[^0-9\-]/g, '');
+      if (processedValue.length > 12) {
+        processedValue = processedValue.slice(0, 12);
+      }
+      // Validar formato RUT
+      if (processedValue.length > 0) {
+        if (processedValue.length < 8) {
+          error = 'El RUT debe tener al menos 8 dígitos';
+        } else if (processedValue.includes('-') && processedValue.split('-')[1]?.length > 1) {
+          error = 'El RUT debe tener máximo 1 dígito verificador';
+        }
+      }
+    } else if (name === 'address') {
+      // Validar que no esté vacío
+      if (value.length === 0) {
+        error = '';
+      } else if (value.length < 5) {
+        error = 'La dirección debe tener al menos 5 caracteres';
+      }
+    }
+
+    setForm(prev => ({
+      ...prev,
+      [name]: processedValue
+    }));
+
+    setFormErrors(prev => ({
+      ...prev,
+      [name]: error
+    }));
   };
 
   // Validar código de descuento
@@ -113,8 +170,35 @@ export const CheckoutPage = () => {
     return null;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validar que todos los campos sean válidos
+    const errors = {};
+    
+    if (!form.name || form.name.length < 3) {
+      errors.name = 'El nombre debe tener al menos 3 caracteres';
+    }
+    
+    if (!form.email || !form.email.includes('@') || !form.email.includes('.')) {
+      errors.email = 'Email inválido';
+    }
+    
+    if (!form.rut) {
+      errors.rut = 'El RUT es requerido';
+    } else if (form.rut.length < 8) {
+      errors.rut = 'El RUT debe tener al menos 8 dígitos';
+    }
+    
+    if (!form.address || form.address.length < 5) {
+      errors.address = 'La dirección debe tener al menos 5 caracteres';
+    }
+    
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      alert('Por favor completa todos los campos correctamente');
+      return;
+    }
     
     // Verificar stock disponible
     const stockError = checkStockAvailability();
@@ -123,42 +207,78 @@ export const CheckoutPage = () => {
       return;
     }
     
-    // Crear datos de la orden
-    const order = {
-      id: `ORD-${Date.now()}`,
-      date: new Date().toLocaleDateString('es-CO'),
-      time: new Date().toLocaleTimeString('es-CO'),
-      customer: form.name,
-      email: form.email,
-      address: form.address,
-      payment: form.payment,
-      items: cartItems.map(item => ({
-        id: item.id,
-        name: item.nombre,
-        price: item.precio,
-        quantity: quantities[item.id] || item.cantidad || 1,
-        imagenesUrl: item.imagenesUrl,
-      })),
-      subtotal,
-      iva,
-      subtotalWithIVA,
-      discountPercentage: couponDiscount,
-      discountAmount,
-      freeShipping,
-      shipping: shippingCost,
-      couponCode: couponCode.toUpperCase(),
-      total: finalTotal,
-    };
+    try {
+      // Crear orden en el backend (descuenta stock automáticamente)
+      const orderResponse = await createOrderInBackend();
+      
+      // Si la orden fue exitosa, procesar
+      if (orderResponse) {
+        // Crear datos de la orden para mostrar
+        const order = {
+          id: orderResponse.id || `ORD-${Date.now()}`,
+          date: new Date().toLocaleDateString('es-CO'),
+          time: new Date().toLocaleTimeString('es-CO'),
+          customer: form.name,
+          email: form.email,
+          rut: form.rut,
+          address: form.address,
+          payment: form.payment,
+          items: cartItems.map(item => ({
+            id: item.id,
+            name: item.nombre,
+            price: item.precio,
+            quantity: quantities[item.id] || item.cantidad || 1,
+            imagenesUrl: item.imagenesUrl,
+          })),
+          subtotal,
+          iva,
+          subtotalWithIVA,
+          discountPercentage: couponDiscount,
+          discountAmount,
+          freeShipping,
+          shipping: shippingCost,
+          couponCode: couponCode.toUpperCase(),
+          total: finalTotal,
+        };
 
-    setOrderData(order);
-    setShowVoucher(true);
+        setOrderData(order);
+        setShowVoucher(true);
 
-    // Guardar en historial de compras
-    saveOrderToHistory(order);
+        // Guardar en historial de compras
+        saveOrderToHistory(order);
 
-    // Limpiar carrito
-    setCartItems([]);
-    closeCart();
+        // Limpiar carrito
+        setCartItems([]);
+        closeCart();
+      }
+    } catch (err) {
+      console.error('Error al procesar la compra:', err);
+      alert(err.message || 'Error al procesar la compra. Intenta nuevamente.');
+    }
+  };
+
+  const createOrderInBackend = async () => {
+    try {
+      // Preparar detalles de la orden para el backend
+      const detalles = cartItems.map(item => ({
+        productoId: item.id,
+        cantidad: quantities[item.id] || item.cantidad || 1
+      }));
+
+      // Enviar orden al backend
+      const response = await productService.createOrder({
+        usuarioId: user.id,
+        detalles
+      });
+
+      if (response && response.id) {
+        return response;
+      }
+      throw new Error('Error al crear la orden en el backend');
+    } catch (err) {
+      console.error('Error creating order in backend:', err);
+      throw new Error(err.response?.data?.message || 'No se pudo crear la orden');
+    }
   };
 
   const saveOrderToHistory = (order) => {
@@ -286,6 +406,7 @@ export const CheckoutPage = () => {
 
         <div class="customer-info">
           <p><strong>Cliente:</strong> ${orderData.customer}</p>
+          <p><strong>RUT:</strong> ${orderData.rut}</p>
           <p><strong>Email:</strong> ${orderData.email}</p>
           <p><strong>Dirección:</strong> ${orderData.address}</p>
           <p><strong>Método de pago:</strong> ${orderData.payment === 'tarjeta' ? 'Tarjeta de crédito/débito' : orderData.payment === 'transferencia' ? 'Transferencia bancaria' : 'Efectivo al recibir'}</p>
@@ -460,34 +581,51 @@ export const CheckoutPage = () => {
         <div className="checkout-form-container">
           <h3>Datos del comprador</h3>
           <form className="checkout-form" onSubmit={handleSubmit}>
-            <label>Nombre completo</label>
+            <label>Nombre completo *</label>
             <input
               type="text"
               name="name"
               value={form.name}
               onChange={handleChange}
               required
+              placeholder="Tu nombre completo"
             />
+            {formErrors.name && <p className="form-error-message">{formErrors.name}</p>}
 
-            <label>Correo electrónico</label>
+            <label>Correo electrónico *</label>
             <input
               type="email"
               name="email"
               value={form.email}
               onChange={handleChange}
               required
+              placeholder="tu@email.com"
             />
+            {formErrors.email && <p className="form-error-message">{formErrors.email}</p>}
 
-            <label>Dirección</label>
+            <label>RUT * (formato: 12345678-9)</label>
+            <input
+              type="text"
+              name="rut"
+              value={form.rut}
+              onChange={handleChange}
+              required
+              placeholder="Ej: 12345678-9"
+            />
+            {formErrors.rut && <p className="form-error-message">{formErrors.rut}</p>}
+
+            <label>Dirección *</label>
             <input
               type="text"
               name="address"
               value={form.address}
               onChange={handleChange}
               required
+              placeholder="Tu dirección de entrega"
             />
+            {formErrors.address && <p className="form-error-message">{formErrors.address}</p>}
 
-            <label>Método de pago</label>
+            <label>Método de pago *</label>
             <select
               name="payment"
               value={form.payment}

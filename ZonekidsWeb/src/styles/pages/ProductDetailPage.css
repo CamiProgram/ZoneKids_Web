@@ -14,14 +14,86 @@
     position: relative; /* Necesario para posicionar las etiquetas */
 }
 
-.product-detail-image img {
+/* --- ESTILOS DEL CARRUSEL --- */
+.carousel-container {
+    position: relative;
     width: 100%;
-    max-width: 500px; 
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.carousel-image {
+    width: 100%;
     height: auto;
     object-fit: cover;
-    border-radius: 8px;
-    margin: 0 auto; 
+    display: block;
+    transition: opacity 0.3s ease;
 }
+
+/* Botones de navegación (flechas) */
+.carousel-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    z-index: 10;
+}
+
+.carousel-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.carousel-prev {
+    left: 10px;
+}
+
+.carousel-next {
+    right: 10px;
+}
+
+/* Indicadores de imágenes (puntos) */
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.indicator:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.indicator.active {
+    background-color: white;
+    width: 12px;
+    height: 12px;
+}
+/* --- FIN ESTILOS CARRUSEL --- */
 
 /* --- ESTILOS DE ETIQUETAS AÑADIDOS --- */
 .product-badges-detail {

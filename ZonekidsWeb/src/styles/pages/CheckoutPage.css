@@ -246,6 +246,20 @@
   font-size: 1rem;
 }
 
+.checkout-form input:focus, .checkout-form select:focus {
+  outline: none;
+  border-color: #ff9ec5;
+  box-shadow: 0 0 0 3px rgba(255, 158, 197, 0.1);
+}
+
+/* Mensajes de error en formulario */
+.form-error-message {
+  color: #e63946;
+  font-size: 0.8rem;
+  margin: -0.8rem 0 0.8rem 0;
+  font-weight: 600;
+}
+
 .checkout-button {
   width: 100%;
   padding: 0.8rem;

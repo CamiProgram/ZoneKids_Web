@@ -24,6 +24,18 @@ export const CrearProducto = () => {
         }
     };
 
+    // Prevenir entrada de decimales en precio
+    const handlePrecioChange = (e) => {
+        const valor = e.target.value.replace(/[.,]/g, ''); // Eliminar puntos y comas
+        setPrecio(valor);
+    };
+
+    // Prevenir entrada de decimales en precio original
+    const handlePrecioOriginalChange = (e) => {
+        const valor = e.target.value.replace(/[.,]/g, ''); // Eliminar puntos y comas
+        setPrecioOriginal(valor);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -31,6 +43,39 @@ export const CrearProducto = () => {
         // Validar campos
         if (!nombre || !precio || !stock || !categoria) {
             setError('Por favor completa todos los campos obligatorios.');
+            return;
+        }
+
+        // Validar que precio no tenga decimales
+        if (precio.includes('.') || precio.includes(',')) {
+            setError('El precio no puede tener decimales. Solo se permiten números enteros.');
+            return;
+        }
+
+        // Validar que precio sea un número entero positivo
+        const precioNum = parseFloat(precio);
+        if (!Number.isInteger(precioNum) || precioNum <= 0) {
+            setError('El precio debe ser un número entero positivo.');
+            return;
+        }
+
+        // Validar que precioOriginal no tenga decimales si está ingresado
+        if (precioOriginal) {
+            if (precioOriginal.includes('.') || precioOriginal.includes(',')) {
+                setError('El precio original no puede tener decimales. Solo se permiten números enteros.');
+                return;
+            }
+
+            const precioOriginalNum = parseFloat(precioOriginal);
+            if (!Number.isInteger(precioOriginalNum) || precioOriginalNum <= 0) {
+                setError('El precio original debe ser un número entero positivo.');
+                return;
+            }
+        }
+
+        // Validar que stock sea un número entero
+        if (!Number.isInteger(parseInt(stock)) || parseInt(stock) < 0) {
+            setError('El stock debe ser un número entero sin decimales.');
             return;
         }
 
@@ -42,9 +87,7 @@ export const CrearProducto = () => {
         setLoading(true);
 
         try {
-            const formData = new FormData();
-
-            // Preparar datos del producto
+            // Preparar datos del producto como JSON puro
             const productData = {
                 nombre,
                 descripcion,
@@ -58,11 +101,9 @@ export const CrearProducto = () => {
                 imagenesUrl: [], // Se agregará la imagen del servidor
             };
 
-            formData.append('product', new Blob([JSON.stringify(productData)], { type: 'application/json' }));
-            formData.append('file', imagen);
-
-            // Crear el producto
-            await productService.create(formData);
+            // Crear el producto (sin imagen en esta solicitud)
+            // Si el backend requiere imagen, necesitarías endpoint separado
+            await productService.create(productData);
 
             alert('¡Producto creado exitosamente!');
             navigate('/admin/products');
@@ -103,26 +144,28 @@ export const CrearProducto = () => {
 
                 <div className="form-group-inline">
                     <div className="form-group">
-                        <label htmlFor="precio">Precio Final *</label>
+                        <label htmlFor="precio">Precio Final * (números enteros)</label>
                         <input
                             type="number"
                             id="precio"
                             value={precio}
-                            onChange={(e) => setPrecio(e.target.value)}
+                            onChange={handlePrecioChange}
                             required
-                            step="0.01"
+                            step="1"
                             min="0"
+                            placeholder="Ej: 50000"
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="precioOriginal">Precio Original</label>
+                        <label htmlFor="precioOriginal">Precio Original (números enteros)</label>
                         <input
                             type="number"
                             id="precioOriginal"
                             value={precioOriginal}
-                            onChange={(e) => setPrecioOriginal(e.target.value)}
-                            step="0.01"
+                            onChange={handlePrecioOriginalChange}
+                            step="1"
                             min="0"
+                            placeholder="Ej: 60000"
                         />
                     </div>
                 </div>

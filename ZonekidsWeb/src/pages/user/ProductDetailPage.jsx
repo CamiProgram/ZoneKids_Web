@@ -14,6 +14,7 @@ export const ProductDetailPage = () => {
     const [isAdded, setIsAdded] = useState(false);
     const [similarProducts, setSimilarProducts] = useState([]);
     const [loadingSimilar, setLoadingSimilar] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const { addToCart } = useCart();
 
     useEffect(() => {
@@ -23,6 +24,7 @@ export const ProductDetailPage = () => {
                 setError(null);
                 const data = await productService.getById(id);
                 setProduct(data);
+                setCurrentImageIndex(0); // Resetear índice al cambiar producto
 
                 // Cargar productos similares
                 setLoadingSimilar(true);
@@ -40,6 +42,19 @@ export const ProductDetailPage = () => {
 
         fetchProduct();
     }, [id]);
+
+    // Auto-cambiar carrusel cada 30 segundos si hay más de 1 imagen
+    useEffect(() => {
+        if (!product?.imagenesUrl || product.imagenesUrl.length <= 1) {
+            return; // No hacer nada si hay 0 o 1 imagen
+        }
+
+        const interval = setInterval(() => {
+            setCurrentImageIndex(prev => (prev + 1) % product.imagenesUrl.length);
+        }, 30000); // Cambiar cada 30 segundos
+
+        return () => clearInterval(interval);
+    }, [product?.imagenesUrl]);
 
     // Algoritmo para obtener productos similares
     const getSimilarProducts = (currentProduct, allProducts) => {
@@ -112,7 +127,25 @@ export const ProductDetailPage = () => {
     } = product;
 
     const tieneDescuento = precioOriginal && precioOriginal > precio;
-    const imagenPrincipal = imagenesUrl && imagenesUrl.length > 0 ? imagenesUrl[0] : '/assets/Zonekids_logo_web.webp';
+
+    // Ir a imagen anterior
+    const goToPreviousImage = () => {
+        setCurrentImageIndex(prev => 
+            prev === 0 ? imagenesUrl.length - 1 : prev - 1
+        );
+    };
+
+    // Ir a siguiente imagen
+    const goToNextImage = () => {
+        setCurrentImageIndex(prev => 
+            (prev + 1) % imagenesUrl.length
+        );
+    };
+
+    // Ir a imagen específica
+    const goToImage = (index) => {
+        setCurrentImageIndex(index);
+    };
 
     const handleAddToCart = () => {
         addToCart({
@@ -134,7 +167,49 @@ export const ProductDetailPage = () => {
                         {esNuevo && <span className="badge-nuevo">NUEVO</span>}
                         {enOferta && <span className="badge-oferta">OFERTA</span>}
                     </div>
-                    <img src={imagenPrincipal} alt={nombre} />
+
+                    {/* --- CARRUSEL DE IMÁGENES --- */}
+                    <div className="carousel-container">
+                        <img 
+                            src={imagenesUrl && imagenesUrl.length > 0 ? imagenesUrl[currentImageIndex] : '/assets/Zonekids_logo_web.webp'} 
+                            alt={`${nombre} - Imagen ${currentImageIndex + 1}`}
+                            className="carousel-image"
+                        />
+
+                        {/* Flechas de navegación (solo si hay más de 1 imagen) */}
+                        {imagenesUrl && imagenesUrl.length > 1 && (
+                            <>
+                                <button 
+                                    className="carousel-button carousel-prev"
+                                    onClick={goToPreviousImage}
+                                    aria-label="Imagen anterior"
+                                >
+                                    ❮
+                                </button>
+                                <button 
+                                    className="carousel-button carousel-next"
+                                    onClick={goToNextImage}
+                                    aria-label="Siguiente imagen"
+                                >
+                                    ❯
+                                </button>
+                            </>
+                        )}
+                    </div>
+
+                    {/* Indicadores de imágenes (solo si hay más de 1 imagen) */}
+                    {imagenesUrl && imagenesUrl.length > 1 && (
+                        <div className="carousel-indicators">
+                            {imagenesUrl.map((_, index) => (
+                                <button
+                                    key={index}
+                                    className={`indicator ${index === currentImageIndex ? 'active' : ''}`}
+                                    onClick={() => goToImage(index)}
+                                    aria-label={`Ir a imagen ${index + 1}`}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
                 <div className="product-detail-info">
                     <h1>{nombre}</h1>
