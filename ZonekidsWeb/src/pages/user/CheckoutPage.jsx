@@ -19,6 +19,13 @@ export const CheckoutPage = () => {
   const [orderData, setOrderData] = useState(null);
   const [showVoucher, setShowVoucher] = useState(false);
 
+  // Redirigir a login si no está loggeado
+  useEffect(() => {
+    if (!user) {
+      navigate('/login', { state: { from: '/checkout' } });
+    }
+  }, [user, navigate]);
+
   // Inicializar cantidades desde el carrito
   useEffect(() => {
     const initialQuantities = {};
@@ -45,9 +52,13 @@ export const CheckoutPage = () => {
     }, 0);
   };
 
+  // Constantes de cálculo
+  const IVA_RATE = 0.19; // 19% IVA en Colombia
   const shippingCost = 4000;
   const subtotal = calculateTotal();
-  const total = subtotal + shippingCost;
+  const iva = subtotal * IVA_RATE;
+  const subtotalWithIVA = subtotal + iva;
+  const total = subtotalWithIVA + shippingCost;
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -73,6 +84,8 @@ export const CheckoutPage = () => {
         imagenesUrl: item.imagenesUrl,
       })),
       subtotal,
+      iva,
+      subtotalWithIVA,
       shipping: shippingCost,
       total,
     };
@@ -90,9 +103,11 @@ export const CheckoutPage = () => {
 
   const saveOrderToHistory = (order) => {
     try {
-      const history = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
+      // Guardar orden asociada al usuario actual
+      const userKey = `purchaseHistory_${user.id}`;
+      const history = JSON.parse(localStorage.getItem(userKey) || '[]');
       history.push(order);
-      localStorage.setItem('purchaseHistory', JSON.stringify(history));
+      localStorage.setItem(userKey, JSON.stringify(history));
     } catch (err) {
       console.error('Error saving order to history:', err);
     }
@@ -232,6 +247,8 @@ export const CheckoutPage = () => {
 
         <div class="total-section">
           <p>Subtotal: $${orderData.subtotal.toLocaleString('es-CO')}</p>
+          <p>IVA (19%): $${orderData.iva.toLocaleString('es-CO')}</p>
+          <p>Subtotal + IVA: $${orderData.subtotalWithIVA.toLocaleString('es-CO')}</p>
           <p>Envío: $${orderData.shipping.toLocaleString('es-CO')}</p>
           <p class="grand-total">Total: $${orderData.total.toLocaleString('es-CO')}</p>
         </div>
@@ -270,6 +287,18 @@ export const CheckoutPage = () => {
                 <span>${(item.price * item.quantity).toLocaleString('es-CO')}</span>
               </div>
             ))}
+            <div className="voucher-subtotal">
+              <span>Subtotal:</span>
+              <span>${orderData.subtotal.toLocaleString('es-CO')}</span>
+            </div>
+            <div className="voucher-iva">
+              <span>IVA (19%):</span>
+              <span>${orderData.iva.toLocaleString('es-CO')}</span>
+            </div>
+            <div className="voucher-shipping">
+              <span>Envío:</span>
+              <span>${orderData.shipping.toLocaleString('es-CO')}</span>
+            </div>
             <div className="voucher-total">
               <span>Total:</span>
               <span>${orderData.total.toLocaleString('es-CO')}</span>
@@ -332,6 +361,8 @@ export const CheckoutPage = () => {
 
           <div className="cart-total">
             <p>Subtotal: ${subtotal.toLocaleString('es-CO')}</p>
+            <p>IVA (19%): ${iva.toLocaleString('es-CO')}</p>
+            <p>Subtotal + IVA: ${subtotalWithIVA.toLocaleString('es-CO')}</p>
             <p>Envío: ${shippingCost.toLocaleString('es-CO')}</p>
             <h4>Total: ${total.toLocaleString('es-CO')}</h4>
           </div>

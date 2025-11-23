@@ -66,6 +66,17 @@ export const AuthProvider = ({ children }) => {
     return hasRole('ADMIN');
   };
 
+  /**
+   * Dev only: Cambiar rol del usuario localmente
+   */
+  const setUserRole = (newRole) => {
+    if (user) {
+      const updatedUser = { ...user, rol: newRole };
+      setUser(updatedUser);
+      localStorage.setItem('authUser', JSON.stringify(updatedUser));
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -77,6 +88,7 @@ export const AuthProvider = ({ children }) => {
         hasRole,
         isAdmin,
         isAuthenticated: !!user,
+        setUserRole,
       }}
     >
       {children}

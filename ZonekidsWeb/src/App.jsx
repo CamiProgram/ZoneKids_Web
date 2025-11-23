@@ -16,6 +16,10 @@ import { OrderDetailPage } from './pages/user/OrderDetailPage';
 import { ContactPage } from './pages/user/ContactPage';
 import { AboutUsPage } from './pages/user/AboutUsPage';
 import { ShippingPage } from './pages/user/ShippingPage';
+import { ReturnsPage } from './pages/user/ReturnsPage';
+import { RefundsPage } from './pages/user/RefundsPage';
+import { ProductGuidePage } from './pages/user/ProductGuidePage';
+import { PointsPage } from './pages/user/PointsPage';
 
 // Páginas de Admin
 import { AdminDashboard } from './pages/admin/AdminDashboard';
@@ -43,6 +47,10 @@ function App() {
         <Route path="contacto" element={<ContactPage />} />
         <Route path="sobre-nosotros" element={<AboutUsPage />} />
         <Route path="envios" element={<ShippingPage />} />
+        <Route path="devoluciones" element={<ReturnsPage />} />
+        <Route path="reembolsos" element={<RefundsPage />} />
+        <Route path="guia-productos" element={<ProductGuidePage />} />
+        <Route path="puntos" element={<PointsPage />} />
       </Route>
 
       {/* --- RUTAS DE ADMIN (Protegidas) --- */}

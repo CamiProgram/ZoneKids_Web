@@ -17,16 +17,16 @@ export const Footer = () => {
           <h3>AYUDA & APOYO</h3>
           <ul>
             <li><NavLink to="/envios">Información de envío</NavLink></li>
-            <li><a href="#devolucion">Devolución</a></li>
-            <li><a href="#reembolsos">Reembolsos</a></li>
-            <li><a href="#guia">Guía de productos</a></li>
+            <li><NavLink to="/devoluciones">Devolución</NavLink></li>
+            <li><NavLink to="/reembolsos">Reembolsos</NavLink></li>
+            <li><NavLink to="/guia-productos">Guía de productos</NavLink></li>
           </ul>
         </div>
         <div className="footer-section">
           <h3>SERVICIO AL CLIENTE</h3>
           <ul>
             <li><NavLink to="/contacto">Contáctenos</NavLink></li>
-            <li><a href="#puntos">Puntos</a></li>
+            <li><NavLink to="/puntos">Puntos</NavLink></li>
           </ul>
         </div>
         <div className="footer-section">
