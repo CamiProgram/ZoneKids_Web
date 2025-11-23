@@ -85,12 +85,14 @@ public class ProductoController {
             Producto producto = new Producto();
             producto.setNombre(productoRequest.getNombre());
             producto.setDescripcion(productoRequest.getDescripcion());
-            producto.setPrecio(productoRequest.getPrecio());
+            Long precio = productoRequest.getPrecio();
+            producto.setPrecio(precio == null ? null : precio.doubleValue());
             producto.setStock(productoRequest.getStock());
             producto.setCategoria(productoRequest.getCategoria());
             producto.setImagenesUrl(productoRequest.getImagenesUrl());
             producto.setEstado("activo");
-            producto.setPrecioOriginal(productoRequest.getPrecioOriginal());
+            Long precioOriginal = productoRequest.getPrecioOriginal();
+            producto.setPrecioOriginal(precioOriginal == null ? null : precioOriginal.doubleValue());
             producto.setEsNuevo(productoRequest.isEsNuevo());
             producto.setEnOferta(productoRequest.isEnOferta());
 
@@ -124,11 +126,13 @@ public class ProductoController {
             Producto producto = productoOpt.get();
             producto.setNombre(productoRequest.getNombre());
             producto.setDescripcion(productoRequest.getDescripcion());
-            producto.setPrecio(productoRequest.getPrecio());
+            Long precio = productoRequest.getPrecio();
+            producto.setPrecio(precio == null ? null : precio.doubleValue());
             producto.setStock(productoRequest.getStock());
             producto.setCategoria(productoRequest.getCategoria());
             producto.setImagenesUrl(productoRequest.getImagenesUrl());
-            producto.setPrecioOriginal(productoRequest.getPrecioOriginal());
+            Long precioOriginal = productoRequest.getPrecioOriginal();
+            producto.setPrecioOriginal(precioOriginal == null ? null : precioOriginal.doubleValue());
             producto.setEsNuevo(productoRequest.isEsNuevo());
             producto.setEnOferta(productoRequest.isEnOferta());
 

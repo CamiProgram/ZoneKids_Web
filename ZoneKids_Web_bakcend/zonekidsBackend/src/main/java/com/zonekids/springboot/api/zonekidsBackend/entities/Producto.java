@@ -33,7 +33,7 @@ public class Producto {
 
     @Min(value = 0, message = "El precio no puede ser negativo")
     @Column(nullable = false)
-    private Double precio; 
+    private Long precio; // Precio en número entero (sin decimales, sin comas)
 
     @Min(value = 0, message = "El stock no puede ser negativo")
     @Column(nullable = false)
@@ -61,7 +61,7 @@ public class Producto {
     private LocalDateTime fechaActualizacion;
     
     @Min(value = 0)
-    private Double precioOriginal; 
+    private Long precioOriginal; // Precio original en número entero
 
     private boolean esNuevo = false; 
 
@@ -125,11 +125,11 @@ public class Producto {
     }
 
     public Double getPrecio() {
-        return precio;
+        return precio == null ? null : precio.doubleValue();
     }
 
     public void setPrecio(Double precio) {
-        this.precio = precio;
+        this.precio = precio == null ? null : precio.longValue();
     }
 
     public Integer getStock() {
@@ -181,11 +181,11 @@ public class Producto {
     }
 
     public Double getPrecioOriginal() {
-        return precioOriginal;
+        return precioOriginal == null ? null : precioOriginal.doubleValue();
     }
 
     public void setPrecioOriginal(Double precioOriginal) {
-        this.precioOriginal = precioOriginal;
+        this.precioOriginal = precioOriginal == null ? null : precioOriginal.longValue();
     }
 
     public boolean isEsNuevo() {

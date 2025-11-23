@@ -5,6 +5,8 @@ import com.zonekids.springboot.api.zonekidsBackend.dto.UsuarioRequestDto;
 import com.zonekids.springboot.api.zonekidsBackend.dto.UsuarioResponseDto;
 import com.zonekids.springboot.api.zonekidsBackend.entities.User;
 import com.zonekids.springboot.api.zonekidsBackend.enums.RoleEnum;
+import com.zonekids.springboot.api.zonekidsBackend.exception.BadRequestException;
+import com.zonekids.springboot.api.zonekidsBackend.exception.ResourceNotFoundException;
 import com.zonekids.springboot.api.zonekidsBackend.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -40,16 +42,11 @@ public class UserController {
     @Operation(summary = "Listar usuarios", description = "Obtiene todos los usuarios del sistema")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> obtenerTodos() {
-        try {
-            List<User> users = userService.findAllUsers();
-            List<UsuarioResponseDto> response = users.stream()
-                    .map(this::convertirADto)
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(ApiResponse.success("Usuarios obtenidos", response));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Error al obtener usuarios"));
-        }
+        List<User> users = userService.findAllUsers();
+        List<UsuarioResponseDto> response = users.stream()
+                .map(this::convertirADto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(ApiResponse.success("Usuarios obtenidos", response));
     }
 
     /**
@@ -59,17 +56,11 @@ public class UserController {
     @Operation(summary = "Obtener usuario por ID", description = "Obtiene los detalles de un usuario específico")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
-        try {
-            var userOpt = userService.findUserById(id);
-            if (userOpt.isPresent()) {
-                return ResponseEntity.ok(ApiResponse.success("Usuario obtenido", convertirADto(userOpt.get())));
-            }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error("Usuario no encontrado"));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Error al obtener usuario"));
+        var userOpt = userService.findUserById(id);
+        if (userOpt.isEmpty()) {
+            throw new ResourceNotFoundException("Usuario con ID " + id + " no encontrado");
         }
+        return ResponseEntity.ok(ApiResponse.success("Usuario obtenido", convertirADto(userOpt.get())));
     }
 
     /**
@@ -79,39 +70,31 @@ public class UserController {
     @Operation(summary = "Crear usuario", description = "Crea un nuevo usuario con rol específico (Solo ADMIN)")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> crear(@Valid @RequestBody UsuarioRequestDto usuarioRequest) {
-        try {
-            // Verificar que el email no exista
-            if (userService.findUserByEmail(usuarioRequest.getEmail()).isPresent()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(ApiResponse.error("El email ya está registrado"));
-            }
-
-            // Crear usuario
-            User newUser = new User();
-            newUser.setNombre(usuarioRequest.getNombre());
-            newUser.setEmail(usuarioRequest.getEmail());
-            newUser.setContrasena(usuarioRequest.getContrasena());
-
-            // Asignar rol validado
-            try {
-                RoleEnum rol = RoleEnum.fromString(usuarioRequest.getRol());
-                newUser.setRol(rol);
-            } catch (IllegalArgumentException e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(ApiResponse.error("Rol inválido. Use: admin, vendedor, cliente"));
-            }
-
-            newUser.setEstado("activo");
-
-            // Guardar usuario
-            User savedUser = userService.saveUser(newUser);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(ApiResponse.success("Usuario creado exitosamente", convertirADto(savedUser)));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Error al crear el usuario"));
+        // Verificar que el email no exista
+        if (userService.findUserByEmail(usuarioRequest.getEmail()).isPresent()) {
+            throw new BadRequestException("El email " + usuarioRequest.getEmail() + " ya está registrado");
         }
+
+        // Crear usuario
+        User newUser = new User();
+        newUser.setNombre(usuarioRequest.getNombre());
+        newUser.setEmail(usuarioRequest.getEmail());
+        newUser.setContrasena(usuarioRequest.getContrasena());
+
+        // Asignar rol validado
+        try {
+            RoleEnum rol = RoleEnum.fromString(usuarioRequest.getRol());
+            newUser.setRol(rol);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Rol inválido. Use: admin, vendedor, cliente");
+        }
+
+        newUser.setEstado("activo");
+
+        // Guardar usuario
+        User savedUser = userService.saveUser(newUser);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success("Usuario creado exitosamente", convertirADto(savedUser)));
     }
 
     /**
@@ -121,32 +104,22 @@ public class UserController {
     @Operation(summary = "Actualizar usuario", description = "Actualiza los datos de un usuario existente")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> actualizar(@PathVariable Long id, @Valid @RequestBody UsuarioRequestDto usuarioRequest) {
+        User user = userService.findUserById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario con ID " + id + " no encontrado"));
+
+        user.setNombre(usuarioRequest.getNombre());
+        user.setEmail(usuarioRequest.getEmail());
+        user.setContrasena(usuarioRequest.getContrasena());
+
         try {
-            if (!userService.findUserById(id).isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.error("Usuario no encontrado"));
-            }
-
-            User user = userService.findUserById(id).get();
-            user.setNombre(usuarioRequest.getNombre());
-            user.setEmail(usuarioRequest.getEmail());
-            user.setContrasena(usuarioRequest.getContrasena());
-
-            try {
-                RoleEnum rol = RoleEnum.fromString(usuarioRequest.getRol());
-                user.setRol(rol);
-            } catch (IllegalArgumentException e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(ApiResponse.error("Rol inválido. Use: admin, vendedor, cliente"));
-            }
-
-            User updatedUser = userService.saveUser(user);
-            return ResponseEntity.ok(ApiResponse.success("Usuario actualizado exitosamente", convertirADto(updatedUser)));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Error al actualizar el usuario"));
+            RoleEnum rol = RoleEnum.fromString(usuarioRequest.getRol());
+            user.setRol(rol);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Rol inválido. Use: admin, vendedor, cliente");
         }
+
+        User updatedUser = userService.saveUser(user);
+        return ResponseEntity.ok(ApiResponse.success("Usuario actualizado exitosamente", convertirADto(updatedUser)));
     }
 
     /**
@@ -156,26 +129,16 @@ public class UserController {
     @Operation(summary = "Cambiar estado de usuario", description = "Activa o desactiva un usuario")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> cambiarEstado(@PathVariable Long id, @RequestParam String estado) {
-        try {
-            if (!estado.equals("activo") && !estado.equals("inactivo")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(ApiResponse.error("Estado inválido. Use: activo, inactivo"));
-            }
-
-            if (!userService.findUserById(id).isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.error("Usuario no encontrado"));
-            }
-
-            User user = userService.findUserById(id).get();
-            user.setEstado(estado);
-            User updatedUser = userService.saveUser(user);
-            return ResponseEntity.ok(ApiResponse.success("Estado actualizado exitosamente", convertirADto(updatedUser)));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Error al cambiar estado"));
+        if (!estado.equals("activo") && !estado.equals("inactivo")) {
+            throw new BadRequestException("Estado inválido. Use: activo, inactivo");
         }
+
+        User user = userService.findUserById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario con ID " + id + " no encontrado"));
+
+        user.setEstado(estado);
+        User updatedUser = userService.saveUser(user);
+        return ResponseEntity.ok(ApiResponse.success("Estado actualizado exitosamente", convertirADto(updatedUser)));
     }
 
     /**
@@ -185,17 +148,11 @@ public class UserController {
     @Operation(summary = "Eliminar usuario", description = "Elimina un usuario del sistema")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
-        try {
-            if (!userService.findUserById(id).isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.error("Usuario no encontrado"));
-            }
-            userService.deleteUserById(id);
-            return ResponseEntity.ok(ApiResponse.success("Usuario eliminado exitosamente", null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Error al eliminar el usuario"));
-        }
+        User user = userService.findUserById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario con ID " + id + " no encontrado"));
+
+        userService.deleteUserById(id);
+        return ResponseEntity.ok(ApiResponse.success("Usuario eliminado exitosamente", null));
     }
 
     /**
