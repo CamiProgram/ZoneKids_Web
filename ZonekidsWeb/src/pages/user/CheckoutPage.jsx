@@ -43,6 +43,7 @@ export const CheckoutPage = () => {
     setCouponDiscount(0);
     setFreeShipping(false);
     setCouponError('');
+    setCouponSuccess('');
   }, [cartItems]);
 
   // Cambiar cantidad de producto
@@ -79,18 +80,19 @@ export const CheckoutPage = () => {
   // Validar código de descuento
   const applyCoupon = () => {
     setCouponError('');
+    setCouponSuccess('');
     const code = couponCode.trim().toUpperCase();
     
     if (code === 'PROFEVIVIAN') {
       setFreeShipping(true);
       setCouponDiscount(0);
-      setCouponError('✓ Envío gratis aplicado');
+      setCouponSuccess('✓ Envío gratis aplicado');
     } else if (code === 'SACO7') {
       setFreeShipping(false);
       setCouponDiscount(50);
-      setCouponError('✓ 50% de descuento aplicado');
+      setCouponSuccess('✓ 50% de descuento aplicado');
     } else if (code === '') {
-      setCouponError('');
+      setCouponSuccess('');
       setFreeShipping(false);
       setCouponDiscount(0);
     } else {
@@ -437,12 +439,7 @@ export const CheckoutPage = () => {
               </button>
             </div>
             {couponError && <p className="coupon-error">{couponError}</p>}
-            {couponDiscount > 0 && (
-              <p className="coupon-success">✓ Cupón aplicado: {couponDiscount}% de descuento</p>
-            )}
-            {freeShipping && (
-              <p className="coupon-success">✓ Envío gratis activado</p>
-            )}
+            {couponSuccess && <p className="coupon-success">{couponSuccess}</p>}
           </div>
 
           <div className="cart-total">
