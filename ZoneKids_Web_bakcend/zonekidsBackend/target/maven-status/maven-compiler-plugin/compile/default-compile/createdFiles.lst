@@ -29,6 +29,7 @@ com\zonekids\springboot\api\zonekidsBackend\dto\DetalleOrdenResponseDto.class
 com\zonekids\springboot\api\zonekidsBackend\config\WebConfig.class
 com\zonekids\springboot\api\zonekidsBackend\dto\ProductoResponseDto.class
 com\zonekids\springboot\api\zonekidsBackend\services\ProductoServiceImpl.class
+com\zonekids\springboot\api\zonekidsBackend\controllers\OrdenController.class
 com\zonekids\springboot\api\zonekidsBackend\services\FileSystemStorageService.class
 com\zonekids\springboot\api\zonekidsBackend\entities\Orden.class
 com\zonekids\springboot\api\zonekidsBackend\repositories\OrdenRepository.class
