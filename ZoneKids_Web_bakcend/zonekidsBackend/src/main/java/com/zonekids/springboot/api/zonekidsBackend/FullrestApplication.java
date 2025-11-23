@@ -17,6 +17,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "com.zonekids.springboot.api.zonekidsBackend") // Asegura que Spring escanee todos los paquetes
@@ -123,10 +125,6 @@ public class FullrestApplication {
                             42.99, 52.99
                     };
 
-                    String imageUrl1 = "https://via.placeholder.com/300x300?text=Ropa+Bebe+1";
-                    String imageUrl2 = "https://via.placeholder.com/300x300?text=Ropa+Bebe+2";
-                    String imageUrl3 = "https://via.placeholder.com/300x300?text=Ropa+Bebe+3";
-
                     int productosCreados = 0;
                     for (int i = 0; i < 10; i++) {
                         Producto producto = new Producto();
@@ -139,15 +137,22 @@ public class FullrestApplication {
                         producto.setEsNuevo(i < 3);
                         producto.setEnOferta(i % 2 == 0);
                         producto.setPrecioOriginal(precios[i] * 1.2);
-                        producto.setImagenesUrl(Arrays.asList(
-                                imageUrl1 + "+" + i,
-                                imageUrl2 + "+" + i,
-                                imageUrl3 + "+" + i
-                        ));
+                        
+                        // Agregar 2 o 3 imágenes según el índice (para variar)
+                        List<String> imagenes = new ArrayList<>();
+                        imagenes.add("https://via.placeholder.com/300x300?text=Ropa+Bebe+Frente+" + i);
+                        imagenes.add("https://via.placeholder.com/300x300?text=Ropa+Bebe+Detalle+" + i);
+                        
+                        // Agregar una 3ª imagen solo en algunos productos (alternado)
+                        if (i % 2 == 0) {
+                            imagenes.add("https://via.placeholder.com/300x300?text=Ropa+Bebe+Espalda+" + i);
+                        }
+                        
+                        producto.setImagenesUrl(imagenes);
                         productoRepository.save(producto);
                         productosCreados++;
                     }
-                    System.out.println("✅ " + productosCreados + " productos creados exitosamente");
+                    System.out.println("✅ " + productosCreados + " productos creados exitosamente (con 2-3 imágenes cada uno)");
                 } else {
                     System.out.println("⏭️ Productos ya existen, saltando...");
                 }
