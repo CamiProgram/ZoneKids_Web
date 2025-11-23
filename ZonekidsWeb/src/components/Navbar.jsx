@@ -39,7 +39,7 @@ export const Navbar = () => {
         <NavLink to="/" className="logo">
           <img src="/public/Zonekids_logo_web.webp" alt="ZoneKids Logo" className="logo-image" />
         </NavLink>
-        
+
         <form className="search-bar desktop-search" onSubmit={handleSearch}>
           <input 
             type="text" 
@@ -52,24 +52,50 @@ export const Navbar = () => {
           ) : (
             <button type="submit" aria-label="Buscar">🔍</button>
           )}
-          </form>
+        </form>
 
-          <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
+        <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
           ☰
         </button>
 
-        <div className="user-actions desktop-actions">
-          {user ? (
-            <>
+        {/* Saludo + Iconos a la derecha */}
+        <div className="navbar-right">
+          <div className="navbar-greeting">
+            {user ? (
               <span>¡Hola, {user.nombre}!</span>
-              {user.rol === 'super-admin' && <NavLink to="/admin">Panel</NavLink>}
-              <a onClick={logout} className="navbar-link-button">Salir</a>
-            </>
-          ) : (
-            <NavLink to="/login">Cuenta</NavLink>
+            ) : (
+              <span>Bienvenido</span>
+            )}
+          </div>
+
+          {/* Iconos */}
+          <div className="user-actions desktop-actions">
+          {user && user.rol === 'ADMIN' && (
+            <NavLink to="/admin" className="icon-button" title="Panel de Admin">
+              ⚙️
+            </NavLink>
           )}
-          {/* --- BOTÓN CARRITO RE-AÑADIDO --- */}
-          <a onClick={openCart} className="navbar-link-button">Carrito</a> 
+          
+          {user && (
+            <NavLink to="/historial" className="icon-button" title="Historial de compras">
+              📋
+            </NavLink>
+          )}
+          
+          {user ? (
+            <a onClick={logout} className="icon-button" title="Cerrar sesión">
+              🚪
+            </a>
+          ) : (
+            <NavLink to="/login" className="icon-button" title="Iniciar sesión">
+              👤
+            </NavLink>
+          )}
+          
+          <a onClick={openCart} className="icon-button cart-icon" title="Carrito">
+            🛒
+          </a> 
+        </div>
         </div>
       </div>
 
@@ -84,17 +110,33 @@ export const Navbar = () => {
             />
             <button type="submit" aria-label="Buscar">🔍</button>
           </form>
-          {user ? (
-            <>
-              <span>¡Hola, {user.nombre}!</span>
-              {user.rol === 'super-admin' && <NavLink to="/admin" onClick={closeMobileMenu}>Panel</NavLink>}
-              <a onClick={() => { logout(); closeMobileMenu(); }} className="navbar-link-button">Salir</a>
-            </>
-          ) : (
-            <NavLink to="/login" onClick={closeMobileMenu}>Cuenta</NavLink>
-          )}
-          {/* --- BOTÓN CARRITO RE-AÑADIDO (MÓVIL) --- */}
-          <a onClick={() => { openCart(); closeMobileMenu(); }} className="navbar-link-button">Carrito</a> 
+          <div className="mobile-actions">
+            {user && user.rol === 'ADMIN' && (
+              <NavLink to="/admin" onClick={closeMobileMenu} className="mobile-action-item">
+                ⚙️ Panel de Admin
+              </NavLink>
+            )}
+            
+            {user && (
+              <NavLink to="/historial" onClick={closeMobileMenu} className="mobile-action-item">
+                📋 Historial
+              </NavLink>
+            )}
+            
+            {user ? (
+              <a onClick={() => { logout(); closeMobileMenu(); }} className="mobile-action-item">
+                🚪 Salir
+              </a>
+            ) : (
+              <NavLink to="/login" onClick={closeMobileMenu} className="mobile-action-item">
+                👤 Cuenta
+              </NavLink>
+            )}
+            
+            <a onClick={() => { openCart(); closeMobileMenu(); }} className="mobile-action-item">
+              🛒 Carrito
+            </a> 
+          </div>
         </div>
       )}
 

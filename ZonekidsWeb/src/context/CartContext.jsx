@@ -11,11 +11,12 @@ export const CartProvider = ({ children }) => {
       const existingItem = prevItems.find(item => item.id === product.id);
       if (existingItem) {
         return prevItems.map(item =>
-          item.id === product.id ? { ...item, quantity: (item.quantity || 1) + 1 } : item
+          item.id === product.id ? { ...item, cantidad: (item.cantidad || 1) + 1 } : item
         );
       }
-      return [...prevItems, { ...product, quantity: 1 }];
+      return [...prevItems, { ...product, cantidad: 1 }];
     });
+    // Abre el modal cuando se añade un producto
     setIsCartOpen(true);
   };
 
@@ -23,11 +24,39 @@ export const CartProvider = ({ children }) => {
     setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
   };
 
+  const updateQuantity = (productId, newQuantity) => {
+    if (newQuantity < 1) {
+      removeFromCart(productId);
+      return;
+    }
+    setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.id === productId ? { ...item, cantidad: newQuantity } : item
+      )
+    );
+  };
+
+  const getTotalPrice = () => {
+    return cartItems.reduce((total, item) => {
+      return total + (item.precio * (item.cantidad || 1));
+    }, 0);
+  };
+
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, isCartOpen, openCart, closeCart }}>
+    <CartContext.Provider value={{ 
+      cartItems, 
+      setCartItems,
+      addToCart, 
+      removeFromCart,
+      updateQuantity,
+      getTotalPrice,
+      isCartOpen, 
+      openCart, 
+      closeCart 
+    }}>
       {children}
     </CartContext.Provider>
   );

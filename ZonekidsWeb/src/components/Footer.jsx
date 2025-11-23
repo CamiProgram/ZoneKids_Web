@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import '../styles/components/footer.css';
 
 export const Footer = () => {
@@ -8,24 +9,24 @@ export const Footer = () => {
         <div className="footer-section">
           <h3>SOBRE NOSOTROS</h3>
           <ul>
-            <li><a href="#">Quiénes somos</a></li>
-            <li><a href="#">Blogs</a></li>
+            <li><NavLink to="/sobre-nosotros">Quiénes somos</NavLink></li>
+            <li><a href="#blogs">Blogs</a></li>
           </ul>
         </div>
         <div className="footer-section">
           <h3>AYUDA & APOYO</h3>
           <ul>
-            <li><a href="#">Información de envío</a></li>
-            <li><a href="#">Devolución</a></li>
-            <li><a href="#">Reembolsos</a></li>
-            <li><a href="#">Guía de productos</a></li>
+            <li><NavLink to="/envios">Información de envío</NavLink></li>
+            <li><a href="#devolucion">Devolución</a></li>
+            <li><a href="#reembolsos">Reembolsos</a></li>
+            <li><a href="#guia">Guía de productos</a></li>
           </ul>
         </div>
         <div className="footer-section">
           <h3>SERVICIO AL CLIENTE</h3>
           <ul>
-            <li><a href="#">Contáctenos</a></li>
-            <li><a href="#">Puntos</a></li>
+            <li><NavLink to="/contacto">Contáctenos</NavLink></li>
+            <li><a href="#puntos">Puntos</a></li>
           </ul>
         </div>
         <div className="footer-section">

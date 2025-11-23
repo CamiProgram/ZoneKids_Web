@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { ProductCard } from '../../components/ProductCard';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
+import { productService } from '../../services/productService';
 import '../../styles/pages/homePage.css';
 
 export const HomePage = () => {
@@ -13,23 +13,29 @@ export const HomePage = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      try { 
-        setLoading(true); setError(null);
-        const response = await axios.get('http://localhost:8080/api/products');
-        setProducts(response.data);
-        
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await productService.getAll();
+        setProducts(data);
+
         // Extrae categorías únicas de los productos
-        const uniqueCategories = [...new Set(response.data.map(p => p.categoria).filter(Boolean))];
+        const uniqueCategories = [...new Set(data.map(p => p.categoria).filter(Boolean))];
         setCategories(uniqueCategories);
       } catch (err) {
-        console.error("Error fetching products:", err);
-        setError("No se pudieron cargar los productos. Intenta más tarde.");
-      } finally { setLoading(false); }
+        console.error('Error fetching products:', err);
+        setError('No se pudieron cargar los productos. Intenta más tarde.');
+      } finally {
+        setLoading(false);
+      }
     };
+
     fetchProducts();
   }, []);
 
-  const filteredProducts = selectedCategory ? products.filter(p => p.categoria === selectedCategory) : products;
+  const filteredProducts = selectedCategory
+    ? products.filter(p => p.categoria === selectedCategory)
+    : products;
 
   if (loading) return <LoadingSpinner />;
   if (error) return <div className="error-message">{error}</div>;
@@ -38,21 +44,25 @@ export const HomePage = () => {
     <div className="homepage-container">
       <div className="home-content-wrapper">
         <div className="home-left-ad">
-          <span>Espacio para<br/>Anuncio</span>
+          <span>
+            Espacio para
+            <br />
+            Anuncio
+          </span>
         </div>
 
         <div className="home-main-content">
           {/* --- LISTA DE CATEGORÍAS --- */}
           <div className="category-filter-list">
-            <button 
+            <button
               onClick={() => setSelectedCategory(null)}
               className={selectedCategory === null ? 'active' : ''}
             >
               Todos
             </button>
             {categories.map(cat => (
-              <button 
-                key={cat} 
+              <button
+                key={cat}
                 onClick={() => setSelectedCategory(cat)}
                 className={selectedCategory === cat ? 'active' : ''}
               >
@@ -74,7 +84,11 @@ export const HomePage = () => {
         </div>
 
         <div className="home-right-ad">
-          <span>Espacio para<br/>Anuncio</span>
+          <span>
+            Espacio para
+            <br />
+            Anuncio
+          </span>
         </div>
       </div>
     </div>

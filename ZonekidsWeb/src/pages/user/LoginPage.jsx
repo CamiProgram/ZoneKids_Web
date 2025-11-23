@@ -45,15 +45,19 @@ export const LoginPage = () => {
     setLoading(true);
     try {
       const user = await login(email, password);
-      if (user && user.rol === 'super-admin') {
-        navigate('/admin');
-      } else if (user) {
+      
+      // Redirigir según el rol del usuario
+      if (user && user.rol === 'ADMIN') {
+        navigate('/admin/dashboard');
+      } else if (user && user.rol === 'VENDEDOR') {
+        navigate('/');
+      } else if (user && user.rol === 'CLIENTE') {
         navigate('/');
       } else {
-        setError('Credenciales incorrectas.');
+        navigate('/');
       }
     } catch (err) {
-      setError('Error al iniciar sesión. Intente más tarde.');
+      setError(err.message || 'Error al iniciar sesión. Intente más tarde.');
     } finally {
       setLoading(false);
     }

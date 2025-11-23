@@ -1,0 +1,95 @@
+.homepage-container {
+  padding: 2rem;
+  background-color: #ffffff;
+  min-height: 80vh;
+  width: 100%;
+}
+
+.home-content-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 0 180px;
+}
+
+.home-left-ad {
+  display: none;
+}
+
+.home-main-content {
+  width: 100%;
+  padding: 0;
+  background-color: #ffffff;
+}
+
+.home-right-ad {
+  display: none;
+}
+
+/* Estilos para los botones de categoría */
+.category-filter-list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.category-filter-list button {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 20px; 
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.category-filter-list button:hover {
+  background-color: #f0f0f0;
+  border-color: #ccc;
+}
+.category-filter-list button.active {
+  background-color: #333; 
+  color: white;
+  border-color: #333;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+.loading-message, .error-message {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2em;
+}
+.error-message { color: red; }
+
+/* Media queries para adaptar a pantallas más pequeñas */
+@media (max-width: 1200px) {
+  .home-content-wrapper {
+    margin: 0 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-content-wrapper {
+    margin: 0 20px;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 576px) {
+  .home-content-wrapper {
+    margin: 0;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
