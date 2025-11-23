@@ -47,14 +47,16 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
+    /**
+     * Configuración de seguridad HTTP
+     * Define rutas públicas, protegidas y validaciones por rol
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 // ===== CSRF DESHABILITADO =====
+                // JWT no usa sesiones estándar, por lo que CSRF no es necesario
                 .csrf(csrf -> csrf.disable())
-
-                // ===== CORS HABILITADO =====
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 // ===== CONFIGURACIÓN DE RUTAS =====
                 .authorizeHttpRequests(authz -> authz
@@ -64,43 +66,22 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**").permitAll()            // Swagger Resources
                         .requestMatchers("/v3/api-docs/**").permitAll()           // OpenAPI JSON
                         .requestMatchers("/doc/**").permitAll()                   // Documentación custom
-                        .requestMatchers("OPTIONS", "/**").permitAll()            // Preflight CORS
 
                         // ===== RUTAS PROTEGIDAS =====
+                        // Todas las demás rutas requieren autenticación
                         .anyRequest().authenticated()
                 )
 
                 // ===== CONFIGURACIÓN DE SESIONES =====
+                // Stateless: cada petición debe tener su propio token JWT
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
                 // ===== AGREGAR FILTRO JWT =====
+                // El filtro JWT se ejecuta antes del filtro de autenticación por defecto
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    /**
-     * Configuración de CORS a nivel de Spring Security
-     */
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:3000",
-                "http://localhost:5173",
-                "http://localhost:8080",
-                "http://127.0.0.1:3000",
-                "http://127.0.0.1:5173"
-        ));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
     }
 }

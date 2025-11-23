@@ -1,5 +1,6 @@
 package com.zonekids.springboot.api.zonekidsBackend.controllers;
 
+import com.zonekids.springboot.api.zonekidsBackend.dto.ApiResponse;
 import com.zonekids.springboot.api.zonekidsBackend.dto.AuthResponseDto;
 import com.zonekids.springboot.api.zonekidsBackend.dto.LoginRequestDto;
 import com.zonekids.springboot.api.zonekidsBackend.dto.UsuarioRequestDto;
@@ -19,6 +20,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -42,7 +45,7 @@ public class AuthController {
     /**
      * Endpoint de login
      * @param loginRequest DTO con email y contraseña
-     * @return Token JWT en AuthResponseDto
+     * @return Token JWT en ApiResponse
      */
     @PostMapping("/login")
     @Operation(summary = "Login", description = "Autentica un usuario y devuelve un token JWT")
@@ -51,9 +54,8 @@ public class AuthController {
             // Validar que el usuario existe y está activo
             Optional<User> userOptional = userService.findUserByEmail(loginRequest.getEmail());
             if (userOptional.isEmpty() || !userOptional.get().getEstado().equals("activo")) {
-                AuthResponseDto response = new AuthResponseDto();
-                response.setMensaje("Credenciales inválidas o cuenta deshabilitada");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ApiResponse.error("Email o contraseña incorrectos"));
             }
 
             // Autenticar el usuario usando AuthenticationManager
@@ -69,19 +71,22 @@ public class AuthController {
 
             // Retornar la respuesta con el token y rol
             User user = userOptional.get();
-            AuthResponseDto response = new AuthResponseDto();
-            response.setToken(token);
-            response.setMensaje("Login exitoso - Rol: " + user.getRol().getDescripcion());
-            return ResponseEntity.ok(response);
+            Map<String, Object> loginData = new HashMap<>();
+            loginData.put("token", token);
+            loginData.put("email", user.getEmail());
+            loginData.put("id", user.getId());
+            loginData.put("nombre", user.getNombre());
+            loginData.put("rol", user.getRol().toString());
+            loginData.put("activo", user.getEstado().equals("activo"));
+
+            return ResponseEntity.ok(ApiResponse.success("Login exitoso", loginData));
 
         } catch (BadCredentialsException e) {
-            AuthResponseDto response = new AuthResponseDto();
-            response.setMensaje("Credenciales inválidas");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Email o contraseña incorrectos"));
         } catch (Exception e) {
-            AuthResponseDto response = new AuthResponseDto();
-            response.setMensaje("Error en el servidor: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Error en el servidor"));
         }
     }
 
@@ -96,8 +101,8 @@ public class AuthController {
         try {
             // Verificar que el email no esté registrado
             if (userService.findUserByEmail(usuarioRequest.getEmail()).isPresent()) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body("El email ya está registrado");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(ApiResponse.error("El email ya está registrado"));
             }
 
             // Crear nuevo usuario
@@ -106,14 +111,8 @@ public class AuthController {
             newUser.setEmail(usuarioRequest.getEmail());
             newUser.setContrasena(usuarioRequest.getContrasena());
             
-            // Asignar rol (por defecto CLIENTE, solo ADMIN puede asignar otros)
-            try {
-                RoleEnum rol = RoleEnum.fromString(usuarioRequest.getRol());
-                newUser.setRol(rol);
-            } catch (IllegalArgumentException e) {
-                newUser.setRol(RoleEnum.CLIENTE); // Default
-            }
-            
+            // Asignar rol CLIENTE por defecto
+            newUser.setRol(RoleEnum.CLIENTE);
             newUser.setEstado("activo");
 
             // Guardar el usuario
@@ -129,11 +128,12 @@ public class AuthController {
             response.setFechaCreacion(savedUser.getFechaCreacion());
             response.setFechaActualizacion(savedUser.getFechaActualizacion());
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(ApiResponse.success("Registro exitoso", response));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al registrar el usuario: " + e.getMessage());
+                    .body(ApiResponse.error("Error al registrar el usuario"));
         }
     }
 }

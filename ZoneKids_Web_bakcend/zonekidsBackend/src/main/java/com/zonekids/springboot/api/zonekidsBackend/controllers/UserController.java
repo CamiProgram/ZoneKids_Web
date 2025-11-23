@@ -1,5 +1,6 @@
 package com.zonekids.springboot.api.zonekidsBackend.controllers;
 
+import com.zonekids.springboot.api.zonekidsBackend.dto.ApiResponse;
 import com.zonekids.springboot.api.zonekidsBackend.dto.UsuarioRequestDto;
 import com.zonekids.springboot.api.zonekidsBackend.dto.UsuarioResponseDto;
 import com.zonekids.springboot.api.zonekidsBackend.entities.User;
@@ -38,12 +39,17 @@ public class UserController {
     @GetMapping
     @Operation(summary = "Listar usuarios", description = "Obtiene todos los usuarios del sistema")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UsuarioResponseDto>> obtenerTodos() {
-        List<User> users = userService.findAllUsers();
-        List<UsuarioResponseDto> response = users.stream()
-                .map(this::convertirADto)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> obtenerTodos() {
+        try {
+            List<User> users = userService.findAllUsers();
+            List<UsuarioResponseDto> response = users.stream()
+                    .map(this::convertirADto)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(ApiResponse.success("Usuarios obtenidos", response));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Error al obtener usuarios"));
+        }
     }
 
     /**
@@ -53,11 +59,17 @@ public class UserController {
     @Operation(summary = "Obtener usuario por ID", description = "Obtiene los detalles de un usuario específico")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
-        var userOpt = userService.findUserById(id);
-        if (userOpt.isPresent()) {
-            return ResponseEntity.ok(convertirADto(userOpt.get()));
+        try {
+            var userOpt = userService.findUserById(id);
+            if (userOpt.isPresent()) {
+                return ResponseEntity.ok(ApiResponse.success("Usuario obtenido", convertirADto(userOpt.get())));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error("Usuario no encontrado"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Error al obtener usuario"));
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
     }
 
     /**
@@ -70,8 +82,8 @@ public class UserController {
         try {
             // Verificar que el email no exista
             if (userService.findUserByEmail(usuarioRequest.getEmail()).isPresent()) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body("El email ya está registrado");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(ApiResponse.error("El email ya está registrado"));
             }
 
             // Crear usuario
@@ -86,18 +98,19 @@ public class UserController {
                 newUser.setRol(rol);
             } catch (IllegalArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Rol inválido. Use: admin, vendedor, cliente");
+                        .body(ApiResponse.error("Rol inválido. Use: admin, vendedor, cliente"));
             }
 
             newUser.setEstado("activo");
 
             // Guardar usuario
             User savedUser = userService.saveUser(newUser);
-            return ResponseEntity.status(HttpStatus.CREATED).body(convertirADto(savedUser));
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(ApiResponse.success("Usuario creado exitosamente", convertirADto(savedUser)));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al crear el usuario: " + e.getMessage());
+                    .body(ApiResponse.error("Error al crear el usuario"));
         }
     }
 
@@ -110,7 +123,8 @@ public class UserController {
     public ResponseEntity<?> actualizar(@PathVariable Long id, @Valid @RequestBody UsuarioRequestDto usuarioRequest) {
         try {
             if (!userService.findUserById(id).isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.error("Usuario no encontrado"));
             }
 
             User user = userService.findUserById(id).get();
@@ -123,15 +137,15 @@ public class UserController {
                 user.setRol(rol);
             } catch (IllegalArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Rol inválido. Use: admin, vendedor, cliente");
+                        .body(ApiResponse.error("Rol inválido. Use: admin, vendedor, cliente"));
             }
 
             User updatedUser = userService.saveUser(user);
-            return ResponseEntity.ok(convertirADto(updatedUser));
+            return ResponseEntity.ok(ApiResponse.success("Usuario actualizado exitosamente", convertirADto(updatedUser)));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al actualizar el usuario: " + e.getMessage());
+                    .body(ApiResponse.error("Error al actualizar el usuario"));
         }
     }
 
@@ -145,21 +159,22 @@ public class UserController {
         try {
             if (!estado.equals("activo") && !estado.equals("inactivo")) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Estado inválido. Use: activo, inactivo");
+                        .body(ApiResponse.error("Estado inválido. Use: activo, inactivo"));
             }
 
             if (!userService.findUserById(id).isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.error("Usuario no encontrado"));
             }
 
             User user = userService.findUserById(id).get();
             user.setEstado(estado);
             User updatedUser = userService.saveUser(user);
-            return ResponseEntity.ok(convertirADto(updatedUser));
+            return ResponseEntity.ok(ApiResponse.success("Estado actualizado exitosamente", convertirADto(updatedUser)));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al cambiar estado: " + e.getMessage());
+                    .body(ApiResponse.error("Error al cambiar estado"));
         }
     }
 
@@ -172,13 +187,14 @@ public class UserController {
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
             if (!userService.findUserById(id).isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.error("Usuario no encontrado"));
             }
             userService.deleteUserById(id);
-            return ResponseEntity.ok("Usuario eliminado exitosamente");
+            return ResponseEntity.ok(ApiResponse.success("Usuario eliminado exitosamente", null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al eliminar el usuario: " + e.getMessage());
+                    .body(ApiResponse.error("Error al eliminar el usuario"));
         }
     }
 

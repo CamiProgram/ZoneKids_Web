@@ -11,7 +11,10 @@ com\zonekids\springboot\api\zonekidsBackend\dto\AuthResponseDto.class
 com\zonekids\springboot\api\zonekidsBackend\dto\OrdenRequestDto.class
 com\zonekids\springboot\api\zonekidsBackend\services\ProductoServices.class
 com\zonekids\springboot\api\zonekidsBackend\services\StorageService.class
+com\zonekids\springboot\api\zonekidsBackend\dto\ApiResponse$ErrorField.class
+com\zonekids\springboot\api\zonekidsBackend\dto\ApiResponse.class
 com\zonekids\springboot\api\zonekidsBackend\config\AdminUserConfig.class
+com\zonekids\springboot\api\zonekidsBackend\config\CorsConfig.class
 com\zonekids\springboot\api\zonekidsBackend\enums\RoleEnum.class
 com\zonekids\springboot\api\zonekidsBackend\services\UserService.class
 com\zonekids\springboot\api\zonekidsBackend\FullrestApplication.class

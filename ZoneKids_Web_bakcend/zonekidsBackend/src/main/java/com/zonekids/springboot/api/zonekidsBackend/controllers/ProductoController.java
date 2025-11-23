@@ -1,5 +1,6 @@
 package com.zonekids.springboot.api.zonekidsBackend.controllers;
 
+import com.zonekids.springboot.api.zonekidsBackend.dto.ApiResponse;
 import com.zonekids.springboot.api.zonekidsBackend.dto.ProductoRequestDto;
 import com.zonekids.springboot.api.zonekidsBackend.dto.ProductoResponseDto;
 import com.zonekids.springboot.api.zonekidsBackend.entities.Producto;
@@ -35,33 +36,40 @@ public class ProductoController {
     private ProductoServices productoServices;
 
     /**
-     * Obtener todos los productos (lectura pública)
-     * Acceso: ADMIN, VENDEDOR, CLIENTE
+     * Obtener todos los productos (lectura pública - sin autenticación)
      */
     @GetMapping
-    @Operation(summary = "Listar productos", description = "Obtiene todos los productos disponibles")
-    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'CLIENTE')")
-    public ResponseEntity<List<ProductoResponseDto>> obtenerTodos() {
-        List<Producto> productos = productoServices.findAllProducts();
-        List<ProductoResponseDto> response = productos.stream()
-                .map(this::convertirADto)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(response);
+    @Operation(summary = "Listar productos", description = "Obtiene todos los productos disponibles (público)")
+    public ResponseEntity<?> obtenerTodos() {
+        try {
+            List<Producto> productos = productoServices.findAllProducts();
+            List<ProductoResponseDto> response = productos.stream()
+                    .map(this::convertirADto)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(ApiResponse.success("Productos obtenidos", response));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Error al obtener productos"));
+        }
     }
 
     /**
-     * Obtener un producto por ID
-     * Acceso: ADMIN, VENDEDOR, CLIENTE
+     * Obtener un producto por ID (lectura pública - sin autenticación)
      */
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener producto por ID", description = "Obtiene los detalles de un producto específico")
-    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'CLIENTE')")
+    @Operation(summary = "Obtener producto por ID", description = "Obtiene los detalles de un producto específico (público)")
     public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
-        Optional<Producto> producto = productoServices.findProductById(id);
-        if (producto.isPresent()) {
-            return ResponseEntity.ok(convertirADto(producto.get()));
+        try {
+            Optional<Producto> producto = productoServices.findProductById(id);
+            if (producto.isPresent()) {
+                return ResponseEntity.ok(ApiResponse.success("Producto obtenido", convertirADto(producto.get())));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error("Producto no encontrado"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Error al obtener producto"));
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado");
     }
 
     /**
@@ -73,19 +81,6 @@ public class ProductoController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> crear(@Valid @RequestBody ProductoRequestDto productoRequest) {
         try {
-            // Validar que tenga entre 2 y 3 imágenes
-            if (productoRequest.getImagenesUrl() == null || 
-                productoRequest.getImagenesUrl().isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El producto debe tener mínimo 2 imágenes");
-            }
-
-            if (productoRequest.getImagenesUrl().size() < 2 || 
-                productoRequest.getImagenesUrl().size() > 3) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El producto debe tener entre 2 y 3 imágenes");
-            }
-
             // Crear el producto
             Producto producto = new Producto();
             producto.setNombre(productoRequest.getNombre());
@@ -100,13 +95,15 @@ public class ProductoController {
             producto.setEnOferta(productoRequest.isEnOferta());
 
             Producto savedProducto = productoServices.saveProduct(producto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(convertirADto(savedProducto));
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(ApiResponse.success("Producto creado exitosamente", convertirADto(savedProducto)));
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al crear el producto: " + e.getMessage());
+                    .body(ApiResponse.error("Error al crear el producto"));
         }
     }
 
@@ -120,15 +117,8 @@ public class ProductoController {
         try {
             Optional<Producto> productoOpt = productoServices.findProductById(id);
             if (productoOpt.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado");
-            }
-
-            // Validar imágenes
-            if (productoRequest.getImagenesUrl() == null || 
-                productoRequest.getImagenesUrl().size() < 2 || 
-                productoRequest.getImagenesUrl().size() > 3) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El producto debe tener entre 2 y 3 imágenes");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.error("Producto no encontrado"));
             }
 
             Producto producto = productoOpt.get();
@@ -143,11 +133,11 @@ public class ProductoController {
             producto.setEnOferta(productoRequest.isEnOferta());
 
             Producto updatedProducto = productoServices.saveProduct(producto);
-            return ResponseEntity.ok(convertirADto(updatedProducto));
+            return ResponseEntity.ok(ApiResponse.success("Producto actualizado exitosamente", convertirADto(updatedProducto)));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al actualizar el producto: " + e.getMessage());
+                    .body(ApiResponse.error("Error al actualizar el producto"));
         }
     }
 
@@ -160,13 +150,14 @@ public class ProductoController {
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
             if (!productoServices.findProductById(id).isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.error("Producto no encontrado"));
             }
             productoServices.deleteProductById(id);
-            return ResponseEntity.ok("Producto eliminado exitosamente");
+            return ResponseEntity.ok(ApiResponse.success("Producto eliminado exitosamente", null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al eliminar el producto: " + e.getMessage());
+                    .body(ApiResponse.error("Error al eliminar el producto"));
         }
     }
 

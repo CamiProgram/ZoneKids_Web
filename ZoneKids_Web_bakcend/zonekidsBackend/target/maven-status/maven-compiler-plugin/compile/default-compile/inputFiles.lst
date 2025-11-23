@@ -8,6 +8,7 @@ C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\entities\Orden.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\dto\LoginRequestDto.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\services\ProductoServiceImpl.java
+C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\config\CorsConfig.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\config\OpenApiConfig.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\dto\AuthResponseDto.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\dto\UsuarioRequestDto.java
@@ -32,6 +33,7 @@ C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\dto\ProductoResponseDto.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\dto\DetalleOrdenResponseDto.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\security\CustomUserDetailsService.java
+C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\dto\ApiResponse.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\entities\Producto.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\services\OrdenServiceImpl.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\services\UserService.java
