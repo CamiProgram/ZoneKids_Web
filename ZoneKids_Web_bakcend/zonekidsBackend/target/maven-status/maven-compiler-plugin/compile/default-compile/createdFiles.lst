@@ -58,6 +58,7 @@ com\zonekids\springboot\api\zonekidsBackend\services\FileSystemStorageService.cl
 com\zonekids\springboot\api\zonekidsBackend\dto\BoletaRequestDto.class
 com\zonekids\springboot\api\zonekidsBackend\repositories\OrdenRepository.class
 com\zonekids\springboot\api\zonekidsBackend\services\impl\DatosPersonalesServiceImpl.class
+com\zonekids\springboot\api\zonekidsBackend\controllers\ImageUploadController.class
 com\zonekids\springboot\api\zonekidsBackend\services\OrdenService.class
 com\zonekids\springboot\api\zonekidsBackend\dto\DatosPersonalesRequestDto.class
 com\zonekids\springboot\api\zonekidsBackend\entities\DetalleOrden.class

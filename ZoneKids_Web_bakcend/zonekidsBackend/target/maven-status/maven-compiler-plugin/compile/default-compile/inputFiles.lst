@@ -25,6 +25,7 @@ C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\config\AdminUserConfig.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\dto\DetalleBoletaRequestDto.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\dto\UsuarioResponseDto.java
+C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\controllers\ImageUploadController.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\dto\ProductoRequestDto.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\dto\ApiResponse.java
 C:\Users\Cami\Desktop\ZoneKids_Web\ZoneKids_Web_bakcend\zonekidsBackend\src\main\java\com\zonekids\springboot\api\zonekidsBackend\services\DatosPersonalesService.java
