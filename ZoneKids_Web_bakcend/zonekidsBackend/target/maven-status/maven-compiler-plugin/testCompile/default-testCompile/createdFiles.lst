@@ -1,0 +1,6 @@
+com\zonekids\springboot\api\zonekidsBacked\controllers\AuthControllerTest.class
+com\zonekids\springboot\api\zonekidsBacked\controllers\ProductoControllerTest.class
+com\zonekids\springboot\api\zonekidsBacked\services\ProductServiceTest.class
+com\zonekids\springboot\api\zonekidsBacked\FullrestApplicationTests.class
+com\zonekids\springboot\api\zonekidsBacked\services\UserServiceTest.class
+com\zonekids\springboot\api\zonekidsBacked\validation\ProductoImagenesValidationTest.class
