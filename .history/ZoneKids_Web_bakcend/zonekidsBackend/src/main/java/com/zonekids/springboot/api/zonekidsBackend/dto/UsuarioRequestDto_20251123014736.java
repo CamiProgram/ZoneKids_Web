@@ -1,5 +1,8 @@
 package com.zonekids.springboot.api.zonekidsBackend.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -9,14 +12,24 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @Setter
+
 @NoArgsConstructor
 public class UsuarioRequestDto {
     
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
+
+    @Email(message = "Debe ser un email válido")
+    @NotBlank(message = "El email es obligatorio")
     private String email;
+
+    @NotBlank(message = "La contraseña es obligatoria")
     private String contrasena;
+
+    // Rol es opcional - por defecto será CLIENTE
     private String rol;
 
+    // Getters y Setters - Generados por Lombok pero añadidos explícitamente si Lombok no funciona
     public String getNombre() {
         return nombre;
     }

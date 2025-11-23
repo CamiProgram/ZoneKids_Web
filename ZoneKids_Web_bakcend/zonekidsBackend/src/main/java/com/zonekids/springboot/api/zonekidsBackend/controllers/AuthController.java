@@ -11,13 +11,14 @@ import com.zonekids.springboot.api.zonekidsBackend.security.JwtUtils;
 import com.zonekids.springboot.api.zonekidsBackend.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -42,6 +43,9 @@ public class AuthController {
     @Autowired
     private JwtUtils jwtUtils;
 
+    @Autowired
+    private EntityManager entityManager;
+
     /**
      * Endpoint de login
      * @param loginRequest DTO con email y contraseña
@@ -49,28 +53,44 @@ public class AuthController {
      */
     @PostMapping("/login")
     @Operation(summary = "Login", description = "Autentica un usuario y devuelve un token JWT")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequest) {
         try {
+            System.out.println("🔐 Login intentado con email: " + loginRequest.getEmail());
+            
             // Validar que el usuario existe y está activo
             Optional<User> userOptional = userService.findUserByEmail(loginRequest.getEmail());
-            if (userOptional.isEmpty() || !userOptional.get().getEstado().equals("activo")) {
+            if (userOptional.isEmpty()) {
+                System.out.println("❌ Usuario no encontrado: " + loginRequest.getEmail());
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(ApiResponse.error("Email o contraseña incorrectos"));
             }
 
+            User user = userOptional.get();
+            if (!user.getEstado().equals("activo")) {
+                System.out.println("❌ Usuario inactivo: " + loginRequest.getEmail());
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ApiResponse.error("Usuario inactivo"));
+            }
+
             // Autenticar el usuario usando AuthenticationManager
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.getEmail(),
-                            loginRequest.getContrasena()
-                    )
-            );
+            try {
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                loginRequest.getEmail(),
+                                loginRequest.getContrasena()
+                        )
+                );
+            } catch (BadCredentialsException e) {
+                System.out.println("❌ Contraseña incorrecta para: " + loginRequest.getEmail());
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ApiResponse.error("Email o contraseña incorrectos"));
+            }
 
             // Generar el token JWT
             String token = jwtUtils.generateToken(loginRequest.getEmail());
+            System.out.println("✅ Login exitoso para: " + loginRequest.getEmail());
 
             // Retornar la respuesta con el token y rol
-            User user = userOptional.get();
             Map<String, Object> loginData = new HashMap<>();
             loginData.put("token", token);
             loginData.put("email", user.getEmail());
@@ -81,12 +101,11 @@ public class AuthController {
 
             return ResponseEntity.ok(ApiResponse.success("Login exitoso", loginData));
 
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(ApiResponse.error("Email o contraseña incorrectos"));
         } catch (Exception e) {
+            System.out.println("❌ Error en login: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Error en el servidor"));
+                    .body(ApiResponse.error("Error en el servidor: " + e.getMessage()));
         }
     }
 
@@ -97,10 +116,13 @@ public class AuthController {
      */
     @PostMapping("/register")
     @Operation(summary = "Registro", description = "Crea un nuevo usuario con rol CLIENTE por defecto")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody UsuarioRequestDto usuarioRequest) {
+    public ResponseEntity<?> registerUser(@RequestBody UsuarioRequestDto usuarioRequest) {
         try {
+            System.out.println("📝 Registro intentado con email: " + usuarioRequest.getEmail());
+            
             // Verificar que el email no esté registrado
             if (userService.findUserByEmail(usuarioRequest.getEmail()).isPresent()) {
+                System.out.println("❌ Email ya registrado: " + usuarioRequest.getEmail());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(ApiResponse.error("El email ya está registrado"));
             }
@@ -117,6 +139,7 @@ public class AuthController {
 
             // Guardar el usuario
             User savedUser = userService.saveUser(newUser);
+            System.out.println("✅ Usuario registrado: " + savedUser.getEmail() + " (ID: " + savedUser.getId() + ")");
 
             // Convertir a DTO de respuesta
             UsuarioResponseDto response = new UsuarioResponseDto();
@@ -132,8 +155,42 @@ public class AuthController {
                     .body(ApiResponse.success("Registro exitoso", response));
 
         } catch (Exception e) {
+            System.out.println("❌ Error en registro: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Error al registrar el usuario"));
+                    .body(ApiResponse.error("Error al registrar el usuario: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * Endpoint para limpiar la BD (elimina todos los usuarios y productos)
+     * SOLO para desarrollo - ¡NUNCA usar en producción!
+     */
+    @DeleteMapping("/cleanup")
+    @Transactional
+    @Operation(summary = "Limpiar BD", description = "SOLO DESARROLLO - Elimina todos los datos")
+    public ResponseEntity<?> cleanupDatabase() {
+        try {
+            System.out.println("🔄 Limpiando base de datos...");
+            
+            int productosEliminados = entityManager.createNativeQuery("DELETE FROM productos").executeUpdate();
+            System.out.println("   ✅ " + productosEliminados + " productos eliminados");
+            
+            int usuariosEliminados = entityManager.createNativeQuery("DELETE FROM usuarios").executeUpdate();
+            System.out.println("   ✅ " + usuariosEliminados + " usuarios eliminados");
+            
+            entityManager.flush();
+            
+            Map<String, Object> result = new HashMap<>();
+            result.put("productosEliminados", productosEliminados);
+            result.put("usuariosEliminados", usuariosEliminados);
+            
+            return ResponseEntity.ok(ApiResponse.success("Base de datos limpiada", result));
+        } catch (Exception e) {
+            System.out.println("❌ Error al limpiar BD: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Error al limpiar la base de datos: " + e.getMessage()));
         }
     }
 }
