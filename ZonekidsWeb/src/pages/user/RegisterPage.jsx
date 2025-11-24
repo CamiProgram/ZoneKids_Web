@@ -5,6 +5,7 @@ import '../../styles/pages/registerPage.css';
 
 export const RegisterPage = () => {
     const [nombre, setNombre] = useState('');
+    const [rut, setRut] = useState('');
     const [email, setEmail] = useState('');
     const [contrasena, setContrasena] = useState('');
     const [error, setError] = useState('');
@@ -17,6 +18,10 @@ export const RegisterPage = () => {
       switch (name) {
         case 'nombre':
           if (!value) fieldError = 'El nombre es obligatorio.';
+          break;
+        case 'rut':
+          if (!value) fieldError = 'El RUT es obligatorio.';
+          else if (!/^\d{9}$/.test(value.replace(/[.\-]/g, ''))) fieldError = 'El RUT debe tener 9 dígitos.';
           break;
         case 'email':
           if (!value) fieldError = 'El email es obligatorio.';
@@ -38,10 +43,11 @@ export const RegisterPage = () => {
         setError('');
         
         const isNombreValid = validateField('nombre', nombre);
+        const isRutValid = validateField('rut', rut);
         const isEmailValid = validateField('email', email);
         const isPasswordValid = validateField('contrasena', contrasena);
         
-        if (!isNombreValid || !isEmailValid || !isPasswordValid) {
+        if (!isNombreValid || !isRutValid || !isEmailValid || !isPasswordValid) {
             setError('Por favor corrige los errores.');
             return;
         }
@@ -50,7 +56,7 @@ export const RegisterPage = () => {
 
         try {
             console.log('📝 Iniciando registro...');
-            console.log('👤 Datos:', { nombre, email });
+            console.log('👤 Datos:', { nombre, rut, email });
             
             // Registrar nuevo usuario (rol CLIENTE automático)
             const usuarioCreado = await authService.register(nombre, email, contrasena);
@@ -102,6 +108,24 @@ export const RegisterPage = () => {
                         className={fieldErrors.nombre ? 'input-error' : ''}
                     />
                     {fieldErrors.nombre && <span className="field-error">{fieldErrors.nombre}</span>}
+                </div>
+                <div className="form-group">
+                    <label htmlFor="rut">RUT (9 dígitos)</label>
+                    <input
+                        type="text"
+                        id="rut"
+                        placeholder="123456789"
+                        value={rut}
+                        onChange={(e) => {
+                            const onlyNumbers = e.target.value.replace(/\D/g, '');
+                            setRut(onlyNumbers.slice(0, 9));
+                            validateField('rut', onlyNumbers);
+                        }}
+                        onBlur={(e) => validateField('rut', e.target.value)}
+                        className={fieldErrors.rut ? 'input-error' : ''}
+                        maxLength="9"
+                    />
+                    {fieldErrors.rut && <span className="field-error">{fieldErrors.rut}</span>}
                 </div>
                 <div className="form-group">
                     <label htmlFor="email">Email</label>

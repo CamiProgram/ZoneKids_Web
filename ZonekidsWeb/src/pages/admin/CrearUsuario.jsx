@@ -12,22 +12,31 @@ export const CrearUsuario = () => {
     const [estado, setEstado] = useState('activo');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [fieldErrors, setFieldErrors] = useState({});
     const navigate = useNavigate();
     
     // Verificar si el usuario actual es el jefe
     const isJefe = authService.isJefe();
 
     const validateField = (field, value) => {
+        let fieldError = '';
         switch (field) {
             case 'nombre':
-                return value.trim() !== '';
+                if (!value.trim()) fieldError = 'El nombre es obligatorio.';
+                else if (value.trim().length < 3) fieldError = 'Mínimo 3 caracteres.';
+                break;
             case 'email':
-                return /\S+@\S+\.\S+/.test(value);
+                if (!value.trim()) fieldError = 'El email es obligatorio.';
+                else if (!/\S+@\S+\.\S+/.test(value)) fieldError = 'El email no es válido.';
+                break;
             case 'contrasena':
-                return value.length >= 8;
+                if (!value) fieldError = 'La contraseña es obligatoria.';
+                else if (value.length < 8) fieldError = 'Mínimo 8 caracteres.';
+                break;
             default:
-                return true;
+                break;
         }
+        setFieldErrors(prev => ({ ...prev, [field]: fieldError }));
     };
 
     const handleSubmit = async (e) => {
@@ -35,16 +44,13 @@ export const CrearUsuario = () => {
         setError('');
 
         // Validar campos
-        if (!validateField('nombre', nombre)) {
-            setError('El nombre es obligatorio.');
-            return;
-        }
-        if (!validateField('email', email)) {
-            setError('El email no es válido.');
-            return;
-        }
-        if (!validateField('contrasena', contrasena)) {
-            setError('La contraseña debe tener mínimo 8 caracteres.');
+        validateField('nombre', nombre);
+        validateField('email', email);
+        validateField('contrasena', contrasena);
+
+        // Si hay errores, no enviar
+        if (fieldErrors.nombre || fieldErrors.email || fieldErrors.contrasena) {
+            setError('Por favor, corrige los errores en el formulario.');
             return;
         }
 
@@ -91,9 +97,15 @@ export const CrearUsuario = () => {
                         type="text"
                         id="nombre"
                         value={nombre}
-                        onChange={(e) => setNombre(e.target.value)}
+                        onChange={(e) => {
+                            setNombre(e.target.value);
+                            validateField('nombre', e.target.value);
+                        }}
+                        onBlur={(e) => validateField('nombre', e.target.value)}
+                        className={fieldErrors.nombre ? 'input-error' : ''}
                         required
                     />
+                    {fieldErrors.nombre && <span className="field-error">{fieldErrors.nombre}</span>}
                 </div>
 
                 <div className="form-group">
@@ -102,9 +114,15 @@ export const CrearUsuario = () => {
                         type="email"
                         id="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                            validateField('email', e.target.value);
+                        }}
+                        onBlur={(e) => validateField('email', e.target.value)}
+                        className={fieldErrors.email ? 'input-error' : ''}
                         required
                     />
+                    {fieldErrors.email && <span className="field-error">{fieldErrors.email}</span>}
                 </div>
 
                 <div className="form-group">
@@ -113,9 +131,15 @@ export const CrearUsuario = () => {
                         type="password"
                         id="contrasena"
                         value={contrasena}
-                        onChange={(e) => setContrasena(e.target.value)}
+                        onChange={(e) => {
+                            setContrasena(e.target.value);
+                            validateField('contrasena', e.target.value);
+                        }}
+                        onBlur={(e) => validateField('contrasena', e.target.value)}
+                        className={fieldErrors.contrasena ? 'input-error' : ''}
                         required
                     />
+                    {fieldErrors.contrasena && <span className="field-error">{fieldErrors.contrasena}</span>}
                 </div>
 
                 <div className="form-group">

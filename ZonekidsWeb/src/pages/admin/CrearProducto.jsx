@@ -18,7 +18,36 @@ export const CrearProducto = () => {
     const [precioOriginal, setPrecioOriginal] = useState('');
     const [esNuevo, setEsNuevo] = useState(false);
     const [enOferta, setEnOferta] = useState(false);
+    const [fieldErrors, setFieldErrors] = useState({});
     const navigate = useNavigate();
+
+    const validateField = (name, value) => {
+      let fieldError = '';
+      switch (name) {
+        case 'nombre':
+          if (!value) fieldError = 'El nombre es obligatorio.';
+          else if (value.length < 3) fieldError = 'Mínimo 3 caracteres.';
+          break;
+        case 'precio':
+          if (!value) fieldError = 'El precio es obligatorio.';
+          else if (parseInt(value) <= 0) fieldError = 'Debe ser mayor a 0.';
+          break;
+        case 'precioOriginal':
+          if (value && parseInt(value) <= 0) fieldError = 'Debe ser mayor a 0.';
+          break;
+        case 'stock':
+          if (!value) fieldError = 'El stock es obligatorio.';
+          else if (parseInt(value) < 0) fieldError = 'No puede ser negativo.';
+          break;
+        case 'categoria':
+          if (!value) fieldError = 'Debes seleccionar una categoría.';
+          break;
+        default:
+          break;
+      }
+      setFieldErrors(prev => ({ ...prev, [name]: fieldError }));
+      return fieldError === '';
+    };
 
     const handleImagenChange = (e, index) => {
         if (e.target.files && e.target.files[0]) {
@@ -51,12 +80,14 @@ export const CrearProducto = () => {
     const handlePrecioChange = (e) => {
         const valor = e.target.value.replace(/[.,]/g, ''); // Eliminar puntos y comas
         setPrecio(valor);
+        validateField('precio', valor);
     };
 
     // Prevenir entrada de decimales en precio original
     const handlePrecioOriginalChange = (e) => {
         const valor = e.target.value.replace(/[.,]/g, ''); // Eliminar puntos y comas
         setPrecioOriginal(valor);
+        validateField('precioOriginal', valor);
     };
 
     const handleSubmit = async (e) => {
@@ -205,9 +236,15 @@ export const CrearProducto = () => {
                         type="text"
                         id="nombre"
                         value={nombre}
-                        onChange={(e) => setNombre(e.target.value)}
+                        onChange={(e) => {
+                            setNombre(e.target.value);
+                            validateField('nombre', e.target.value);
+                        }}
+                        onBlur={(e) => validateField('nombre', e.target.value)}
+                        className={fieldErrors.nombre ? 'input-error' : ''}
                         required
                     />
+                    {fieldErrors.nombre && <span className="field-error">{fieldErrors.nombre}</span>}
                 </div>
 
                 <div className="form-group">
@@ -227,11 +264,14 @@ export const CrearProducto = () => {
                             id="precio"
                             value={precio}
                             onChange={handlePrecioChange}
+                            onBlur={(e) => validateField('precio', e.target.value)}
+                            className={fieldErrors.precio ? 'input-error' : ''}
                             required
                             step="1"
                             min="0"
                             placeholder="Ej: 50000"
                         />
+                        {fieldErrors.precio && <span className="field-error">{fieldErrors.precio}</span>}
                     </div>
                     <div className="form-group">
                         <label htmlFor="precioOriginal">Precio Original (números enteros)</label>
@@ -240,10 +280,13 @@ export const CrearProducto = () => {
                             id="precioOriginal"
                             value={precioOriginal}
                             onChange={handlePrecioOriginalChange}
+                            onBlur={(e) => validateField('precioOriginal', e.target.value)}
+                            className={fieldErrors.precioOriginal ? 'input-error' : ''}
                             step="1"
                             min="0"
                             placeholder="Ej: 60000"
                         />
+                        {fieldErrors.precioOriginal && <span className="field-error">{fieldErrors.precioOriginal}</span>}
                     </div>
                 </div>
 
@@ -254,10 +297,16 @@ export const CrearProducto = () => {
                             type="number"
                             id="stock"
                             value={stock}
-                            onChange={(e) => setStock(e.target.value)}
+                            onChange={(e) => {
+                                setStock(e.target.value);
+                                validateField('stock', e.target.value);
+                            }}
+                            onBlur={(e) => validateField('stock', e.target.value)}
+                            className={fieldErrors.stock ? 'input-error' : ''}
                             required
                             min="0"
                         />
+                        {fieldErrors.stock && <span className="field-error">{fieldErrors.stock}</span>}
                     </div>
                     <div className="form-group">
                         <label htmlFor="categoria">Categoría *</label>
@@ -265,9 +314,15 @@ export const CrearProducto = () => {
                             type="text"
                             id="categoria"
                             value={categoria}
-                            onChange={(e) => setCategoria(e.target.value)}
+                            onChange={(e) => {
+                                setCategoria(e.target.value);
+                                validateField('categoria', e.target.value);
+                            }}
+                            onBlur={(e) => validateField('categoria', e.target.value)}
+                            className={fieldErrors.categoria ? 'input-error' : ''}
                             required
                         />
+                        {fieldErrors.categoria && <span className="field-error">{fieldErrors.categoria}</span>}
                     </div>
                 </div>
 

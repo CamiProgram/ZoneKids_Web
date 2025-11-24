@@ -14,6 +14,7 @@ export const EditarUsuario = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const [fieldErrors, setFieldErrors] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -37,17 +38,38 @@ export const EditarUsuario = () => {
         fetchUser();
     }, [id]);
 
+    const validateField = (field, value) => {
+        let fieldError = '';
+        switch (field) {
+            case 'nombre':
+                if (!value.trim()) fieldError = 'El nombre es obligatorio.';
+                else if (value.trim().length < 3) fieldError = 'Mínimo 3 caracteres.';
+                break;
+            case 'email':
+                if (!value.trim()) fieldError = 'El email es obligatorio.';
+                else if (!/\S+@\S+\.\S+/.test(value)) fieldError = 'El email no es válido.';
+                break;
+            case 'rawPassword':
+                if (value && value.length < 8) fieldError = 'La contraseña debe tener mínimo 8 caracteres.';
+                break;
+            default:
+                break;
+        }
+        setFieldErrors(prev => ({ ...prev, [field]: fieldError }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
         // Validar campos
-        if (!nombre.trim()) {
-            setError('El nombre es obligatorio.');
-            return;
-        }
-        if (!email || !/\S+@\S+\.\S+/.test(email)) {
-            setError('El email no es válido.');
+        validateField('nombre', nombre);
+        validateField('email', email);
+        validateField('rawPassword', rawPassword);
+
+        // Si hay errores, no enviar
+        if (fieldErrors.nombre || fieldErrors.email || fieldErrors.rawPassword) {
+            setError('Por favor, corrige los errores en el formulario.');
             return;
         }
 
@@ -103,9 +125,15 @@ export const EditarUsuario = () => {
                         type="text"
                         id="nombre"
                         value={nombre}
-                        onChange={(e) => setNombre(e.target.value)}
+                        onChange={(e) => {
+                            setNombre(e.target.value);
+                            validateField('nombre', e.target.value);
+                        }}
+                        onBlur={(e) => validateField('nombre', e.target.value)}
+                        className={fieldErrors.nombre ? 'input-error' : ''}
                         required
                     />
+                    {fieldErrors.nombre && <span className="field-error">{fieldErrors.nombre}</span>}
                 </div>
 
                 <div className="form-group">
@@ -114,9 +142,15 @@ export const EditarUsuario = () => {
                         type="email"
                         id="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                            validateField('email', e.target.value);
+                        }}
+                        onBlur={(e) => validateField('email', e.target.value)}
+                        className={fieldErrors.email ? 'input-error' : ''}
                         required
                     />
+                    {fieldErrors.email && <span className="field-error">{fieldErrors.email}</span>}
                 </div>
 
                 <div className="form-group">
@@ -125,9 +159,15 @@ export const EditarUsuario = () => {
                         type="password"
                         id="rawPassword"
                         value={rawPassword}
-                        onChange={(e) => setRawPassword(e.target.value)}
+                        onChange={(e) => {
+                            setRawPassword(e.target.value);
+                            validateField('rawPassword', e.target.value);
+                        }}
+                        onBlur={(e) => validateField('rawPassword', e.target.value)}
+                        className={fieldErrors.rawPassword ? 'input-error' : ''}
                         placeholder="Nueva contraseña (opcional)"
                     />
+                    {fieldErrors.rawPassword && <span className="field-error">{fieldErrors.rawPassword}</span>}
                     <small style={{ color: '#666', marginTop: '4px', display: 'block' }}>
                         Si dejas este campo vacío, la contraseña no se cambiará.
                     </small>
