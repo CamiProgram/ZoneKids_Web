@@ -44,20 +44,45 @@ export const LoginPage = () => {
 
     setLoading(true);
     try {
+      console.log('🔐 Iniciando login...');
+      console.log('📧 Email:', email);
+      
       const user = await login(email, password);
+      
+      console.log('✅ Login exitoso');
+      console.log('👤 Usuario:', { email: user.email, rol: user.rol, nombre: user.nombre });
+      console.log('🎯 Rol detected:', user.rol);
       
       // Redirigir según el rol del usuario
       if (user && user.rol === 'ADMIN') {
+        console.log('➡️ Redirigiendo a /admin/dashboard');
         navigate('/admin/dashboard');
       } else if (user && user.rol === 'VENDEDOR') {
+        console.log('➡️ Redirigiendo a / (VENDEDOR)');
         navigate('/');
       } else if (user && user.rol === 'CLIENTE') {
+        console.log('➡️ Redirigiendo a / (CLIENTE)');
         navigate('/');
       } else {
+        console.log('➡️ Redirigiendo a / (default)');
         navigate('/');
       }
     } catch (err) {
-      setError(err.message || 'Error al iniciar sesión. Intente más tarde.');
+      console.error('❌ Error en login:', err);
+      
+      let errorMessage = 'Error al iniciar sesión. Intente más tarde.';
+      
+      // Diferentes formas en que el backend puede retornar el error
+      if (typeof err === 'string') {
+        errorMessage = err;
+      } else if (err.message && typeof err.message === 'string') {
+        errorMessage = err.message;
+      } else if (err.detail) {
+        errorMessage = err.detail;
+      }
+      
+      console.error('📋 Mensaje de error:', errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

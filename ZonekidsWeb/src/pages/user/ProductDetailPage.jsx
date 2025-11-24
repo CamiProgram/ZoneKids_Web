@@ -16,6 +16,7 @@ export const ProductDetailPage = () => {
     const [similarProducts, setSimilarProducts] = useState([]);
     const [loadingSimilar, setLoadingSimilar] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isAutoPlay, setIsAutoPlay] = useState(true);
     const { addToCart } = useCart();
 
     useEffect(() => {
@@ -55,8 +56,8 @@ export const ProductDetailPage = () => {
 
     // Auto-cambiar carrusel cada 30 segundos si hay más de 1 imagen
     useEffect(() => {
-        if (!product?.imagenesUrl || product.imagenesUrl.length <= 1) {
-            return; // No hacer nada si hay 0 o 1 imagen
+        if (!product?.imagenesUrl || product.imagenesUrl.length <= 1 || !isAutoPlay) {
+            return; // No hacer nada si hay 0, 1 imagen o autoplay está desactivado
         }
 
         const interval = setInterval(() => {
@@ -64,7 +65,7 @@ export const ProductDetailPage = () => {
         }, 30000); // Cambiar cada 30 segundos
 
         return () => clearInterval(interval);
-    }, [product?.imagenesUrl]);
+    }, [product?.imagenesUrl, isAutoPlay]);
 
     // Algoritmo para obtener productos similares
     const getSimilarProducts = (currentProduct, allProducts) => {
@@ -135,10 +136,29 @@ export const ProductDetailPage = () => {
         categoria,
         stock,
     } = product;
+    
     const tieneDescuento = precioOriginal && precioOriginal > precio;
+
+    // Función para construir URLs completas
+    const getImageUrl = (imagenUrl) => {
+        if (!imagenUrl) {
+            return '/assets/Zonekids_logo_web.webp';
+        }
+        // Si es URL absoluta, devolverla tal cual
+        if (imagenUrl.startsWith('http')) {
+            return imagenUrl;
+        }
+        // Si es ruta relativa, agregar base URL del backend
+        return `http://localhost:8080${imagenUrl.startsWith('/') ? '' : '/'}${imagenUrl}`;
+    };
+
+    const currentImageUrl = imagenesUrl && imagenesUrl.length > 0 
+        ? getImageUrl(imagenesUrl[currentImageIndex]) 
+        : '/assets/Zonekids_logo_web.webp';
 
     // Ir a imagen anterior
     const goToPreviousImage = () => {
+        setIsAutoPlay(false); // Pausar autoplay al interactuar
         setCurrentImageIndex(prev => 
             prev === 0 ? imagenesUrl.length - 1 : prev - 1
         );
@@ -146,6 +166,7 @@ export const ProductDetailPage = () => {
 
     // Ir a siguiente imagen
     const goToNextImage = () => {
+        setIsAutoPlay(false); // Pausar autoplay al interactuar
         setCurrentImageIndex(prev => 
             (prev + 1) % imagenesUrl.length
         );
@@ -153,6 +174,7 @@ export const ProductDetailPage = () => {
 
     // Ir a imagen específica
     const goToImage = (index) => {
+        setIsAutoPlay(false); // Pausar autoplay al interactuar
         setCurrentImageIndex(index);
     };
 
@@ -178,11 +200,19 @@ export const ProductDetailPage = () => {
                     </div>
 
                     {/* --- CARRUSEL DE IMÁGENES --- */}
-                    <div className="carousel-container">
+                    <div className={`carousel-container ${isAutoPlay && imagenesUrl?.length > 1 ? 'autoplay' : ''}`}>
                         <img 
-                            src={imagenesUrl && imagenesUrl.length > 0 ? imagenesUrl[currentImageIndex] : '/assets/Zonekids_logo_web.webp'} 
+                            src={currentImageUrl}
                             alt={`${nombre} - Imagen ${currentImageIndex + 1}`}
                             className="carousel-image"
+                            key={`carousel-image-${currentImageIndex}`}
+                            onError={(e) => {
+                                console.error('❌ Error cargando imagen:', currentImageUrl);
+                                e.target.src = '/assets/Zonekids_logo_web.webp';
+                            }}
+                            onLoad={() => {
+                                console.log('✅ Imagen cargada:', currentImageUrl);
+                            }}
                         />
 
                         {/* Flechas de navegación (solo si hay más de 1 imagen) */}

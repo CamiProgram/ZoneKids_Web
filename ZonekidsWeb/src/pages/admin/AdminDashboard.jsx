@@ -70,10 +70,21 @@ export const AdminDashboard = () => {
         setLoading(true);
         setError(null);
         
+        console.log('📊 Iniciando carga de datos del dashboard...');
+        
         const [products, users, allOrders] = await Promise.all([
-          productService.getAll(),
-          userService.getAll(),
-          orderService.getAll(),
+          productService.getAll().then(data => {
+            console.log('✅ Productos cargados:', data?.length || 0);
+            return data;
+          }),
+          userService.getAll().then(data => {
+            console.log('✅ Usuarios cargados:', data?.length || 0);
+            return data;
+          }),
+          orderService.getAll().then(data => {
+            console.log('✅ Órdenes cargadas:', data?.length || 0);
+            return data;
+          }),
         ]);
 
         const lowStockCount = products.filter(p => p.stock < 10).length;
@@ -84,6 +95,13 @@ export const AdminDashboard = () => {
           totalUsers: users.length,
           lowStockProducts: lowStockCount,
           activeProducts: activeCount,
+        });
+
+        console.log('📊 Estadísticas:', { 
+          totalProducts: products.length, 
+          totalUsers: users.length,
+          lowStockProducts: lowStockCount,
+          activeProducts: activeCount
         });
 
         // Mapear órdenes con información del usuario
@@ -132,10 +150,21 @@ export const AdminDashboard = () => {
           };
         });
 
+        console.log('📊 Dashboard cargado exitosamente');
         setOrders(ordersWithUserData);
       } catch (err) {
-        console.error('Error fetching dashboard data:', err);
-        setError('Error al cargar las compras realizadas. Intenta más tarde.');
+        console.error('❌ Error fetching dashboard data:', err);
+        console.error('Error response:', err.response?.data);
+        console.error('Error status:', err.response?.status);
+        
+        // Mostrar mensajes de error específicos
+        if (err.response?.status === 403) {
+          setError('No tienes permisos para acceder al dashboard. Verifica tu rol.');
+        } else if (err.response?.status === 401) {
+          setError('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+        } else {
+          setError('Error al cargar las compras realizadas. Intenta más tarde.');
+        }
       } finally {
         setLoading(false);
       }

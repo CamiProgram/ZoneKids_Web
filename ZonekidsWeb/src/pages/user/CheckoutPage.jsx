@@ -10,6 +10,13 @@ export const CheckoutPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   
+  // 🖼️ Función para construir URLs de imágenes
+  const getImageUrl = (imagenUrl) => {
+    if (!imagenUrl) return '/assets/Zonekids_logo_web.webp';
+    if (imagenUrl.startsWith('http')) return imagenUrl;
+    return `http://localhost:8080${imagenUrl.startsWith('/') ? '' : '/'}${imagenUrl}`;
+  };
+
   const [quantities, setQuantities] = useState({});
   const [form, setForm] = useState({
     name: user?.nombre || '',
@@ -524,7 +531,15 @@ export const CheckoutPage = () => {
           <h3>Tu carrito ({cartItems.length} productos)</h3>
           {cartItems.map((item) => (
             <div key={item.id} className="cart-item-checkout">
-              <img src={item.imagenesUrl?.[0] || '/public/Zonekids_logo_web.webp'} alt={item.nombre} />
+              <img 
+                src={getImageUrl(item.imagenesUrl?.[0])} 
+                alt={item.nombre}
+                onError={(e) => {
+                  e.target.src = '/assets/Zonekids_logo_web.webp';
+                  console.error('❌ Error cargando imagen del checkout:', item.imagenesUrl?.[0]);
+                }}
+                onLoad={() => console.log('✅ Imagen del checkout cargada:', getImageUrl(item.imagenesUrl?.[0]))}
+              />
               <div className="item-details">
                 <p className="item-name">{item.nombre}</p>
                 <p className="item-price">${(item.precio || 0).toLocaleString('es-CO')}</p>

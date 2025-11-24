@@ -21,16 +21,27 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
+      
+      console.log('🔐 AuthContext.login: Iniciando...');
+      
       const userData = await authService.login(email, contrasena);
+      
+      console.log('✅ AuthContext.login: Datos recibidos del backend');
+      console.log('👤 Usuario:', { email: userData.email, rol: userData.rol, nombre: userData.nombre });
       
       // Verificar que la cuenta no esté deshabilitada
       if (userData.estado === 'inactivo') {
+        console.warn('⚠️ Cuenta deshabilitada');
         throw new Error('Tu cuenta ha sido deshabilitada.');
       }
       
       setUser(userData);
+      console.log('💾 Usuario guardado en state de AuthContext');
+      
       return userData;
     } catch (err) {
+      console.error('❌ AuthContext.login: Error', err);
+      
       const errorMessage = typeof err === 'string' ? err : err.message || 'Error al iniciar sesión';
       setError(errorMessage);
       throw new Error(errorMessage);

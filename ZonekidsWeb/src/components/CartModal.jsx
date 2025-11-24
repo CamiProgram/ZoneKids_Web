@@ -7,6 +7,19 @@ export const CartModal = () => {
   const { cartItems, isCartOpen, closeCart, removeFromCart, getTotalPrice } = useCart();
   const navigate = useNavigate();
 
+  // Función para construir URLs completas
+  const getImageUrl = (imagenUrl) => {
+    if (!imagenUrl) {
+      return '/assets/Zonekids_logo_web.webp';
+    }
+    // Si es URL absoluta, devolverla tal cual
+    if (imagenUrl.startsWith('http')) {
+      return imagenUrl;
+    }
+    // Si es ruta relativa, agregar base URL del backend
+    return `http://localhost:8080${imagenUrl.startsWith('/') ? '' : '/'}${imagenUrl}`;
+  };
+
   const handleGoToCheckout = () => {
     closeCart();
     navigate('/checkout');
@@ -32,16 +45,26 @@ export const CartModal = () => {
         {/* --- LISTA DE PRODUCTOS --- */}
         {cartItems.length > 0 ? (
           <div className="cart-items-list">
-            {cartItems.map((item) => (
+            {cartItems.map((item) => {
+              const imageUrl = getImageUrl(
+                Array.isArray(item.imagenesUrl)
+                  ? item.imagenesUrl[0]
+                  : item.imagenesUrl
+              );
+              
+              return (
               <div key={item.id} className="cart-item">
                 <div className="cart-item-image">
                   <img
-                    src={
-                      Array.isArray(item.imagenesUrl)
-                        ? item.imagenesUrl[0]
-                        : item.imagenesUrl
-                    }
+                    src={imageUrl}
                     alt={item.nombre}
+                    onError={(e) => {
+                      console.error('❌ Error cargando imagen en carrito:', imageUrl);
+                      e.target.src = '/assets/Zonekids_logo_web.webp';
+                    }}
+                    onLoad={() => {
+                      console.log('✅ Imagen del carrito cargada:', imageUrl);
+                    }}
                   />
                 </div>
 
@@ -65,7 +88,8 @@ export const CartModal = () => {
                   🗑️
                 </button>
               </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <p className="cart-empty">Tu carrito está vacío</p>

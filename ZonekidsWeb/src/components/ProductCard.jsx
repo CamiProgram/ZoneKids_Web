@@ -19,9 +19,20 @@ export const ProductCard = ({ product }) => {
   } = product;
   
   // Obtener primera imagen del array o usar logo por defecto
-  const imagenPrincipal = Array.isArray(imagenesUrl) && imagenesUrl.length > 0 
-    ? imagenesUrl[0] 
-    : '/public/Zonekids_logo_web.webp';
+  const getImageUrl = () => {
+    if (!Array.isArray(imagenesUrl) || imagenesUrl.length === 0) {
+      return '/public/Zonekids_logo_web.webp';
+    }
+    const firstImage = imagenesUrl[0];
+    // Si es URL absoluta, devolverla tal cual
+    if (firstImage.startsWith('http')) {
+      return firstImage;
+    }
+    // Si es ruta relativa, agregar base URL del backend
+    return `http://localhost:8080${firstImage.startsWith('/') ? '' : '/'}${firstImage}`;
+  };
+
+  const imagenPrincipal = getImageUrl();
 
   const tieneDescuento = precioOriginal && precioOriginal > precio;
 
@@ -51,7 +62,15 @@ export const ProductCard = ({ product }) => {
       </div>
 
       <Link to={`/producto/${id || 'default'}`}> 
-        <img src={imagenPrincipal} alt={nombre || 'Producto'} className="product-image" />
+        <img 
+          src={imagenPrincipal} 
+          alt={nombre || 'Producto'} 
+          className="product-image"
+          onError={(e) => {
+            console.error('❌ Error loading product image:', imagenPrincipal);
+            e.target.src = '/public/Zonekids_logo_web.webp';
+          }}
+        />
       </Link>
 
       <div className="product-info">

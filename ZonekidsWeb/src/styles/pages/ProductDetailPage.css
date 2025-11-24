@@ -30,7 +30,32 @@
     height: auto;
     object-fit: cover;
     display: block;
-    transition: opacity 0.3s ease;
+    animation: fadeInImage 0.8s ease-in-out;
+}
+
+/* Animación suave de fade + slide para autoplay */
+.carousel-container.autoplay .carousel-image {
+    animation: slideInFromRight 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeInImage {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 /* Botones de navegación (flechas) */
@@ -49,20 +74,53 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
     z-index: 10;
 }
 
 .carousel-button:hover {
     background-color: rgba(0, 0, 0, 0.8);
+    transform: translateY(-50%) scale(1.1);
 }
 
 .carousel-prev {
     left: 10px;
 }
 
+.carousel-prev:hover {
+    animation: slideArrowLeft 0.4s ease-out;
+}
+
 .carousel-next {
     right: 10px;
+}
+
+.carousel-next:hover {
+    animation: slideArrowRight 0.4s ease-out;
+}
+
+@keyframes slideArrowLeft {
+    0% {
+        transform: translateY(-50%) translateX(0);
+    }
+    50% {
+        transform: translateY(-50%) translateX(-5px);
+    }
+    100% {
+        transform: translateY(-50%) translateX(0);
+    }
+}
+
+@keyframes slideArrowRight {
+    0% {
+        transform: translateY(-50%) translateX(0);
+    }
+    50% {
+        transform: translateY(-50%) translateX(5px);
+    }
+    100% {
+        transform: translateY(-50%) translateX(0);
+    }
 }
 
 /* Indicadores de imágenes (puntos) */
@@ -86,12 +144,26 @@
 
 .indicator:hover {
     background-color: rgba(255, 255, 255, 0.8);
+    transform: scale(1.2);
 }
 
 .indicator.active {
     background-color: white;
     width: 12px;
     height: 12px;
+    animation: indicatorPulse 0.5s ease-out;
+}
+
+@keyframes indicatorPulse {
+    0% {
+        transform: scale(0.8);
+    }
+    50% {
+        transform: scale(1.3);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 /* --- FIN ESTILOS CARRUSEL --- */
 

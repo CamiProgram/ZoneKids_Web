@@ -49,25 +49,34 @@ export const RegisterPage = () => {
         setLoading(true);
 
         try {
-            // Registrar con rol CLIENTE por defecto
-            await authService.register(nombre, email, contrasena, 'CLIENTE');
-            alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
+            console.log('📝 Iniciando registro...');
+            console.log('👤 Datos:', { nombre, email });
+            
+            // Registrar nuevo usuario (rol CLIENTE automático)
+            const usuarioCreado = await authService.register(nombre, email, contrasena);
+            
+            console.log('✅ Registro exitoso');
+            console.log('👤 Usuario creado:', usuarioCreado);
+            
+            alert('✅ ¡Registro exitoso! Ahora puedes iniciar sesión.');
             navigate('/login');
         } catch (err) {
+            console.error('❌ Error en registro:', err);
+            
             let errorMessage = 'Error al registrar la cuenta.';
             
+            // Diferentes formas en que el backend puede retornar el error
             if (typeof err === 'string') {
                 errorMessage = err;
-            } else if (err.response?.data?.errors && Array.isArray(err.response.data.errors)) {
-                errorMessage = err.response.data.errors[0].defaultMessage;
-            } else if (err.response?.data?.message) {
-                errorMessage = err.response.data.message;
-            } else if (typeof err.response?.data === 'string') {
-                errorMessage = err.response.data;
-            } else if (err.message) {
+            } else if (err.message && typeof err.message === 'string') {
                 errorMessage = err.message;
+            } else if (err.errors && Array.isArray(err.errors)) {
+                errorMessage = err.errors[0].defaultMessage || err.errors[0];
+            } else if (err.detail) {
+                errorMessage = err.detail;
             }
             
+            console.error('📋 Mensaje de error:', errorMessage);
             setError(errorMessage);
         } finally {
             setLoading(false);

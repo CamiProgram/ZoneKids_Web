@@ -26,7 +26,11 @@ export const EditarProducto = () => {
             try {
                 setLoading(true);
                 setError(null);
+                console.log('📦 Cargando producto con ID:', id);
                 const product = await productService.getById(id);
+                console.log('✅ Producto cargado:', product);
+                console.log('📸 imagenesUrl:', product.imagenesUrl);
+                
                 setNombre(product.nombre);
                 setDescripcion(product.descripcion || '');
                 setPrecio(product.precio.toString());
@@ -41,16 +45,20 @@ export const EditarProducto = () => {
                 const newPreviews = ['', '', ''];
                 const newImagenes = [null, null, null];
                 if (product.imagenesUrl && product.imagenesUrl.length > 0) {
+                    console.log('📸 Inicializando previews con', product.imagenesUrl.length, 'imágenes');
                     product.imagenesUrl.forEach((url, idx) => {
                         if (idx < 3) {
+                            console.log(`  ${idx + 1}. ${url}`);
                             newPreviews[idx] = url;
                         }
                     });
                 }
+                console.log('✅ Previews finales:', newPreviews.filter(p => p));
                 setPreviews(newPreviews);
                 setImagenes(newImagenes);
             } catch (err) {
-                console.error('Error fetching product:', err);
+                console.error('❌ Error fetching product:', err);
+                console.error('📋 Error details:', err.response?.data || err.message);
                 setError('No se pudo cargar el producto.');
             } finally {
                 setLoading(false);
@@ -154,21 +162,50 @@ export const EditarProducto = () => {
         setLoading(true);
 
         try {
-            // Obtener las imágenes finales (nuevas + actuales)
+            console.log('📝 Iniciando actualización de producto...');
+            
             const newImagesCount = imagenes.filter(img => img !== null).length;
             let finalImagenesUrl = [];
 
-            // Si hay nuevas imágenes, subirlas
+            console.log('📊 Estado de imágenes:');
+            console.log('  - Nuevas imágenes seleccionadas:', newImagesCount);
+            console.log('  - Imágenes actuales guardadas:', previews.filter(p => p && !p.startsWith('data:')).length);
+
+            // Paso 1: Si hay nuevas imágenes, subirlas
             if (newImagesCount > 0) {
-                const imagenesSubidas = await productService.uploadImages(imagenes);
-                if (imagenesSubidas && imagenesSubidas.length > 0) {
-                    finalImagenesUrl = imagenesSubidas;
+                console.log('📤 Paso 1: Subiendo', newImagesCount, 'nuevas imágenes...');
+                const imagenesToUpload = imagenes.filter(img => img !== null);
+                console.log('📦 Archivos a subir:', imagenesToUpload.length);
+                
+                try {
+                    const imagenesSubidas = await productService.uploadImages(imagenesToUpload);
+                    console.log('✅ Respuesta del upload:', imagenesSubidas);
+                    console.log('  - Tipo:', typeof imagenesSubidas);
+                    console.log('  - Es array:', Array.isArray(imagenesSubidas));
+                    console.log('  - Longitud:', Array.isArray(imagenesSubidas) ? imagenesSubidas.length : 'N/A');
+                    
+                    if (imagenesSubidas && Array.isArray(imagenesSubidas) && imagenesSubidas.length > 0) {
+                        finalImagenesUrl = imagenesSubidas;
+                        console.log('✅ URLs asignadas a finalImagenesUrl:', finalImagenesUrl.length);
+                    } else {
+                        console.warn('⚠️ Upload retornó respuesta inválida');
+                    }
+                } catch (uploadError) {
+                    console.error('❌ Error en uploadImages:', uploadError);
+                    setError('Error al subir las imágenes: ' + uploadError.message);
+                    setLoading(false);
+                    return;
                 }
             } else {
-                // Si no hay nuevas imágenes, usar las actuales
-                finalImagenesUrl = previews.filter(p => p && !p.startsWith('data:'));
+                // Si no hay nuevas imágenes, usar las actuales (sin data: URLs)
+                console.log('📸 No hay nuevas imágenes, usando las actuales');
+                const currentImages = previews.filter(p => p && !p.startsWith('data:'));
+                finalImagenesUrl = currentImages;
+                console.log('✅ Imágenes actuales a mantener:', finalImagenesUrl.length);
             }
 
+            console.log('📊 Total de imágenes para actualizar:', finalImagenesUrl.length);
+            
             // Validar que haya al menos 2 imágenes
             if (finalImagenesUrl.length < 2) {
                 setError('Debes tener al menos 2 imágenes. Carga nuevas o mantén las actuales.');
@@ -176,30 +213,43 @@ export const EditarProducto = () => {
                 return;
             }
 
-            // Paso 1: Actualizar datos del producto
+            console.log('✅ Total de imágenes válidas:', finalImagenesUrl.length);
+            finalImagenesUrl.forEach((url, idx) => {
+                console.log(`  ${idx + 1}. ${typeof url === 'string' ? url.substring(0, 60) : JSON.stringify(url)}`);
+            });
+
+            // Paso 2: Actualizar datos del producto INCLUYENDO las imágenes en el body
+            console.log('📝 Paso 2: Actualizando producto con imágenes en el body...');
             const productData = {
                 nombre,
                 descripcion,
-                precio: parseFloat(precio),
+                precio: parseInt(precio),
                 stock: parseInt(stock),
                 categoria,
-                precioOriginal: precioOriginal ? parseFloat(precioOriginal) : null,
+                precioOriginal: precioOriginal ? parseInt(precioOriginal) : null,
                 esNuevo,
                 enOferta,
-                imagenesUrl: finalImagenesUrl,
+                imagenesUrl: finalImagenesUrl  // ← IMPORTANTE: Incluir las imágenes aquí
             };
 
-            await productService.update(id, productData);
+            console.log('📦 Datos completos del producto a enviar:');
+            console.log('  - nombre:', nombre);
+            console.log('  - precio:', parseInt(precio));
+            console.log('  - stock:', parseInt(stock));
+            console.log('  - imagenesUrl:', finalImagenesUrl.length, 'imágenes');
+            
+            const response = await productService.update(id, productData);
+            console.log('✅ Producto actualizado exitosamente');
+            console.log('📋 Respuesta del servidor:', response);
 
-            // Paso 2: Si hay nuevas imágenes, actualizar también con PATCH
-            if (newImagesCount > 0) {
-                await productService.updateImages(id, finalImagenesUrl);
-            }
-
-            alert('¡Producto actualizado exitosamente!');
+            alert('✅ ¡Producto actualizado exitosamente!');
             navigate('/admin/products');
         } catch (err) {
-            console.error('Error al actualizar el producto:', err);
+            console.error('❌ Error al actualizar el producto:', err);
+            console.error('📋 Error response data:', err.response?.data);
+            console.error('📊 Error status:', err.response?.status);
+            console.error('⚠️ Error message:', err.message);
+            
             const errorMessage = typeof err === 'string' ? err : err.message || 'Error al actualizar el producto.';
             setError(errorMessage);
         } finally {
@@ -289,29 +339,82 @@ export const EditarProducto = () => {
 
                 <div className="form-group">
                     <label>Imágenes del Producto (Sube o reemplaza imágenes)</label>
+                    <div style={{ marginTop: '10px', marginBottom: '20px', padding: '10px', backgroundColor: '#e7f3ff', borderRadius: '4px', fontSize: '12px', color: '#0c5aa0' }}>
+                        📸 <strong>Imágenes actuales:</strong> {imagenesActuales.length} / 3
+                    </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginTop: '10px' }}>
-                        {[0, 1, 2].map((index) => (
+                        {[0, 1, 2].map((index) => {
+                            // Construir URL completa si es necesario
+                            let imagenUrl = previews[index];
+                            if (imagenUrl && !imagenUrl.startsWith('data:') && !imagenUrl.startsWith('http')) {
+                                // Si no es data URL ni URL absoluta, agregar el base URL del backend
+                                imagenUrl = `http://localhost:8080${imagenUrl.startsWith('/') ? '' : '/'}${imagenUrl}`;
+                            }
+                            
+                            return (
                             <div key={index} style={{
                                 border: '2px dashed #ccc',
                                 borderRadius: '8px',
                                 padding: '15px',
                                 textAlign: 'center',
-                                backgroundColor: previews[index] ? '#f0f0f0' : '#fafafa'
+                                backgroundColor: previews[index] ? '#f0f0f0' : '#fafafa',
+                                position: 'relative'
                             }}>
                                 {previews[index] ? (
                                     <div>
-                                        <img
-                                            src={previews[index]}
-                                            alt={`Preview ${index + 1}`}
-                                            style={{
-                                                maxWidth: '100%',
-                                                maxHeight: '150px',
-                                                marginBottom: '10px',
-                                                borderRadius: '4px'
-                                            }}
-                                        />
-                                        <p style={{ margin: '8px 0', fontSize: '12px', color: '#666' }}>
-                                            {imagenes[index]?.name || `Imagen actual ${index + 1}`}
+                                        <div style={{ position: 'relative', display: 'inline-block' }}>
+                                            <img
+                                                src={imagenUrl}
+                                                alt={`Preview ${index + 1}`}
+                                                style={{
+                                                    maxWidth: '100%',
+                                                    maxHeight: '150px',
+                                                    marginBottom: '10px',
+                                                    borderRadius: '4px',
+                                                    border: imagenes[index] ? '2px solid #28a745' : '1px solid #ddd'
+                                                }}
+                                                onError={(e) => {
+                                                    console.error(`❌ Error loading image ${index + 1}:`, imagenUrl);
+                                                    e.target.style.display = 'none';
+                                                }}
+                                                onLoad={() => {
+                                                    console.log(`✅ Imagen ${index + 1} cargada:`, imagenUrl);
+                                                }}
+                                            />
+                                            {/* Indicador si es imagen nueva o actual */}
+                                            {imagenes[index] && (
+                                                <span style={{
+                                                    position: 'absolute',
+                                                    top: '5px',
+                                                    right: '5px',
+                                                    backgroundColor: '#28a745',
+                                                    color: 'white',
+                                                    padding: '2px 6px',
+                                                    borderRadius: '3px',
+                                                    fontSize: '10px',
+                                                    fontWeight: 'bold'
+                                                }}>
+                                                    NUEVA
+                                                </span>
+                                            )}
+                                            {!imagenes[index] && previews[index] && !previews[index].startsWith('data:') && (
+                                                <span style={{
+                                                    position: 'absolute',
+                                                    top: '5px',
+                                                    right: '5px',
+                                                    backgroundColor: '#17a2b8',
+                                                    color: 'white',
+                                                    padding: '2px 6px',
+                                                    borderRadius: '3px',
+                                                    fontSize: '10px',
+                                                    fontWeight: 'bold'
+                                                }}>
+                                                    ACTUAL
+                                                </span>
+                                            )}
+                                        </div>
+                                        <p style={{ margin: '8px 0', fontSize: '12px', color: '#666', wordBreak: 'break-all' }}>
+                                            {imagenes[index]?.name || `Imagen ${index + 1}`}
                                         </p>
                                         <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
                                             <input
@@ -378,7 +481,8 @@ export const EditarProducto = () => {
                                     </div>
                                 )}
                             </div>
-                        ))}
+                            );
+                        })}
                     </div>
                     <p style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
                         Imágenes actuales: {previews.filter(p => p && !p.startsWith('data:')).length} | Nuevas imágenes: {imagenes.filter(img => img !== null).length}

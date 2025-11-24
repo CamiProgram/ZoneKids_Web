@@ -16,11 +16,24 @@ export const AdminProducts = () => {
     try {
       setLoading(true);
       setError(null);
+      console.log('📦 Cargando productos...');
+      
       const data = await productService.getAll();
+      console.log('✅ Productos cargados:', data?.length || 0);
       setProducts(data);
     } catch (err) {
-      console.error('Error fetching products:', err);
-      setError('Error al cargar productos.');
+      console.error('❌ Error fetching products:', err);
+      console.error('Error response:', err.response?.data);
+      console.error('Error status:', err.response?.status);
+      
+      // Mostrar mensajes de error específicos
+      if (err.response?.status === 403) {
+        setError('No tienes permisos para acceder a los productos. Verifica tu rol.');
+      } else if (err.response?.status === 401) {
+        setError('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+      } else {
+        setError('Error al cargar productos. Intenta más tarde.');
+      }
     } finally {
       setLoading(false);
     }
@@ -128,7 +141,19 @@ export const AdminProducts = () => {
                   <td data-label="ID">{p.id}</td>
                   <td data-label="Imagen">
                     {p.imagenesUrl && p.imagenesUrl.length > 0 ? (
-                      <img src={p.imagenesUrl[0]} alt={p.nombre} className="admin-product-image" />
+                      <img 
+                        src={
+                          p.imagenesUrl[0].startsWith('http') 
+                            ? p.imagenesUrl[0] 
+                            : `http://localhost:8080${p.imagenesUrl[0].startsWith('/') ? '' : '/'}${p.imagenesUrl[0]}`
+                        } 
+                        alt={p.nombre} 
+                        className="admin-product-image"
+                        onError={(e) => {
+                          console.error('❌ Error loading product image:', p.imagenesUrl[0]);
+                          e.target.src = '/public/Zonekids_logo_web.webp';
+                        }}
+                      />
                     ) : (
                       'N/A'
                     )}

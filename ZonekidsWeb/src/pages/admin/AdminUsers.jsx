@@ -14,11 +14,25 @@ export const AdminUsers = () => {
     try {
       setLoading(true);
       setError(null);
+      console.log('👥 Cargando usuarios...');
+      
       const data = await userService.getAll();
+      console.log('✅ Usuarios cargados:', data?.length || 0);
+      console.log('📋 Usuarios:', data);
       setUsers(data);
     } catch (err) {
-      console.error('Error fetching users:', err);
-      setError('Error al cargar usuarios.');
+      console.error('❌ Error fetching users:', err);
+      console.error('📋 Error response:', err.response?.data);
+      console.error('📊 Error status:', err.response?.status);
+      
+      // Mostrar mensajes de error específicos
+      if (err.response?.status === 403) {
+        setError('❌ No tienes permisos para acceder a los usuarios. Verifica tu rol (debe ser ADMIN).');
+      } else if (err.response?.status === 401) {
+        setError('❌ Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+      } else {
+        setError('❌ Error al cargar usuarios. Intenta más tarde.');
+      }
     } finally {
       setLoading(false);
     }
@@ -34,12 +48,28 @@ export const AdminUsers = () => {
 
     if (window.confirm(`¿${actionVerb} a ${userToUpdate.nombre}?`)) {
       try {
-        const updatedUserData = { ...userToUpdate, estado: nuevoEstado };
-        await userService.update(userToUpdate.id, updatedUserData);
-        fetchUsers();
+        console.log(`🔄 Iniciando cambio de estado para usuario: ${userToUpdate.nombre}`);
+        
+        // Usar el nuevo método changeEstado
+        await userService.changeEstado(userToUpdate.id, nuevoEstado);
+        
+        console.log(`✅ Usuario ${userToUpdate.nombre} ${actionVerb}do correctamente`);
+        
+        // Recargar la lista de usuarios
+        await fetchUsers();
+        
+        alert(`✅ Usuario ${actionVerb}do correctamente`);
       } catch (err) {
-        console.error('Error updating user:', err);
-        alert(`Error al ${actionVerb} el usuario.`);
+        console.error('❌ Error al cambiar estado del usuario:', err);
+        
+        let errorMessage = `Error al ${actionVerb} el usuario.`;
+        if (typeof err === 'string') {
+          errorMessage = err;
+        } else if (err.message) {
+          errorMessage = err.message;
+        }
+        
+        alert(errorMessage);
       }
     }
   };

@@ -111,40 +111,81 @@ export const CrearProducto = () => {
         setLoading(true);
 
         try {
-            // Paso 1: Subir imágenes
-            const imagenesSubidas = await productService.uploadImages(imagenes);
+            console.log('📤 Iniciando creación de producto...');
             
-            if (!imagenesSubidas || imagenesSubidas.length === 0) {
-                setError('Error al subir las imágenes. Intenta nuevamente.');
+            // Paso 1: Subir imágenes a POST /api/v1/upload/imagenes
+            console.log('📤 Paso 1: Subiendo imágenes...');
+            const imagenesToUpload = imagenes.filter(img => img !== null);
+            console.log('📦 Archivos a subir:', imagenesToUpload.length);
+            
+            let imagenesSubidas = [];
+            try {
+                imagenesSubidas = await productService.uploadImages(imagenesToUpload);
+                
+                console.log('✅ Respuesta del upload:', imagenesSubidas);
+                console.log('  - Tipo:', typeof imagenesSubidas);
+                console.log('  - Es array:', Array.isArray(imagenesSubidas));
+                console.log('  - Longitud:', Array.isArray(imagenesSubidas) ? imagenesSubidas.length : 'N/A');
+                
+                if (!imagenesSubidas || !Array.isArray(imagenesSubidas) || imagenesSubidas.length === 0) {
+                    setError('Error al subir las imágenes. Intenta nuevamente.');
+                    setLoading(false);
+                    return;
+                }
+                
+                if (imagenesSubidas.length < 2) {
+                    setError('Debe haber al menos 2 imágenes válidas.');
+                    setLoading(false);
+                    return;
+                }
+                
+                console.log('✅ Imágenes subidas correctamente:', imagenesSubidas.length);
+                imagenesSubidas.forEach((url, idx) => {
+                    console.log(`  🔗 ${idx + 1}. ${typeof url === 'string' ? url.substring(0, 60) : JSON.stringify(url)}`);
+                });
+
+                // Paso 2: Crear el producto INCLUYENDO las imágenes en el body
+                console.log('📝 Paso 2: Creando producto con imágenes...');
+                const productData = {
+                    nombre,
+                    descripcion,
+                    precio: parseInt(precio),
+                    stock: parseInt(stock),
+                    categoria,
+                    estado,
+                    precioOriginal: precioOriginal ? parseInt(precioOriginal) : null,
+                    esNuevo,
+                    enOferta,
+                    imagenesUrl: imagenesSubidas  // ← IMPORTANTE: Incluir las imágenes aquí
+                };
+
+                console.log('📦 Datos completos del producto a enviar:');
+                console.log('  - nombre:', nombre);
+                console.log('  - precio:', parseInt(precio));
+                console.log('  - stock:', parseInt(stock));
+                console.log('  - imagenesUrl:', imagenesSubidas.length, 'imágenes');
+                imagenesSubidas.forEach((url, idx) => {
+                    console.log(`    ${idx + 1}. ${typeof url === 'string' ? url.substring(0, 60) : JSON.stringify(url)}`);
+                });
+
+                const productoCreado = await productService.create(productData);
+                console.log('✅ Producto creado con ID:', productoCreado.id);
+                console.log('📋 Respuesta del servidor:', productoCreado);
+
+                alert('✅ ¡Producto creado exitosamente!');
+                navigate('/admin/products');
+            } catch (uploadError) {
+                console.error('❌ Error en el flujo de upload/creación:', uploadError);
+                setError('Error: ' + uploadError.message);
                 setLoading(false);
                 return;
             }
-
-            // Paso 2: Crear el producto sin imágenes
-            const productData = {
-                nombre,
-                descripcion,
-                precio: parseFloat(precio),
-                stock: parseInt(stock),
-                categoria,
-                estado,
-                precioOriginal: precioOriginal ? parseFloat(precioOriginal) : null,
-                esNuevo,
-                enOferta,
-                imagenesUrl: [],
-            };
-
-            const productoCreado = await productService.create(productData);
-
-            // Paso 3: Actualizar imágenes del producto creado
-            if (productoCreado && productoCreado.id) {
-                await productService.updateImages(productoCreado.id, imagenesSubidas);
-            }
-
-            alert('¡Producto creado exitosamente!');
-            navigate('/admin/products');
         } catch (err) {
-            console.error('Error al guardar el producto:', err);
+            console.error('❌ Error al guardar el producto:', err);
+            console.error('📋 Error response data:', err.response?.data);
+            console.error('📊 Error status:', err.response?.status);
+            console.error('⚠️ Error message:', err.message);
+            
             const errorMessage = typeof err === 'string' ? err : err.message || 'Error al guardar el producto.';
             setError(errorMessage);
         } finally {
@@ -244,27 +285,47 @@ export const CrearProducto = () => {
 
                 <div className="form-group">
                     <label>Imágenes del Producto * (Sube exactamente 3 imágenes)</label>
+                    <div style={{ marginTop: '10px', marginBottom: '20px', padding: '10px', backgroundColor: '#fff3cd', borderRadius: '4px', fontSize: '12px', color: '#856404' }}>
+                        ⚠️ <strong>Requerido:</strong> Debes subir exactamente 3 imágenes. Cargadas: {imagenes.filter(img => img !== null).length} / 3
+                    </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginTop: '10px' }}>
                         {[0, 1, 2].map((index) => (
                             <div key={index} style={{
-                                border: '2px dashed #ccc',
+                                border: imagenes[index] ? '2px solid #28a745' : '2px dashed #ccc',
                                 borderRadius: '8px',
                                 padding: '15px',
                                 textAlign: 'center',
-                                backgroundColor: previews[index] ? '#f0f0f0' : '#fafafa'
+                                backgroundColor: previews[index] ? '#f0f0f0' : '#fafafa',
+                                position: 'relative'
                             }}>
                                 {previews[index] ? (
                                     <div>
-                                        <img
-                                            src={previews[index]}
-                                            alt={`Preview ${index + 1}`}
-                                            style={{
-                                                maxWidth: '100%',
-                                                maxHeight: '150px',
-                                                marginBottom: '10px',
-                                                borderRadius: '4px'
-                                            }}
-                                        />
+                                        <div style={{ position: 'relative', display: 'inline-block' }}>
+                                            <img
+                                                src={previews[index]}
+                                                alt={`Preview ${index + 1}`}
+                                                style={{
+                                                    maxWidth: '100%',
+                                                    maxHeight: '150px',
+                                                    marginBottom: '10px',
+                                                    borderRadius: '4px',
+                                                    border: '2px solid #28a745'
+                                                }}
+                                            />
+                                            <span style={{
+                                                position: 'absolute',
+                                                top: '5px',
+                                                right: '5px',
+                                                backgroundColor: '#28a745',
+                                                color: 'white',
+                                                padding: '2px 6px',
+                                                borderRadius: '3px',
+                                                fontSize: '10px',
+                                                fontWeight: 'bold'
+                                            }}>
+                                                ✓ CARGADA
+                                            </span>
+                                        </div>
                                         <p style={{ margin: '8px 0', fontSize: '12px', color: '#666' }}>
                                             {imagenes[index]?.name}
                                         </p>
