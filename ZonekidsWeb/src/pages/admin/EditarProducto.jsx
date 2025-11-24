@@ -48,8 +48,14 @@ export const EditarProducto = () => {
                     console.log('📸 Inicializando previews con', product.imagenesUrl.length, 'imágenes');
                     product.imagenesUrl.forEach((url, idx) => {
                         if (idx < 3) {
-                            console.log(`  ${idx + 1}. ${url}`);
-                            newPreviews[idx] = url;
+                            console.log(`  ${idx + 1}. URL original: ${url}`);
+                            // Construir URL absoluta para display
+                            let absoluteUrl = url;
+                            if (url && !url.startsWith('http') && !url.startsWith('data:')) {
+                                absoluteUrl = `http://localhost:8080${url.startsWith('/') ? '' : '/'}${url}`;
+                            }
+                            console.log(`  ${idx + 1}. URL construida: ${absoluteUrl}`);
+                            newPreviews[idx] = absoluteUrl;
                         }
                     });
                 }
@@ -351,6 +357,15 @@ export const EditarProducto = () => {
                                 imagenUrl = `http://localhost:8080${imagenUrl.startsWith('/') ? '' : '/'}${imagenUrl}`;
                             }
                             
+                            // Función para manejar errores de imagen
+                            const handleImageError = (e, idx) => {
+                                console.error(`❌ Error loading image ${idx + 1}:`, imagenUrl);
+                                console.warn(`⚠️ Intentando cargar desde: ${imagenUrl}`);
+                                // Mostrar fallback con mensaje amigable
+                                e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="150" height="150"%3E%3Crect fill="%23f0f0f0" width="150" height="150"/%3E%3Ctext x="50%25" y="50%25" font-size="12" fill="%23999" text-anchor="middle" dy=".3em"%3ENo se pudo cargar%3C/text%3E%3C/svg%3E';
+                                e.target.style.opacity = '0.6';
+                            };
+                            
                             return (
                             <div key={index} style={{
                                 border: '2px dashed #ccc',
@@ -373,12 +388,9 @@ export const EditarProducto = () => {
                                                     borderRadius: '4px',
                                                     border: imagenes[index] ? '2px solid #28a745' : '1px solid #ddd'
                                                 }}
-                                                onError={(e) => {
-                                                    console.error(`❌ Error loading image ${index + 1}:`, imagenUrl);
-                                                    e.target.style.display = 'none';
-                                                }}
+                                                onError={(e) => handleImageError(e, index)}
                                                 onLoad={() => {
-                                                    console.log(`✅ Imagen ${index + 1} cargada:`, imagenUrl);
+                                                    console.log(`✅ Imagen ${index + 1} cargada correctamente`);
                                                 }}
                                             />
                                             {/* Indicador si es imagen nueva o actual */}
@@ -455,6 +467,11 @@ export const EditarProducto = () => {
                                                 </button>
                                             )}
                                         </div>
+                                        {!imagenes[index] && previews[index] && !previews[index].startsWith('data:') && (
+                                            <p style={{ marginTop: '8px', fontSize: '11px', color: '#0c5aa0', backgroundColor: '#e7f3ff', padding: '4px', borderRadius: '3px' }}>
+                                                ℹ️ Imagen actual guardada en el servidor
+                                            </p>
+                                        )}
                                     </div>
                                 ) : (
                                     <div>
