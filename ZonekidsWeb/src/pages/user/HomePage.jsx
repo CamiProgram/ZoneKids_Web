@@ -13,20 +13,12 @@ export const HomePage = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-<<<<<<< HEAD
-      try { 
-        setLoading(true); setError(null);
-        const response = await axios.get('http://localhost:8080/api/v1/productos');
-        setProducts(response.data);
-        
-=======
       try {
         setLoading(true);
         setError(null);
         const data = await productService.getAll();
         setProducts(data);
 
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
         // Extrae categorías únicas de los productos
         const uniqueCategories = [...new Set(data.map(p => p.categoria).filter(Boolean))];
         setCategories(uniqueCategories);
@@ -40,6 +32,15 @@ export const HomePage = () => {
 
     fetchProducts();
   }, []);
+
+  // Toggle para deseleccionar categoría al hacer click nuevamente
+  const handleCategoryClick = (category) => {
+    if (selectedCategory === category) {
+      setSelectedCategory(null); // Deseleccionar si ya está seleccionada
+    } else {
+      setSelectedCategory(category); // Seleccionar la nueva categoría
+    }
+  };
 
   const filteredProducts = selectedCategory
     ? products.filter(p => p.categoria === selectedCategory)
@@ -75,60 +76,42 @@ export const HomePage = () => {
         </div>
 
         <div className="home-main-content">
-<<<<<<< HEAD
-          {/* --- CARRUSEL DE CATEGORÍAS --- */}
-          {categories.length > 0 && (
-            <div className="category-carousel-container">
-              <button 
-                className="carousel-arrow prev-arrow" 
-                onClick={handlePrevCategory}
-                aria-label="Categoría anterior"
-=======
-          {/* --- LISTA DE CATEGORÍAS --- */}
-          <div className="category-filter-list">
-            <button
-              onClick={() => setSelectedCategory(null)}
-              className={selectedCategory === null ? 'active' : ''}
+          {/* --- SECCIÓN DE CATEGORÍAS CON FLECHAS --- */}
+          <div className="category-carousel-container">
+            <button 
+              className="carousel-arrow prev-arrow"
+              onClick={handlePrevCategory}
+              aria-label="Categorías anteriores"
             >
-              Todos
+              ←
             </button>
-            {categories.map(cat => (
+            
+            <div className="category-filter-list">
               <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={selectedCategory === cat ? 'active' : ''}
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
+                onClick={() => setSelectedCategory(null)}
+                className={selectedCategory === null ? 'active' : ''}
               >
-                ‹
+                Todos
               </button>
-
-              <div className="category-filter-list">
-                <button 
-                  onClick={() => setSelectedCategory(null)}
-                  className={selectedCategory === null ? 'active' : ''}
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => handleCategoryClick(cat)}
+                  className={selectedCategory === cat ? 'active' : ''}
                 >
-                  Todos
+                  {cat}
                 </button>
-                {categories.map(cat => (
-                  <button 
-                    key={cat} 
-                    onClick={() => setSelectedCategory(cat)}
-                    className={selectedCategory === cat ? 'active' : ''}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-
-              <button 
-                className="carousel-arrow next-arrow" 
-                onClick={handleNextCategory}
-                aria-label="Siguiente categoría"
-              >
-                ›
-              </button>
+              ))}
             </div>
-          )}
+
+            <button 
+              className="carousel-arrow next-arrow"
+              onClick={handleNextCategory}
+              aria-label="Más categorías"
+            >
+              →
+            </button>
+          </div>
 
           {/* --- GRILLA DE PRODUCTOS --- */}
           {filteredProducts.length > 0 ? (

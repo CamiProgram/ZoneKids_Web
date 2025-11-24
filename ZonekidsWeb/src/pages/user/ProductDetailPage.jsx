@@ -23,10 +23,6 @@ export const ProductDetailPage = () => {
             try {
                 setLoading(true);
                 setError(null);
-<<<<<<< HEAD
-                const response = await axios.get(`http://localhost:8080/api/v1/productos/${id}`);
-                setProduct(response.data);
-=======
                 const data = await productService.getById(id);
                 setProduct(data);
                 setCurrentImageIndex(0); // Resetear índice al cambiar producto
@@ -37,7 +33,6 @@ export const ProductDetailPage = () => {
                 const similar = getSimilarProducts(data, allProducts);
                 setSimilarProducts(similar);
                 setLoadingSimilar(false);
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
             } catch (err) {
                 console.error('Error fetching product details:', err);
                 setError('No se pudo cargar el producto.');
@@ -120,10 +115,6 @@ export const ProductDetailPage = () => {
         return <div className="error-message">Producto no encontrado.</div>;
     }
 
-<<<<<<< HEAD
-    // --- Variables para descuento y etiquetas ---
-    const { nombre, precio, imagenes, precioOriginal, esNuevo, enOferta, descripcion, categoria, stock } = product;
-=======
     const {
         nombre,
         precio,
@@ -135,8 +126,6 @@ export const ProductDetailPage = () => {
         categoria,
         stock,
     } = product;
-
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
     const tieneDescuento = precioOriginal && precioOriginal > precio;
 
     // Ir a imagen anterior
@@ -170,30 +159,6 @@ export const ProductDetailPage = () => {
     };
 
     return (
-<<<<<<< HEAD
-        <div className="product-detail-container">
-            <div className="product-detail-image">
-                {/* --- ETIQUETAS AÑADIDAS --- */}
-                <div className="product-badges-detail">
-                    {esNuevo && <span className="badge-nuevo">NUEVO</span>}
-                    {enOferta && <span className="badge-oferta">OFERTA</span>}
-                </div>
-                <ImageCarousel imagenes={imagenes} productName={nombre} />
-            </div>
-            <div className="product-detail-info">
-                <h1>{nombre}</h1>
-                <p className="product-detail-description">{descripcion || 'Sin descripción disponible.'}</p>
-                <p className="product-detail-category">Categoría: {categoria || 'N/A'}</p>
-                <p className="product-detail-stock">Stock disponible: {stock}</p>
-                
-                {/* --- PRECIO CON DESCUENTO AÑADIDO --- */}
-                <div className="product-price-wrapper-detail">
-                    <span className="product-detail-price">${(precio || 0).toLocaleString()}</span>
-                    {tieneDescuento && (
-                        <span className="product-price-original-detail">
-                            ${(precioOriginal || 0).toLocaleString()}
-                        </span>
-=======
         <>
             <div className="product-detail-container">
                 <div className="product-detail-image">
@@ -244,7 +209,6 @@ export const ProductDetailPage = () => {
                                 />
                             ))}
                         </div>
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
                     )}
                 </div>
                 <div className="product-detail-info">

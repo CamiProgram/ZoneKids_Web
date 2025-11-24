@@ -11,9 +11,7 @@ import { ProductDetailPage } from './pages/user/ProductDetailPage';
 import { CategoryPage } from './pages/user/CategoryPage';
 import { SearchPage } from './pages/user/SearchPage';
 import { CheckoutPage } from './pages/user/CheckoutPage';
-<<<<<<< HEAD
 import { BlogsPage } from './pages/user/BlogsPage';
-=======
 import { PurchaseHistoryPage } from './pages/user/PurchaseHistoryPage';
 import { OrderDetailPage } from './pages/user/OrderDetailPage';
 import { ContactPage } from './pages/user/ContactPage';
@@ -23,7 +21,6 @@ import { ReturnsPage } from './pages/user/ReturnsPage';
 import { RefundsPage } from './pages/user/RefundsPage';
 import { ProductGuidePage } from './pages/user/ProductGuidePage';
 import { PointsPage } from './pages/user/PointsPage';
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
 
 // Páginas de Admin
 import { AdminDashboard } from './pages/admin/AdminDashboard';
@@ -42,18 +39,11 @@ function App() {
         <Route index element={<HomePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
-<<<<<<< HEAD
-        {/* Cambié :categoryName a :slug para ser más genérico */}
-        <Route path="categoria/:slug" element={<CategoryPage />} /> 
-        <Route path="producto/:id" element={<ProductDetailPage />} /> 
-        <Route path="buscar" element={<SearchPage />} /> {/* Cambié 'search' a 'buscar' */}
-        <Route path="checkout" element={<CheckoutPage />} />
-        <Route path="blogs" element={<BlogsPage />} />
-=======
         <Route path="categoria/:slug" element={<CategoryPage />} />
         <Route path="producto/:id" element={<ProductDetailPage />} />
         <Route path="buscar" element={<SearchPage />} />
         <Route path="checkout" element={<CheckoutPage />} />
+        <Route path="blogs" element={<BlogsPage />} />
         <Route path="historial" element={<PurchaseHistoryPage />} />
         <Route path="orden/:id" element={<OrderDetailPage />} />
         <Route path="contacto" element={<ContactPage />} />
@@ -63,7 +53,6 @@ function App() {
         <Route path="reembolsos" element={<RefundsPage />} />
         <Route path="guia-productos" element={<ProductGuidePage />} />
         <Route path="puntos" element={<PointsPage />} />
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
       </Route>
 
       {/* --- RUTAS DE ADMIN (Protegidas) --- */}

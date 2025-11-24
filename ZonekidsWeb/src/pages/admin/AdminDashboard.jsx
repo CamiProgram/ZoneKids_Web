@@ -1,15 +1,4 @@
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
-import axios from 'axios';
-import { LoadingSpinner } from '../../components/LoadingSpinner';
-import '../../styles/pages/adminDashboard.css';
-
-export const AdminDashboard = () => {
-  const [stats, setStats] = useState({ totalProducts: 0, totalUsers: 0, lowStockProducts: 0 });
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedOrder, setSelectedOrder] = useState(null);
-=======
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { productService } from '../../services/productService';
 import { userService } from '../../services/userService';
@@ -22,26 +11,20 @@ export const AdminDashboard = () => {
     lowStockProducts: 0,
     activeProducts: 0,
   });
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-<<<<<<< HEAD
-        // Fetch stats
-        const [productsRes, usersRes] = await Promise.all([
-          axios.get('http://localhost:8080/api/v1/productos'),
-          axios.get('http://localhost:8080/api/users')
-=======
         setLoading(true);
         setError(null);
         
         const [products, users] = await Promise.all([
           productService.getAll(),
           userService.getAll(),
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
         ]);
 
         const lowStockCount = products.filter(p => p.stock < 10).length;
@@ -53,10 +36,8 @@ export const AdminDashboard = () => {
           lowStockProducts: lowStockCount,
           activeProducts: activeCount,
         });
-<<<<<<< HEAD
 
-        // Fetch orders - simulado por ahora
-        // En producción, obtener de: http://localhost:8080/api/v1/ordenes
+        // Mock orders for now - in production get from API
         const mockOrders = [
           {
             id: 1,
@@ -87,23 +68,15 @@ export const AdminDashboard = () => {
           }
         ];
         setOrders(mockOrders);
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-=======
       } catch (err) {
-        console.error('Error fetching dashboard stats:', err);
+        console.error('Error fetching dashboard data:', err);
         setError('Error al cargar las estadísticas del dashboard.');
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
       } finally {
         setLoading(false);
       }
     };
-<<<<<<< HEAD
-    fetchData();
-=======
 
-    fetchStats();
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
+    fetchData();
   }, []);
 
   const getStatusColor = (status) => {
@@ -143,10 +116,7 @@ export const AdminDashboard = () => {
   return (
     <div className="admin-dashboard-container">
       <h2>Dashboard Administrativo</h2>
-<<<<<<< HEAD
-=======
       {error && <div className="error-message">{error}</div>}
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
       
       <div className="stats-grid">
         <div className="stat-card">

@@ -50,51 +50,6 @@ export const CheckoutPage = () => {
     setCouponSuccess('');
   }, [cartItems]);
 
-<<<<<<< HEAD
-  // Formatear RUT automáticamente
-  const formatRUT = (value) => {
-    // Remover todo excepto números y la letra K
-    let cleaned = value.toUpperCase().replace(/[^0-9K]/g, '');
-    
-    // Si la última es letra, separarla
-    let dv = '';
-    if (cleaned.match(/K$/)) {
-      dv = 'K';
-      cleaned = cleaned.slice(0, -1);
-    }
-
-    // Agregar puntos cada 3 dígitos de derecha a izquierda
-    let formatted = cleaned.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    
-    // Agregar guión antes del dígito verificador
-    if (dv) {
-      formatted = formatted + '-' + dv;
-    }
-
-    return formatted;
-  };
-
-  const handleChange = (e) => {
-    let { name, value } = e.target;
-
-    if (name === 'rut') {
-      value = formatRUT(value);
-    }
-
-    setForm({ ...form, [name]: value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    // Validar RUT básicamente
-    if (!form.rut.includes('-')) {
-      alert('Por favor, ingresa un RUT válido (ej: 12.345.678-K)');
-      return;
-    }
-
-    alert(`Gracias por tu compra, ${form.name}! 🛍️\nRUT: ${form.rut}`);
-=======
   // Cambiar cantidad de producto
   const updateQuantity = (productId, newQuantity) => {
     if (newQuantity < 1) return;
@@ -110,7 +65,6 @@ export const CheckoutPage = () => {
       const qty = quantities[item.id] || item.cantidad || 1;
       return total + (item.precio * qty);
     }, 0);
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
   };
 
   // Constantes de cálculo
@@ -148,17 +102,26 @@ export const CheckoutPage = () => {
         error = 'Email incompleto (debe contener @ y .)';
       }
     } else if (name === 'rut') {
-      // Solo números y guión, formato: 12345678-9
-      processedValue = value.replace(/[^0-9\-]/g, '');
-      if (processedValue.length > 12) {
-        processedValue = processedValue.slice(0, 12);
+      // Solo números y letra K, formato: 12345678-9 o 21867867-K
+      processedValue = value.replace(/[^0-9kK]/g, '');
+      
+      // Auto-formatear con guión antes del último carácter
+      if (processedValue.length > 1) {
+        // Si tiene más de 1 carácter, insertar guión antes del último
+        const mainPart = processedValue.slice(0, -1);
+        const verifierPart = processedValue.slice(-1).toUpperCase();
+        processedValue = `${mainPart}-${verifierPart}`;
       }
+      
+      // Limitar a longitud máxima (8 dígitos + guión + 1 verificador = 10 caracteres)
+      if (processedValue.length > 10) {
+        processedValue = processedValue.slice(0, 10);
+      }
+      
       // Validar formato RUT
       if (processedValue.length > 0) {
-        if (processedValue.length < 8) {
+        if (processedValue.replace('-', '').length < 8) {
           error = 'El RUT debe tener al menos 8 dígitos';
-        } else if (processedValue.includes('-') && processedValue.split('-')[1]?.length > 1) {
-          error = 'El RUT debe tener máximo 1 dígito verificador';
         }
       }
     } else if (name === 'address') {
@@ -635,42 +598,18 @@ export const CheckoutPage = () => {
               value={form.name}
               onChange={handleChange}
               required
-<<<<<<< HEAD
               placeholder="Juan Pérez García"
-=======
-              placeholder="Tu nombre completo"
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
             />
             {formErrors.name && <p className="form-error-message">{formErrors.name}</p>}
 
-<<<<<<< HEAD
-            <label>RUT</label>
-            <input
-              type="text"
-              name="rut"
-              value={form.rut}
-              onChange={handleChange}
-              required
-              placeholder="12.345.678-K"
-              maxLength="13"
-            />
-            <small className="rut-help">Formato: XX.XXX.XXX-K (ej: 21.867.867-K)</small>
-
-            <label>Correo electrónico</label>
-=======
             <label>Correo electrónico *</label>
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
             <input
               type="email"
               name="email"
               value={form.email}
               onChange={handleChange}
               required
-<<<<<<< HEAD
               placeholder="correo@ejemplo.com"
-=======
-              placeholder="tu@email.com"
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
             />
             {formErrors.email && <p className="form-error-message">{formErrors.email}</p>}
 
@@ -692,11 +631,7 @@ export const CheckoutPage = () => {
               value={form.address}
               onChange={handleChange}
               required
-<<<<<<< HEAD
               placeholder="Calle Principal 123, Dpto 4B"
-=======
-              placeholder="Tu dirección de entrega"
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
             />
             {formErrors.address && <p className="form-error-message">{formErrors.address}</p>}
 

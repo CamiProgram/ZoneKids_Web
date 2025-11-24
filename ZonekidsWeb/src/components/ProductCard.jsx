@@ -7,12 +7,6 @@ export const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
   const [isAdded, setIsAdded] = useState(false);
   
-<<<<<<< HEAD
-  // Nuevos campos del backend
-  const { id, nombre, precio, imagenes, stock, esNuevo, enOferta, precioOriginal } = product;
-  const tieneDescuento = precioOriginal && precioOriginal > precio;
-  const imagenPrincipal = imagenes && imagenes.length > 0 ? imagenes[0] : "/assets/Zonekids_logo_web.webp";
-=======
   const { 
     id, 
     nombre, 
@@ -21,7 +15,7 @@ export const ProductCard = ({ product }) => {
     stock = 0,
     esNuevo = false,
     enOferta = false,
-    precio_base 
+    precioOriginal 
   } = product;
   
   // Obtener primera imagen del array o usar logo por defecto
@@ -29,8 +23,7 @@ export const ProductCard = ({ product }) => {
     ? imagenesUrl[0] 
     : '/public/Zonekids_logo_web.webp';
 
-  const tieneDescuento = precio_base && precio_base > precio;
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
+  const tieneDescuento = precioOriginal && precioOriginal > precio;
 
   const cardClasses = `
     product-card 
@@ -69,11 +62,7 @@ export const ProductCard = ({ product }) => {
         <div className="product-price-wrapper">
           {enOferta && precioOriginal && precioOriginal > 0 && (
             <span className="product-price-original">
-<<<<<<< HEAD
-              ${(precioOriginal || 0).toLocaleString()}
-=======
-              ${(precio_base || 0).toLocaleString('es-CO')}
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
+              ${(precioOriginal || 0).toLocaleString('es-CO')}
             </span>
           )}
           <span className="product-price">

@@ -1,9 +1,5 @@
 import React from 'react';
-<<<<<<< HEAD
-import { Link } from 'react-router-dom';
-=======
 import { NavLink } from 'react-router-dom';
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
 import '../styles/components/footer.css';
 
 export const Footer = () => {
@@ -13,13 +9,8 @@ export const Footer = () => {
         <div className="footer-section">
           <h3>SOBRE NOSOTROS</h3>
           <ul>
-<<<<<<< HEAD
-            <li><a href="#">Quiénes somos</a></li>
-            <li><Link to="/blogs">Blogs</Link></li>
-=======
             <li><NavLink to="/sobre-nosotros">Quiénes somos</NavLink></li>
-            <li><a href="#blogs">Blogs</a></li>
->>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
+            <li><NavLink to="/blogs">Blogs</NavLink></li>
           </ul>
         </div>
         <div className="footer-section">
