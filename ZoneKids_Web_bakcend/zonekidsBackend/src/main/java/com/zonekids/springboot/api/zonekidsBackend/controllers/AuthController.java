@@ -86,9 +86,9 @@ public class AuthController {
                         .body(ApiResponse.error("Email o contraseña incorrectos"));
             }
 
-            // Generar el token JWT
-            String token = jwtUtils.generateToken(loginRequest.getEmail());
-            System.out.println("✅ Login exitoso para: " + loginRequest.getEmail());
+            // Generar el token JWT (incluyendo el rol)
+            String token = jwtUtils.generateTokenWithRole(loginRequest.getEmail(), user.getRol().toString());
+            System.out.println("✅ Login exitoso para: " + loginRequest.getEmail() + " (Rol: " + user.getRol() + ")");
 
             // Retornar la respuesta con el token y rol
             Map<String, Object> loginData = new HashMap<>();

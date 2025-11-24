@@ -64,16 +64,6 @@ public class JwtUtils {
     }
 
     /**
-     * Extrae el rol del token JWT
-     */
-    public String getRolFromToken(String token) {
-        return extractClaim(token, claims -> {
-            Object rolObj = claims.get("rol");
-            return rolObj != null ? rolObj.toString() : null;
-        });
-    }
-
-    /**
      * Extrae un claim específico del token JWT
      */
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

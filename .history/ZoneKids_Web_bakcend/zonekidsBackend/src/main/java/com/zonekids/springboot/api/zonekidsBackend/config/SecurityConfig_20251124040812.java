@@ -69,23 +69,9 @@ public class SecurityConfig {
                         .requestMatchers("OPTIONS", "/**").permitAll()            // Preflight CORS
 
                         // ===== RUTAS PROTEGIDAS SOLO ADMIN =====
-                        .requestMatchers("/api/v1/upload/**").hasRole("ADMIN")    // Upload de imágenes (solo ADMIN)
-                        .requestMatchers("POST", "/api/v1/productos").hasRole("ADMIN")      // Crear producto (solo ADMIN)
-                        .requestMatchers("PUT", "/api/v1/productos/**").hasRole("ADMIN")    // Editar producto (solo ADMIN)
-                        .requestMatchers("DELETE", "/api/v1/productos/**").hasRole("ADMIN") // Eliminar producto (solo ADMIN)
-                        .requestMatchers("PATCH", "/api/v1/productos/**").hasRole("ADMIN")  // Cambiar estado/imágenes (solo ADMIN)
-                        .requestMatchers("GET", "/api/v1/usuarios/**").hasRole("ADMIN")     // Ver detalles usuarios (solo ADMIN)
-                        .requestMatchers("DELETE", "/api/v1/usuarios/**").hasRole("ADMIN")  // Eliminar usuarios (solo ADMIN)
-                        .requestMatchers("PATCH", "/api/v1/usuarios/**").hasRole("ADMIN")   // Cambiar estado usuarios (solo ADMIN)
+                        .requestMatchers("/api/v1/upload/**").hasRole("ADMIN")   // Upload de imágenes (solo ADMIN)
 
-                        // ===== RUTAS PROTEGIDAS (Cualquier usuario autenticado) =====
-                        .requestMatchers("/api/v1/usuarios").authenticated()       // Listar usuarios (autenticado)
-                        .requestMatchers("PUT", "/api/v1/usuarios/perfil").authenticated() // Actualizar perfil propio (autenticado)
-                        .requestMatchers("/api/v1/ordenes/**").authenticated()     // Órdenes - acceso con autenticación
-                        .requestMatchers("/api/v1/boletas/**").authenticated()     // Boletas - acceso con autenticación
-                        .requestMatchers("/api/v1/datos-personales/**").authenticated() // Datos personales - acceso con autenticación
-
-                        // ===== RUTAS PROTEGIDAS POR DEFECTO =====
+                        // ===== RUTAS PROTEGIDAS =====
                         .anyRequest().authenticated()
                 )
 
