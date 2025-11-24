@@ -134,12 +134,9 @@ export const ContactPage = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  onBlur={handleBlur}
                   required
                   placeholder="Tu nombre completo"
-                  className={fieldErrors.name ? 'input-error' : ''}
                 />
-                {fieldErrors.name && <span className="error-message">{fieldErrors.name}</span>}
               </div>
 
               <div className="form-group">
@@ -150,12 +147,9 @@ export const ContactPage = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  onBlur={handleBlur}
                   required
                   placeholder="tu@email.com"
-                  className={fieldErrors.email ? 'input-error' : ''}
                 />
-                {fieldErrors.email && <span className="error-message">{fieldErrors.email}</span>}
               </div>
 
               <div className="form-group">
@@ -166,12 +160,9 @@ export const ContactPage = () => {
                   name="subject"
                   value={formData.subject}
                   onChange={handleChange}
-                  onBlur={handleBlur}
                   required
                   placeholder="Asunto de tu mensaje"
-                  className={fieldErrors.subject ? 'input-error' : ''}
                 />
-                {fieldErrors.subject && <span className="error-message">{fieldErrors.subject}</span>}
               </div>
 
               <div className="form-group">
@@ -181,13 +172,10 @@ export const ContactPage = () => {
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
-                  onBlur={handleBlur}
                   required
                   placeholder="Cuéntanos más..."
                   rows="6"
-                  className={fieldErrors.message ? 'input-error' : ''}
                 />
-                {fieldErrors.message && <span className="error-message">{fieldErrors.message}</span>}
               </div>
 
               <button type="submit" className="submit-button">

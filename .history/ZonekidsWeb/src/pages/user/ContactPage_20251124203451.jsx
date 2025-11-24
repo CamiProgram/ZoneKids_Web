@@ -9,59 +9,6 @@ export const ContactPage = () => {
     message: '',
   });
   const [submitted, setSubmitted] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState({});
-
-  const validateField = (name, value) => {
-    const errors = { ...fieldErrors };
-
-    switch (name) {
-      case 'name':
-        if (!value.trim()) {
-          errors.name = 'El nombre es requerido';
-        } else if (value.trim().length < 3) {
-          errors.name = 'El nombre debe tener al menos 3 caracteres';
-        } else {
-          delete errors.name;
-        }
-        break;
-
-      case 'email':
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!value.trim()) {
-          errors.email = 'El email es requerido';
-        } else if (!emailRegex.test(value)) {
-          errors.email = 'El email no es válido';
-        } else {
-          delete errors.email;
-        }
-        break;
-
-      case 'subject':
-        if (!value.trim()) {
-          errors.subject = 'El asunto es requerido';
-        } else if (value.trim().length < 3) {
-          errors.subject = 'El asunto debe tener al menos 3 caracteres';
-        } else {
-          delete errors.subject;
-        }
-        break;
-
-      case 'message':
-        if (!value.trim()) {
-          errors.message = 'El mensaje es requerido';
-        } else if (value.trim().length < 10) {
-          errors.message = 'El mensaje debe tener al menos 10 caracteres';
-        } else {
-          delete errors.message;
-        }
-        break;
-
-      default:
-        break;
-    }
-
-    return errors;
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,31 +16,10 @@ export const ContactPage = () => {
       ...prev,
       [name]: value
     }));
-    const newErrors = validateField(name, value);
-    setFieldErrors(newErrors);
-  };
-
-  const handleBlur = (e) => {
-    const { name, value } = e.target;
-    const newErrors = validateField(name, value);
-    setFieldErrors(newErrors);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Validar todos los campos antes de enviar
-    let errors = {};
-    errors = validateField('name', formData.name);
-    errors = { ...errors, ...validateField('email', formData.email) };
-    errors = { ...errors, ...validateField('subject', formData.subject) };
-    errors = { ...errors, ...validateField('message', formData.message) };
-
-    if (Object.keys(errors).length > 0) {
-      setFieldErrors(errors);
-      return;
-    }
-
     // Simular envío (en producción iría a un backend)
     console.log('Mensaje enviado:', formData);
     setSubmitted(true);
@@ -105,7 +31,6 @@ export const ContactPage = () => {
       subject: '',
       message: '',
     });
-    setFieldErrors({});
 
     // Ocultar mensaje después de 5 segundos
     setTimeout(() => {
@@ -134,12 +59,9 @@ export const ContactPage = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  onBlur={handleBlur}
                   required
                   placeholder="Tu nombre completo"
-                  className={fieldErrors.name ? 'input-error' : ''}
                 />
-                {fieldErrors.name && <span className="error-message">{fieldErrors.name}</span>}
               </div>
 
               <div className="form-group">
@@ -150,12 +72,9 @@ export const ContactPage = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  onBlur={handleBlur}
                   required
                   placeholder="tu@email.com"
-                  className={fieldErrors.email ? 'input-error' : ''}
                 />
-                {fieldErrors.email && <span className="error-message">{fieldErrors.email}</span>}
               </div>
 
               <div className="form-group">
@@ -166,12 +85,9 @@ export const ContactPage = () => {
                   name="subject"
                   value={formData.subject}
                   onChange={handleChange}
-                  onBlur={handleBlur}
                   required
                   placeholder="Asunto de tu mensaje"
-                  className={fieldErrors.subject ? 'input-error' : ''}
                 />
-                {fieldErrors.subject && <span className="error-message">{fieldErrors.subject}</span>}
               </div>
 
               <div className="form-group">
@@ -181,13 +97,10 @@ export const ContactPage = () => {
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
-                  onBlur={handleBlur}
                   required
                   placeholder="Cuéntanos más..."
                   rows="6"
-                  className={fieldErrors.message ? 'input-error' : ''}
                 />
-                {fieldErrors.message && <span className="error-message">{fieldErrors.message}</span>}
               </div>
 
               <button type="submit" className="submit-button">
@@ -213,8 +126,20 @@ export const ContactPage = () => {
           <div className="contact-info-section">
             <h2>Síguenos</h2>
             <div className="social-media">
-              <a href="https://www.instagram.com/zonekids.cl" target="_blank" rel="noopener noreferrer" className="social-link instagram" title="Instagram">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-link facebook" title="Facebook">
+                👍
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="social-link instagram" title="Instagram">
                 📷
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="social-link twitter" title="Twitter">
+                🐦
+              </a>
+              <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="social-link tiktok" title="TikTok">
+                🎵
+              </a>
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="social-link youtube" title="YouTube">
+                ▶️
               </a>
             </div>
 

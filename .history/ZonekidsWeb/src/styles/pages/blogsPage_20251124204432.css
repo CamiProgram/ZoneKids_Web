@@ -259,16 +259,7 @@
 .modal-image {
   width: 100%;
   height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-image-text {
-  font-size: 3.5rem;
-  font-weight: 700;
-  color: white;
-  text-align: center;
+  object-fit: cover;
 }
 
 .modal-content {
@@ -313,6 +304,44 @@
   line-height: 1.8;
   font-size: 0.95rem;
   margin-bottom: 25px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-share,
+.btn-save {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.btn-share {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-share:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.btn-save {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.btn-save:hover {
+  background-color: #FFE5EF;
+  color: #FF6B9D;
+  transform: translateY(-2px);
 }
 
 /* ===== RESPONSIVE DESIGN ===== */

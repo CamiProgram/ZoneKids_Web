@@ -109,13 +109,13 @@ export const AboutUsPage = () => {
           <div className="mission-card">
             <h3>Misión</h3>
             <p>
-              Satisfacer a las mamás ofreciendo productos de calidad (ropa, zapatos, zapatillas y juguetes) para bebés mayores a 6 meses, con eficiencia en nuestros procesos y atención personalizada.
+              Proporcionar ropa infantil de calidad, estilo y confort a precios accesibles, facilitando la compra online para familias de toda Latinoamérica.
             </p>
           </div>
           <div className="vision-card">
             <h3>Visión</h3>
             <p>
-              Ser la opción preferida de las mamás que buscan productos confiables y de calidad para sus bebés, reconocidos por nuestra dedicación y satisfacción del cliente.
+              Ser la plataforma de moda infantil más confiable y preferida en Latinoamérica, reconocida por nuestra calidad, servicio y compromiso con las familias.
             </p>
           </div>
         </section>

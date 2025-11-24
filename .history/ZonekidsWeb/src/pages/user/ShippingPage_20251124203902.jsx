@@ -81,15 +81,19 @@ export const ShippingPage = () => {
           <h2>Cobertura de Envío</h2>
           <div className="coverage-content">
             <div className="coverage-text">
-              <h3>Nuestra Zona de Cobertura</h3>
+              <h3>Ciudades Principales</h3>
               <ul>
-                <li>✓ Santiago de Chile</li>
-                <li>ℹ️ Próximamente expanderemos a otras ciudades</li>
+                <li>✓ Bogotá, Medellín, Cali, Barranquilla (Colombia)</li>
+                <li>✓ Lima, Arequipa, Trujillo (Perú)</li>
+                <li>✓ Santiago, Valparaíso, Concepción (Chile)</li>
+                <li>✓ Ciudad de México, Guadalajara, Monterrey (México)</li>
+                <li>✓ Buenos Aires, Córdoba, Rosario (Argentina)</li>
+                <li>✓ Quito, Guayaquil (Ecuador)</li>
               </ul>
             </div>
             <div className="coverage-map">
-              <div className="map-placeholder">🏠</div>
-              <p>Santiago de Chile - Nuestro principal lugar de operación</p>
+              <div className="map-placeholder">🗺️</div>
+              <p>Expandiendo nuestros servicios constantemente</p>
             </div>
           </div>
         </section>

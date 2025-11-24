@@ -107,9 +107,7 @@ export const BlogsPage = () => {
         <div className="blogs-grid">
           {filteredBlogs.map(blog => (
             <div key={blog.id} className="blog-card">
-              <div className="blog-image" style={{ backgroundColor: blog.bgColor }}>
-                <span className="blog-image-text">{blog.cardText}</span>
-              </div>
+              <img src={blog.image} alt={blog.title} className="blog-image" />
               <div className="blog-content">
                 <span className="blog-category">{blog.category}</span>
                 <h3>{blog.title}</h3>
@@ -138,9 +136,7 @@ export const BlogsPage = () => {
           <div className="blog-modal" onClick={(e) => e.stopPropagation()}>
             <button className="close-modal" onClick={() => setSelectedBlog(null)}>✕</button>
             
-            <div className="modal-image" style={{ backgroundColor: selectedBlog.bgColor }}>
-              <span className="modal-image-text">{selectedBlog.cardText}</span>
-            </div>
+            <img src={selectedBlog.image} alt={selectedBlog.title} className="modal-image" />
             
             <div className="modal-content">
               <span className="modal-category">{selectedBlog.category}</span>
@@ -153,6 +149,11 @@ export const BlogsPage = () => {
 
               <div className="modal-text">
                 {selectedBlog.content}
+              </div>
+
+              <div className="modal-actions">
+                <button className="btn-share">📤 Compartir</button>
+                <button className="btn-save">❤️ Guardar</button>
               </div>
             </div>
           </div>

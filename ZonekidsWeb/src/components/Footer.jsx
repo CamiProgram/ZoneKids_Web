@@ -46,7 +46,7 @@ export const Footer = () => {
         </div>
       </div>
       <div className="footer-copyright">
-        <p>&copy; 2025 ZoneKids. Todos los derechos reservados.</p>
+        <p>&copy; 2024 ZoneKids - Micro emprendimiento dedicado a satisfacer mamás. Desde Enero 2024. | Contacto: zonekids@contacto.com</p>
       </div>
     </footer>
   );

@@ -14,8 +14,7 @@ export const BlogsPage = () => {
       content: 'Los juguetes son más que simple entretenimiento. Son herramientas fundamentales en el desarrollo infantil. En este artículo compartimos 10 consejos prácticos para elegir juguetes que estimulen la creatividad, imaginación y habilidades cognitivas de tu hijo. Consideramos la edad, seguridad, calidad y valor educativo. Aprende a identificar qué características hacen que un juguete sea realmente valioso para el desarrollo infantil.',
       author: 'Equipo ZoneKids',
       date: '2025-11-15',
-      bgColor: '#FF6B9D',
-      cardText: '🧸 Juguetes',
+      image: 'https://images.unsplash.com/photo-1516627145497-ae3ddd3b2fe0?w=400&h=300&fit=crop',
       category: 'Desarrollo Infantil'
     },
     {
@@ -25,8 +24,7 @@ export const BlogsPage = () => {
       content: 'La seguridad de tus hijos es lo más importante. En este blog exploramos las normas internacionales de seguridad de juguetes, cómo identificar productos certificados, y qué revisar antes de comprar. Hablamos de normas ISO, estándares europeos y americanos, y cómo verificar que un producto haya pasado los controles de calidad necesarios para garantizar que es seguro para tu familia.',
       author: 'Dr. Juan Rodríguez',
       date: '2025-11-10',
-      bgColor: '#4CAF50',
-      cardText: '🛡️ Seguridad',
+      image: 'https://images.unsplash.com/photo-1503454537688-e47a98d158de?w=400&h=300&fit=crop',
       category: 'Seguridad'
     },
     {
@@ -36,8 +34,7 @@ export const BlogsPage = () => {
       content: 'El aprendizaje no tiene por qué ser aburrido. Los juguetes educativos combinan diversión y educación de manera efectiva. Exploraremos diferentes tipos de juguetes que desarrollan habilidades matemáticas, lingüísticas, artísticas y científicas. Desde construcción hasta puzzles, juegos de lógica y robots programables, descubre cómo motivar a tu hijo a aprender nuevas habilidades mientras se divierte.',
       author: 'Maestra Laura Méndez',
       date: '2025-11-05',
-      bgColor: '#2196F3',
-      cardText: '📚 Educación',
+      image: 'https://images.unsplash.com/photo-1567818735868-e71b99932e29?w=400&h=300&fit=crop',
       category: 'Educación'
     },
     {
@@ -47,8 +44,7 @@ export const BlogsPage = () => {
       content: 'El movimiento es fundamental en el desarrollo infantil. El juego activo no solo es divertido, sino que es esencial para el desarrollo de la motricidad fina y gruesa. En este artículo descubrirás qué tipos de actividades y juguetes estimulan diferentes habilidades motrices según la edad. Desde juegos en el parque hasta actividades en casa, aprende cómo fomentar un estilo de vida activo y saludable.',
       author: 'Fisioterapeuta Carlos González',
       date: '2025-10-30',
-      bgColor: '#FFC107',
-      cardText: '🏃 Motricidad',
+      image: 'https://images.unsplash.com/photo-1564429899922-6dcd4c5b5ffa?w=400&h=300&fit=crop',
       category: 'Desarrollo'
     },
     {
@@ -58,8 +54,7 @@ export const BlogsPage = () => {
       content: 'El mundo de los juguetes está en constante evolución. En 2025, vemos un aumento en juguetes sostenibles, tecnología educativa inteligente, y productos inclusivos. Exploraremos las tendencias que están transformando la industria de juguetes, desde la realidad aumentada hasta materiales ecológicos, y cómo estas innovaciones benefician a los niños.',
       author: 'Analista de Mercado Roberto Silva',
       date: '2025-10-25',
-      bgColor: '#9C27B0',
-      cardText: '✨ Tendencias',
+      image: 'https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=400&h=300&fit=crop',
       category: 'Tendencias'
     },
     {
@@ -69,8 +64,7 @@ export const BlogsPage = () => {
       content: 'Todos los niños merecen acceso a juguetes que promuevan diversión e inclusión. Los juguetes inclusivos están diseñados considerando diferentes capacidades físicas, cognitivas y sensoriales. En este artículo aprendemos sobre diseño universal, accesorios adaptativos, y cómo elegir juguetes que permitan que todos los niños jueguen y se diviertan juntos.',
       author: 'Especialista en Inclusión Natalia Flores',
       date: '2025-10-20',
-      bgColor: '#00BCD4',
-      cardText: '🤝 Inclusión',
+      image: 'https://images.unsplash.com/photo-1624079687384-e2c8d7861e9f?w=400&h=300&fit=crop',
       category: 'Inclusión'
     }
   ];
@@ -107,9 +101,7 @@ export const BlogsPage = () => {
         <div className="blogs-grid">
           {filteredBlogs.map(blog => (
             <div key={blog.id} className="blog-card">
-              <div className="blog-image" style={{ backgroundColor: blog.bgColor }}>
-                <span className="blog-image-text">{blog.cardText}</span>
-              </div>
+              <img src={blog.image} alt={blog.title} className="blog-image" />
               <div className="blog-content">
                 <span className="blog-category">{blog.category}</span>
                 <h3>{blog.title}</h3>
@@ -138,9 +130,7 @@ export const BlogsPage = () => {
           <div className="blog-modal" onClick={(e) => e.stopPropagation()}>
             <button className="close-modal" onClick={() => setSelectedBlog(null)}>✕</button>
             
-            <div className="modal-image" style={{ backgroundColor: selectedBlog.bgColor }}>
-              <span className="modal-image-text">{selectedBlog.cardText}</span>
-            </div>
+            <img src={selectedBlog.image} alt={selectedBlog.title} className="modal-image" />
             
             <div className="modal-content">
               <span className="modal-category">{selectedBlog.category}</span>
@@ -153,6 +143,11 @@ export const BlogsPage = () => {
 
               <div className="modal-text">
                 {selectedBlog.content}
+              </div>
+
+              <div className="modal-actions">
+                <button className="btn-share">📤 Compartir</button>
+                <button className="btn-save">❤️ Guardar</button>
               </div>
             </div>
           </div>

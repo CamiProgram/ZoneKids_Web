@@ -154,6 +154,11 @@ export const BlogsPage = () => {
               <div className="modal-text">
                 {selectedBlog.content}
               </div>
+
+              <div className="modal-actions">
+                <button className="btn-share">📤 Compartir</button>
+                <button className="btn-save">❤️ Guardar</button>
+              </div>
             </div>
           </div>
         </div>

@@ -78,28 +78,28 @@ export const AboutUsPage = () => {
         <section className="about-team">
           <h2>Nuestro Equipo</h2>
           <p className="team-intro">
-            Un pequeño equipo apasionado que trabaja día a día para satisfacer a las mamás con los mejores productos.
+            Un equipo apasionado por la moda infantil que trabaja día a día para brindarte la mejor experiencia.
           </p>
           <div className="team-grid">
             <div className="team-member">
+              <div className="member-avatar">👨‍💼</div>
+              <h3>Juan Rodríguez</h3>
+              <p>Fundador y CEO</p>
+            </div>
+            <div className="team-member">
               <div className="member-avatar">👩‍💼</div>
-              <h3>Dana Eo Collao</h3>
-              <p>Dueña</p>
+              <h3>María García</h3>
+              <p>Directora de Diseño</p>
             </div>
             <div className="team-member">
               <div className="member-avatar">👨‍💻</div>
-              <h3>Camilo Tapia</h3>
-              <p>Diseñador y Programador</p>
+              <h3>Carlos López</h3>
+              <p>Director Técnico</p>
             </div>
             <div className="team-member">
-              <div className="member-avatar">🎯</div>
-              <h3>Enfoque</h3>
-              <p>Eficiencia y Satisfacción</p>
-            </div>
-            <div className="team-member">
-              <div className="member-avatar">❤️</div>
-              <h3>Pasión</h3>
-              <p>Por lo que hacemos</p>
+              <div className="member-avatar">👩‍🤝‍👨</div>
+              <h3>Equipo de Atención</h3>
+              <p>Servicio al Cliente</p>
             </div>
           </div>
         </section>
@@ -109,13 +109,13 @@ export const AboutUsPage = () => {
           <div className="mission-card">
             <h3>Misión</h3>
             <p>
-              Satisfacer a las mamás ofreciendo productos de calidad (ropa, zapatos, zapatillas y juguetes) para bebés mayores a 6 meses, con eficiencia en nuestros procesos y atención personalizada.
+              Proporcionar ropa infantil de calidad, estilo y confort a precios accesibles, facilitando la compra online para familias de toda Latinoamérica.
             </p>
           </div>
           <div className="vision-card">
             <h3>Visión</h3>
             <p>
-              Ser la opción preferida de las mamás que buscan productos confiables y de calidad para sus bebés, reconocidos por nuestra dedicación y satisfacción del cliente.
+              Ser la plataforma de moda infantil más confiable y preferida en Latinoamérica, reconocida por nuestra calidad, servicio y compromiso con las familias.
             </p>
           </div>
         </section>

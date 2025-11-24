@@ -34,22 +34,22 @@ export const AboutUsPage = () => {
             <div className="value-card">
               <div className="value-icon">✨</div>
               <h3>Calidad</h3>
-              <p>Seleccionamos cuidadosamente cada producto para garantizar calidad y seguridad para los bebés.</p>
+              <p>Seleccionamos cuidadosamente cada prenda para garantizar calidad y durabilidad.</p>
             </div>
             <div className="value-card">
               <div className="value-icon">🤝</div>
-              <h3>Satisfacción del Cliente</h3>
-              <p>Nos enfocamos en superar las expectativas de nuestras mamás en cada compra.</p>
+              <h3>Confianza</h3>
+              <p>Somos transparentes en nuestros precios, políticas y relación con nuestros clientes.</p>
             </div>
             <div className="value-card">
-              <div className="value-icon">⚡</div>
-              <h3>Eficiencia</h3>
-              <p>Operamos con procesos ágiles para entregar rápidamente lo que nuestros clientes necesitan.</p>
+              <div className="value-icon">🌟</div>
+              <h3>Innovación</h3>
+              <p>Constantemente buscamos nuevas formas de mejorar tu experiencia de compra.</p>
             </div>
             <div className="value-card">
-              <div className="value-icon">👶</div>
-              <h3>Dedicación a Bebés</h3>
-              <p>Todos nuestros productos están pensados especialmente para bebés mayores a 6 meses.</p>
+              <div className="value-icon">💚</div>
+              <h3>Responsabilidad Social</h3>
+              <p>Trabajamos con proveedores éticos y contribuimos al bienestar de nuestras comunidades.</p>
             </div>
           </div>
         </section>
@@ -57,20 +57,20 @@ export const AboutUsPage = () => {
         {/* Números */}
         <section className="about-stats">
           <div className="stat-card">
-            <h3>100%</h3>
-            <p>Dedicación</p>
+            <h3>50K+</h3>
+            <p>Clientes felices</p>
           </div>
           <div className="stat-card">
-            <h3>2024</h3>
-            <p>Fundado en Enero</p>
+            <h3>5000+</h3>
+            <p>Productos disponibles</p>
           </div>
           <div className="stat-card">
-            <h3>6m+</h3>
-            <p>Para bebés mayores</p>
+            <h3>15</h3>
+            <p>Países de envío</p>
           </div>
           <div className="stat-card">
-            <h3>😊</h3>
-            <p>Mamás satisfechas</p>
+            <h3>98%</h3>
+            <p>Satisfacción del cliente</p>
           </div>
         </section>
 
@@ -78,28 +78,28 @@ export const AboutUsPage = () => {
         <section className="about-team">
           <h2>Nuestro Equipo</h2>
           <p className="team-intro">
-            Un pequeño equipo apasionado que trabaja día a día para satisfacer a las mamás con los mejores productos.
+            Un equipo apasionado por la moda infantil que trabaja día a día para brindarte la mejor experiencia.
           </p>
           <div className="team-grid">
             <div className="team-member">
+              <div className="member-avatar">👨‍💼</div>
+              <h3>Juan Rodríguez</h3>
+              <p>Fundador y CEO</p>
+            </div>
+            <div className="team-member">
               <div className="member-avatar">👩‍💼</div>
-              <h3>Dana Eo Collao</h3>
-              <p>Dueña</p>
+              <h3>María García</h3>
+              <p>Directora de Diseño</p>
             </div>
             <div className="team-member">
               <div className="member-avatar">👨‍💻</div>
-              <h3>Camilo Tapia</h3>
-              <p>Diseñador y Programador</p>
+              <h3>Carlos López</h3>
+              <p>Director Técnico</p>
             </div>
             <div className="team-member">
-              <div className="member-avatar">🎯</div>
-              <h3>Enfoque</h3>
-              <p>Eficiencia y Satisfacción</p>
-            </div>
-            <div className="team-member">
-              <div className="member-avatar">❤️</div>
-              <h3>Pasión</h3>
-              <p>Por lo que hacemos</p>
+              <div className="member-avatar">👩‍🤝‍👨</div>
+              <h3>Equipo de Atención</h3>
+              <p>Servicio al Cliente</p>
             </div>
           </div>
         </section>
@@ -109,13 +109,13 @@ export const AboutUsPage = () => {
           <div className="mission-card">
             <h3>Misión</h3>
             <p>
-              Satisfacer a las mamás ofreciendo productos de calidad (ropa, zapatos, zapatillas y juguetes) para bebés mayores a 6 meses, con eficiencia en nuestros procesos y atención personalizada.
+              Proporcionar ropa infantil de calidad, estilo y confort a precios accesibles, facilitando la compra online para familias de toda Latinoamérica.
             </p>
           </div>
           <div className="vision-card">
             <h3>Visión</h3>
             <p>
-              Ser la opción preferida de las mamás que buscan productos confiables y de calidad para sus bebés, reconocidos por nuestra dedicación y satisfacción del cliente.
+              Ser la plataforma de moda infantil más confiable y preferida en Latinoamérica, reconocida por nuestra calidad, servicio y compromiso con las familias.
             </p>
           </div>
         </section>
