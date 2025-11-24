@@ -173,7 +173,7 @@ class UserServiceTest {
 
         assertTrue(userOpt.isPresent());
         assertEquals(RoleEnum.ADMIN, userOpt.get().getRol());
-        assertEquals("Rol debe ser ADMIN", RoleEnum.ADMIN.getValor(), userOpt.get().getRol().getValor());
+        assertEquals(RoleEnum.ADMIN.getValor(), userOpt.get().getRol().getValor(), "Rol debe ser ADMIN");
     }
 
     /**
