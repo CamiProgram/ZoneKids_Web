@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +35,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /**
      * Obtener todos los usuarios (Solo ADMIN)
@@ -79,7 +83,7 @@ public class UserController {
         User newUser = new User();
         newUser.setNombre(usuarioRequest.getNombre());
         newUser.setEmail(usuarioRequest.getEmail());
-        newUser.setContrasena(usuarioRequest.getContrasena());
+        newUser.setContrasena(passwordEncoder.encode(usuarioRequest.getContrasena()));
 
         // Asignar rol validado
         try {
@@ -109,7 +113,8 @@ public class UserController {
 
         user.setNombre(usuarioRequest.getNombre());
         user.setEmail(usuarioRequest.getEmail());
-        user.setContrasena(usuarioRequest.getContrasena());
+        // Codificar la contraseña con BCrypt
+        user.setContrasena(passwordEncoder.encode(usuarioRequest.getContrasena()));
 
         try {
             RoleEnum rol = RoleEnum.fromString(usuarioRequest.getRol());
@@ -148,9 +153,10 @@ public class UserController {
     @Operation(summary = "Eliminar usuario", description = "Elimina un usuario del sistema")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
-        User user = userService.findUserById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario con ID " + id + " no encontrado"));
-
+        // Verificar que el usuario existe
+        if (userService.findUserById(id).isEmpty()) {
+            throw new ResourceNotFoundException("Usuario con ID " + id + " no encontrado");
+        }
         userService.deleteUserById(id);
         return ResponseEntity.ok(ApiResponse.success("Usuario eliminado exitosamente", null));
     }

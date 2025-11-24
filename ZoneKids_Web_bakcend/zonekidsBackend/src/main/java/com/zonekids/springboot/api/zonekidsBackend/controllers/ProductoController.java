@@ -140,9 +140,13 @@ public class ProductoController {
             Producto updatedProducto = productoServices.saveProduct(producto);
             return ResponseEntity.ok(ApiResponse.success("Producto actualizado exitosamente", convertirADto(updatedProducto)));
 
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("Error al actualizar el producto"));
+                    .body(ApiResponse.error("Error al actualizar el producto: " + e.getMessage()));
         }
     }
 
