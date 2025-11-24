@@ -113,8 +113,11 @@ public class UserController {
 
         user.setNombre(usuarioRequest.getNombre());
         user.setEmail(usuarioRequest.getEmail());
-        // Codificar la contraseña con BCrypt
-        user.setContrasena(passwordEncoder.encode(usuarioRequest.getContrasena()));
+        
+        // Solo actualizar la contraseña si se proporciona (no es null)
+        if (usuarioRequest.getContrasena() != null && !usuarioRequest.getContrasena().isEmpty()) {
+            user.setContrasena(passwordEncoder.encode(usuarioRequest.getContrasena()));
+        }
 
         try {
             RoleEnum rol = RoleEnum.fromString(usuarioRequest.getRol());
