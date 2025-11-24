@@ -23,11 +23,10 @@ public class JwtUtils {
     private long jwtExpiration;
 
     /**
-     * Genera una clave de firma a partir de la cadena secreta (decodificada desde Base64)
+     * Genera una clave de firma a partir de la cadena secreta
      */
     private SecretKey getSigningKey() {
-        byte[] decodedKey = Base64.getDecoder().decode(jwtSecret);
-        return Keys.hmacShaKeyFor(decodedKey);
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
     /**

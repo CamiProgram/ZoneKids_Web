@@ -3,6 +3,7 @@ package com.zonekids.springboot.api.zonekidsBackend.controllers;
 import com.zonekids.springboot.api.zonekidsBackend.dto.ApiResponse;
 import com.zonekids.springboot.api.zonekidsBackend.dto.ProductoRequestDto;
 import com.zonekids.springboot.api.zonekidsBackend.dto.ProductoResponseDto;
+import com.zonekids.springboot.api.zonekidsBackend.dto.ActualizarImagenesRequest;
 import com.zonekids.springboot.api.zonekidsBackend.entities.Producto;
 import com.zonekids.springboot.api.zonekidsBackend.services.ProductoServices;
 import io.swagger.v3.oas.annotations.Operation;
@@ -146,6 +147,50 @@ public class ProductoController {
     }
 
     /**
+     * Actualizar imágenes de un producto (solo ADMIN)
+     * PATCH para cambiar solo las imágenes sin modificar otros campos
+     */
+    @PatchMapping("/{id}/imagenes")
+    @Operation(summary = "Actualizar imágenes del producto", description = "Actualiza las 2-3 imágenes de un producto (Solo ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> actualizarImagenes(@PathVariable Long id, @RequestBody ActualizarImagenesRequest request) {
+        try {
+            Optional<Producto> productoOpt = productoServices.findProductById(id);
+            if (productoOpt.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.error("Producto no encontrado"));
+            }
+
+            // Validar que tenga entre 2 y 3 imágenes
+            if (request.getImagenesUrl() == null || request.getImagenesUrl().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(ApiResponse.error("Debe proporcionar entre 2 y 3 imágenes"));
+            }
+
+            if (request.getImagenesUrl().size() < 2) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(ApiResponse.error("Mínimo 2 imágenes requeridas"));
+            }
+
+            if (request.getImagenesUrl().size() > 3) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(ApiResponse.error("Máximo 3 imágenes permitidas"));
+            }
+
+            Producto producto = productoOpt.get();
+            producto.setImagenesUrl(request.getImagenesUrl());
+
+            Producto updatedProducto = productoServices.saveProduct(producto);
+            
+            return ResponseEntity.ok(ApiResponse.success("Imágenes actualizadas exitosamente", convertirADto(updatedProducto)));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Error al actualizar las imágenes: " + e.getMessage()));
+        }
+    }
+
+    /**
      * Deshabilitar/habilitar un producto (solo ADMIN)
      * PATCH para cambiar el estado sin modificar otros campos
      */
@@ -167,7 +212,6 @@ public class ProductoController {
             }
 
             Producto producto = productoOpt.get();
-            String estadoAnterior = producto.getEstado();
             producto.setEstado(nuevoEstado);
 
             Producto updatedProducto = productoServices.saveProduct(producto);
