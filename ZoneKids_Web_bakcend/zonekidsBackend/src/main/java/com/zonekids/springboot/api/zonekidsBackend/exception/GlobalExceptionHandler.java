@@ -84,6 +84,13 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(ex.getMessage()));
     }
 
+    @ExceptionHandler(org.springframework.web.multipart.support.MissingServletRequestPartException.class)
+    public ResponseEntity<?> handleMissingServletRequestPartException(org.springframework.web.multipart.support.MissingServletRequestPartException ex, WebRequest request) {
+        String error = String.format("La parte requerida del request '%s' no se encontró.", ex.getRequestPartName());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(error));
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
         ex.printStackTrace(); // Log for debugging
