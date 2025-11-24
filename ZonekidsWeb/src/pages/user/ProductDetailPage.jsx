@@ -24,13 +24,22 @@ export const ProductDetailPage = () => {
                 setLoading(true);
                 setError(null);
                 const data = await productService.getById(id);
+                
+                // Validar que el producto esté activo
+                if (data.estado !== 'activo') {
+                    setError('Este producto no está disponible.');
+                    setProduct(null);
+                    return;
+                }
+                
                 setProduct(data);
                 setCurrentImageIndex(0); // Resetear índice al cambiar producto
 
-                // Cargar productos similares
+                // Cargar productos similares (solo activos)
                 setLoadingSimilar(true);
                 const allProducts = await productService.getAll();
-                const similar = getSimilarProducts(data, allProducts);
+                const activeProducts = allProducts.filter(p => p.estado === 'activo');
+                const similar = getSimilarProducts(data, activeProducts);
                 setSimilarProducts(similar);
                 setLoadingSimilar(false);
             } catch (err) {

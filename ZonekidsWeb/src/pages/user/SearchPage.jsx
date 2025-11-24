@@ -20,9 +20,9 @@ export const SearchPage = () => {
       try {
         setLoading(true);
         const response = await axios.get('http://localhost:8080/api/v1/productos');
-        // Filtra solo productos válidos
+        // Filtra solo productos válidos y activos
         const validProducts = (response.data || []).filter(product => 
-          product && product.id && product.nombre && product.precio !== undefined
+          product && product.id && product.nombre && product.precio !== undefined && product.estado === 'activo'
         );
         setProducts(validProducts);
       } catch (err) {

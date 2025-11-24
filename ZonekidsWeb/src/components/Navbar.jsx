@@ -136,10 +136,6 @@ export const Navbar = () => {
           )}
         </form>
 
-        <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
-          ☰
-        </button>
-
         {/* Saludo + Iconos a la derecha */}
         <div className="navbar-right">
           <div className="navbar-greeting">
@@ -178,6 +174,10 @@ export const Navbar = () => {
             🛒
           </a> 
         </div>
+
+        <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
+          ☰
+        </button>
         </div>
       </div>
 

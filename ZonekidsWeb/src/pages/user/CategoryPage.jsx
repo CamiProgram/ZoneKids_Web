@@ -17,7 +17,8 @@ export const CategoryPage = () => {
         setLoading(true);
         setError(null);
         const response = await axios.get('http://localhost:8080/api/v1/productos');
-        const filtered = response.data.filter(p => p.categoria === categoryName);
+        // Filtrar por categoría y que estén activos
+        const filtered = response.data.filter(p => p.categoria === categoryName && p.estado === 'activo');
         setProducts(filtered);
       } catch (err) {
         console.error("Error fetching products:", err);

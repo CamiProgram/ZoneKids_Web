@@ -17,10 +17,12 @@ export const HomePage = () => {
         setLoading(true);
         setError(null);
         const data = await productService.getAll();
-        setProducts(data);
+        // Filtrar solo productos activos
+        const activeProducts = data.filter(p => p.estado === 'activo');
+        setProducts(activeProducts);
 
-        // Extrae categorías únicas de los productos
-        const uniqueCategories = [...new Set(data.map(p => p.categoria).filter(Boolean))];
+        // Extrae categorías únicas de los productos activos
+        const uniqueCategories = [...new Set(activeProducts.map(p => p.categoria).filter(Boolean))];
         setCategories(uniqueCategories);
       } catch (err) {
         console.error('Error fetching products:', err);

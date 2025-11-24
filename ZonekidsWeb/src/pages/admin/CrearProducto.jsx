@@ -10,21 +10,41 @@ export const CrearProducto = () => {
     const [stock, setStock] = useState('');
     const [categoria, setCategoria] = useState('');
     const [estado, setEstado] = useState('activo');
-    const [imagenes, setImagenes] = useState([]);
-    const [preview, setPreview] = useState([]);
+    const [imagenes, setImagenes] = useState([null, null, null]);
+    const [previews, setPreviews] = useState(['', '', '']);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
     const [precioOriginal, setPrecioOriginal] = useState('');
     const [esNuevo, setEsNuevo] = useState(false);
     const [enOferta, setEnOferta] = useState(false);
-    const [imagen, setImagen] = useState(null);
     const navigate = useNavigate();
 
-    const handleImagenChange = (e) => {
+    const handleImagenChange = (e, index) => {
         if (e.target.files && e.target.files[0]) {
-            setImagen(e.target.files[0]);
+            const file = e.target.files[0];
+            const newImagenes = [...imagenes];
+            newImagenes[index] = file;
+            setImagenes(newImagenes);
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const newPreviews = [...previews];
+                newPreviews[index] = reader.result;
+                setPreviews(newPreviews);
+            };
+            reader.readAsDataURL(file);
         }
+    };
+
+    const removeImagen = (index) => {
+        const newImagenes = [...imagenes];
+        newImagenes[index] = null;
+        setImagenes(newImagenes);
+
+        const newPreviews = [...previews];
+        newPreviews[index] = '';
+        setPreviews(newPreviews);
     };
 
     // Prevenir entrada de decimales en precio
@@ -46,6 +66,12 @@ export const CrearProducto = () => {
         // Validar campos
         if (!nombre || !precio || !stock || !categoria) {
             setError('Por favor completa todos los campos obligatorios.');
+            return;
+        }
+
+        // Validar que se hayan subido 3 imágenes
+        if (imagenes.filter(img => img !== null).length !== 3) {
+            setError('Debes subir exactamente 3 imágenes.');
             return;
         }
 
@@ -82,15 +108,19 @@ export const CrearProducto = () => {
             return;
         }
 
-        if (!imagen) {
-            setError('Debes seleccionar una imagen.');
-            return;
-        }
-
         setLoading(true);
 
         try {
-            // Preparar datos del producto como JSON puro
+            // Paso 1: Subir imágenes
+            const imagenesSubidas = await productService.uploadImages(imagenes);
+            
+            if (!imagenesSubidas || imagenesSubidas.length === 0) {
+                setError('Error al subir las imágenes. Intenta nuevamente.');
+                setLoading(false);
+                return;
+            }
+
+            // Paso 2: Crear el producto sin imágenes
             const productData = {
                 nombre,
                 descripcion,
@@ -101,12 +131,15 @@ export const CrearProducto = () => {
                 precioOriginal: precioOriginal ? parseFloat(precioOriginal) : null,
                 esNuevo,
                 enOferta,
-                imagenesUrl: [], // Se agregará la imagen del servidor
+                imagenesUrl: [],
             };
 
-            // Crear el producto (sin imagen en esta solicitud)
-            // Si el backend requiere imagen, necesitarías endpoint separado
-            await productService.create(productData);
+            const productoCreado = await productService.create(productData);
+
+            // Paso 3: Actualizar imágenes del producto creado
+            if (productoCreado && productoCreado.id) {
+                await productService.updateImages(productoCreado.id, imagenesSubidas);
+            }
 
             alert('¡Producto creado exitosamente!');
             navigate('/admin/products');
@@ -210,14 +243,77 @@ export const CrearProducto = () => {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="imagen">Imagen del Producto *</label>
-                    <input
-                        type="file"
-                        id="imagen"
-                        onChange={handleImagenChange}
-                        accept="image/*"
-                        required
-                    />
+                    <label>Imágenes del Producto * (Sube exactamente 3 imágenes)</label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginTop: '10px' }}>
+                        {[0, 1, 2].map((index) => (
+                            <div key={index} style={{
+                                border: '2px dashed #ccc',
+                                borderRadius: '8px',
+                                padding: '15px',
+                                textAlign: 'center',
+                                backgroundColor: previews[index] ? '#f0f0f0' : '#fafafa'
+                            }}>
+                                {previews[index] ? (
+                                    <div>
+                                        <img
+                                            src={previews[index]}
+                                            alt={`Preview ${index + 1}`}
+                                            style={{
+                                                maxWidth: '100%',
+                                                maxHeight: '150px',
+                                                marginBottom: '10px',
+                                                borderRadius: '4px'
+                                            }}
+                                        />
+                                        <p style={{ margin: '8px 0', fontSize: '12px', color: '#666' }}>
+                                            {imagenes[index]?.name}
+                                        </p>
+                                        <button
+                                            type="button"
+                                            onClick={() => removeImagen(index)}
+                                            style={{
+                                                padding: '6px 12px',
+                                                backgroundColor: '#dc3545',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '4px',
+                                                cursor: 'pointer',
+                                                fontSize: '12px'
+                                            }}
+                                        >
+                                            ✕ Eliminar
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <p style={{ margin: '20px 0', color: '#999', fontSize: '14px' }}>📸 Imagen {index + 1}</p>
+                                        <input
+                                            type="file"
+                                            id={`imagen-crear-${index}`}
+                                            onChange={(e) => handleImagenChange(e, index)}
+                                            accept="image/*"
+                                            style={{ display: 'none' }}
+                                        />
+                                        <label htmlFor={`imagen-crear-${index}`} style={{
+                                            display: 'inline-block',
+                                            padding: '10px 20px',
+                                            backgroundColor: '#007bff',
+                                            color: 'white',
+                                            borderRadius: '4px',
+                                            cursor: 'pointer',
+                                            fontSize: '14px',
+                                            fontWeight: '500'
+                                        }}>
+                                            📁 Seleccionar Imagen
+                                        </label>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                    <p style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+                        Imágenes subidas: {imagenes.filter(img => img !== null).length} / 3
+                    </p>
                 </div>
 
                 <div className="form-group-inline">

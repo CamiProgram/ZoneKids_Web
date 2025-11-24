@@ -200,7 +200,15 @@
 .navbar-promo h1 { margin: 0; font-size: 1.8em; }
 
 /* --- ESTILOS RESPONSIVOS --- */
-.mobile-menu-toggle { display: none; font-size: 28px; background: none; border: none; cursor: pointer; }
+.mobile-menu-toggle { 
+  display: none; 
+  font-size: 28px; 
+  background: none; 
+  border: none; 
+  cursor: pointer;
+  padding: 0;
+  margin-left: 12px;
+}
 .mobile-menu { display: none; }
 .mobile-search { display: none; }
 

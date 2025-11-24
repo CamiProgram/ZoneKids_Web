@@ -10,6 +10,7 @@ export const AdminProducts = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [togglingStatus, setTogglingStatus] = useState(null);
 
   const fetchProducts = async () => {
     try {
@@ -38,6 +39,30 @@ export const AdminProducts = () => {
         console.error('Error deleting product:', err);
         alert('Error al eliminar el producto.');
       }
+    }
+  };
+
+  const handleToggleStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === 'activo' ? 'inactivo' : 'activo';
+    
+    try {
+      setTogglingStatus(id);
+      await productService.updateStatus(id, newStatus);
+      
+      // Actualizar el producto en la lista inmediatamente
+      const updatedProducts = products.map(p => 
+        p.id === id ? { ...p, estado: newStatus } : p
+      );
+      setProducts(updatedProducts);
+      
+      // Pequeño delay para asegurar actualización visual
+      setTimeout(() => {
+        setTogglingStatus(null);
+      }, 300);
+    } catch (err) {
+      console.error('Error toggling product status:', err);
+      alert(`Error al cambiar el estado del producto: ${err.message || 'Intenta de nuevo'}`);
+      setTogglingStatus(null);
     }
   };
 
@@ -117,7 +142,14 @@ export const AdminProducts = () => {
                   </td>
                   <td data-label="Categoría">{p.categoria || 'N/A'}</td>
                   <td data-label="Estado">
-                    <span className={`status-badge ${p.estado}`}>{p.estado}</span>
+                    <span 
+                      className={`status-badge ${p.estado}`}
+                      onClick={() => handleToggleStatus(p.id, p.estado)}
+                      style={{ cursor: 'pointer', opacity: togglingStatus === p.id ? 0.6 : 1 }}
+                      title="Click para cambiar estado"
+                    >
+                      {togglingStatus === p.id ? '⏳ Cambiando...' : p.estado}
+                    </span>
                   </td>
                   <td data-label="Acciones">
                     <Link to={`/admin/products/editar/${p.id}`} className="btn-edit">
