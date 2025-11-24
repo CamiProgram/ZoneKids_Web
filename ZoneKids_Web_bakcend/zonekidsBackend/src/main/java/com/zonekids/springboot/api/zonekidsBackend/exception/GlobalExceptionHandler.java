@@ -84,6 +84,13 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(ex.getMessage()));
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        ex.printStackTrace(); // Log for debugging
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error("Argumento inválido: " + ex.getMessage()));
+    }
+
     /**
      * Maneja todas las excepciones no específicas
      */

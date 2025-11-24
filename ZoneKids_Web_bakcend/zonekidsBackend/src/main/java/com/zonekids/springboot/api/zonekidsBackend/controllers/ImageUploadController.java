@@ -111,6 +111,8 @@ public class ImageUploadController {
 
             java.util.List<Map<String, Object>> uploadedFiles = new java.util.ArrayList<>();
 
+                    java.util.List<Map<String, Object>> errors = new java.util.ArrayList<>();
+
             for (MultipartFile file : files) {
                 try {
                     if (!file.isEmpty() && isImageFile(file.getContentType())) {
@@ -122,20 +124,25 @@ public class ImageUploadController {
                         uploadedFiles.add(fileInfo);
                     }
                 } catch (Exception e) {
-                    // Continuar con el siguiente archivo si hay error en uno
+                    Map<String, Object> errorInfo = new HashMap<>();
+                    errorInfo.put("fileName", file.getOriginalFilename());
+                    errorInfo.put("error", e.getMessage());
+                    errors.add(errorInfo);
                 }
             }
 
             response.put("uploadedFiles", uploadedFiles);
+            response.put("errors", errors);
             response.put("uploadedCount", uploadedFiles.size());
-            response.put("message", "Imágenes subidas exitosamente");
+            response.put("message", "Proceso de subida de imágenes completado.");
 
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             Map<String, Object> error = new HashMap<>();
-            error.put("error", "Error al procesar las imágenes: " + e.getMessage());
-            error.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            error.put("success", false);
+            error.put("message", "Error al procesar las imágenes: " + e.getMessage());
+            error.put("timestamp", java.time.LocalDateTime.now());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
