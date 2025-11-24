@@ -1,72 +1,105 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios'; 
+import { authService } from '../services/authService';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  // Inicializar usuario desde localStorage si existe
   const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem('authUser');
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  useEffect(() => {
-    const createAdminUser = async () => {
-      try {
-        // Intenta crear el usuario admin si no existe
-        const adminData = {
-          nombre: "Administrador",
-          email: "admin@zonekids.com",
-          contrasena: "admin123",
-          rol: "super-admin",
-          estado: "activo"
-        };
-        
-        await axios.post('http://localhost:8080/api/auth/register', adminData);
-      } catch (error) {
-        // Si el error es porque el usuario ya existe, es normal y podemos ignorarlo
-        console.log("Admin ya existe o error al crear:", error.message);
-      }
-    };
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-    createAdminUser();
-  }, []);
-
-  const login = async (email, password) => {
+  /**
+   * Login con email y contraseña
+   * Guarda token y usuario en localStorage
+   */
+  const login = async (email, contrasena) => {
     try {
-      // La llamada al backend ya no requiere el código de seguridad
-      const response = await axios.post('http://localhost:8080/api/auth/login', { email, contrasena: password }); 
-      if (response.data) {
-        const userData = response.data;
-        if (userData.estado === 'inactivo') {
-          throw new Error("Tu cuenta ha sido deshabilitada."); 
-        }
-        setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData)); 
-        return userData;
+      setLoading(true);
+      setError(null);
+      const userData = await authService.login(email, contrasena);
+      
+      // Verificar que la cuenta no esté deshabilitada
+      if (userData.estado === 'inactivo') {
+        throw new Error('Tu cuenta ha sido deshabilitada.');
       }
-    } catch (error) {
-      console.error("Error en el login:", error.response ? error.response.data : error.message);
-      if (error.message === "Tu cuenta ha sido deshabilitada.") {
-        throw new Error("Tu cuenta ha sido deshabilitada."); 
-      }
-      // Re-lanza el mensaje del backend si existe para mostrarlo en el formulario
-      throw new Error(error.response?.data || "Credenciales incorrectas.");
+      
+      setUser(userData);
+      return userData;
+    } catch (err) {
+      const errorMessage = typeof err === 'string' ? err : err.message || 'Error al iniciar sesión';
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
     }
-    return null; 
   };
 
+  /**
+   * Logout - limpia estado y localStorage
+   */
   const logout = () => {
+    authService.logout();
     setUser(null);
-    localStorage.removeItem('user'); 
+    setError(null);
+  };
+
+  /**
+   * Verificar si el usuario tiene un rol específico
+   * @param {string|string[]} roles - Rol o array de roles a verificar
+   * @returns {boolean}
+   */
+  const hasRole = (roles) => {
+    if (!user) return false;
+    const rolesArray = Array.isArray(roles) ? roles : [roles];
+    return rolesArray.includes(user.rol);
+  };
+
+  /**
+   * Verificar si el usuario es administrador
+   */
+  const isAdmin = () => {
+    return hasRole('ADMIN');
+  };
+
+  /**
+   * Dev only: Cambiar rol del usuario localmente
+   */
+  const setUserRole = (newRole) => {
+    if (user) {
+      const updatedUser = { ...user, rol: newRole };
+      setUser(updatedUser);
+      localStorage.setItem('authUser', JSON.stringify(updatedUser));
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        loading,
+        error,
+        hasRole,
+        isAdmin,
+        isAuthenticated: !!user,
+        setUserRole,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth debe ser usado dentro de AuthProvider');
+  }
+  return context;
 };

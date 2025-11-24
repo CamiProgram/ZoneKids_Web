@@ -1,9 +1,18 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+<<<<<<< HEAD
+=======
+import { useAuth } from './AuthContext';
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
+<<<<<<< HEAD
   const [cart, setCart] = useState([]);
+=======
+  const { user } = useAuth();
+  const [cartItems, setCartItems] = useState([]);
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartTimestamp, setCartTimestamp] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState(null);
@@ -86,6 +95,25 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  // Cargar carrito al cambiar de usuario
+  useEffect(() => {
+    if (user) {
+      const savedCart = localStorage.getItem(`cart_${user.id}`);
+      setCartItems(savedCart ? JSON.parse(savedCart) : []);
+    } else {
+      setCartItems([]);
+    }
+  }, [user?.id]);
+
+  // Guardar carrito cuando cambia
+  useEffect(() => {
+    if (user && cartItems.length > 0) {
+      localStorage.setItem(`cart_${user.id}`, JSON.stringify(cartItems));
+    } else if (user) {
+      localStorage.removeItem(`cart_${user.id}`);
+    }
+  }, [cartItems, user?.id]);
+
   const addToCart = (product) => {
     setCart(prevItems => {
       const existingItem = prevItems.find(item => item.id === product.id);
@@ -96,6 +124,7 @@ export const CartProvider = ({ children }) => {
       }
       return [...prevItems, { ...product, cantidad: 1 }];
     });
+    // Abre el modal cuando se añade un producto
     setIsCartOpen(true);
   };
 
@@ -125,6 +154,28 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+<<<<<<< HEAD
+=======
+  const updateQuantity = (productId, newQuantity) => {
+    if (newQuantity < 1) {
+      removeFromCart(productId);
+      return;
+    }
+    setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.id === productId ? { ...item, cantidad: newQuantity } : item
+      )
+    );
+  };
+
+  const getTotalPrice = () => {
+    return cartItems.reduce((total, item) => {
+      return total + (item.precio * (item.cantidad || 1));
+    }, 0);
+  };
+
+  const openCart = () => setIsCartOpen(true);
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
   const closeCart = () => setIsCartOpen(false);
   
   const clearCart = () => {
@@ -137,6 +188,7 @@ export const CartProvider = ({ children }) => {
 
   return (
     <CartContext.Provider value={{ 
+<<<<<<< HEAD
       cart, 
       addToCart, 
       removeFromCart, 
@@ -147,6 +199,17 @@ export const CartProvider = ({ children }) => {
       clearCart,
       timeRemaining,
       cartTimestamp
+=======
+      cartItems, 
+      setCartItems,
+      addToCart, 
+      removeFromCart,
+      updateQuantity,
+      getTotalPrice,
+      isCartOpen, 
+      openCart, 
+      closeCart 
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
     }}>
       {children}
     </CartContext.Provider>

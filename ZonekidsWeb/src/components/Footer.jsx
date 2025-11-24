@@ -1,5 +1,9 @@
 import React from 'react';
+<<<<<<< HEAD
 import { Link } from 'react-router-dom';
+=======
+import { NavLink } from 'react-router-dom';
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
 import '../styles/components/footer.css';
 
 export const Footer = () => {
@@ -9,24 +13,29 @@ export const Footer = () => {
         <div className="footer-section">
           <h3>SOBRE NOSOTROS</h3>
           <ul>
+<<<<<<< HEAD
             <li><a href="#">Quiénes somos</a></li>
             <li><Link to="/blogs">Blogs</Link></li>
+=======
+            <li><NavLink to="/sobre-nosotros">Quiénes somos</NavLink></li>
+            <li><a href="#blogs">Blogs</a></li>
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
           </ul>
         </div>
         <div className="footer-section">
           <h3>AYUDA & APOYO</h3>
           <ul>
-            <li><a href="#">Información de envío</a></li>
-            <li><a href="#">Devolución</a></li>
-            <li><a href="#">Reembolsos</a></li>
-            <li><a href="#">Guía de productos</a></li>
+            <li><NavLink to="/envios">Información de envío</NavLink></li>
+            <li><NavLink to="/devoluciones">Devolución</NavLink></li>
+            <li><NavLink to="/reembolsos">Reembolsos</NavLink></li>
+            <li><NavLink to="/guia-productos">Guía de productos</NavLink></li>
           </ul>
         </div>
         <div className="footer-section">
           <h3>SERVICIO AL CLIENTE</h3>
           <ul>
-            <li><a href="#">Contáctenos</a></li>
-            <li><a href="#">Puntos</a></li>
+            <li><NavLink to="/contacto">Contáctenos</NavLink></li>
+            <li><NavLink to="/puntos">Puntos</NavLink></li>
           </ul>
         </div>
         <div className="footer-section">

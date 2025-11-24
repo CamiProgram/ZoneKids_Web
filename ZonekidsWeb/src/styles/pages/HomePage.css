@@ -115,7 +115,7 @@
 .products-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 24px;
+  gap: 16px;
 }
 
 .loading-message, .error-message {

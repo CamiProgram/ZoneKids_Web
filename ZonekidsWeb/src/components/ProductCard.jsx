@@ -1,21 +1,53 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
 import '../styles/components/productCard.css';
 
 export const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
+  const [isAdded, setIsAdded] = useState(false);
   
+<<<<<<< HEAD
   // Nuevos campos del backend
   const { id, nombre, precio, imagenes, stock, esNuevo, enOferta, precioOriginal } = product;
   const tieneDescuento = precioOriginal && precioOriginal > precio;
   const imagenPrincipal = imagenes && imagenes.length > 0 ? imagenes[0] : "/assets/Zonekids_logo_web.webp";
+=======
+  const { 
+    id, 
+    nombre, 
+    precio, 
+    imagenesUrl,
+    stock = 0,
+    esNuevo = false,
+    enOferta = false,
+    precio_base 
+  } = product;
+  
+  // Obtener primera imagen del array o usar logo por defecto
+  const imagenPrincipal = Array.isArray(imagenesUrl) && imagenesUrl.length > 0 
+    ? imagenesUrl[0] 
+    : '/public/Zonekids_logo_web.webp';
+
+  const tieneDescuento = precio_base && precio_base > precio;
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
 
   const cardClasses = `
     product-card 
     ${enOferta ? 'product-card--oferta' : ''}
     ${stock <= 10 ? 'product-card--low-stock' : ''}
   `;
+
+  const handleAddToCart = () => {
+    addToCart({
+      ...product,
+      imagenesUrl: Array.isArray(imagenesUrl) ? imagenesUrl : [imagenesUrl]
+    });
+    
+    // Mostrar feedback visual
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 2000);
+  };
 
   return (
     <div className={cardClasses.trim()}>
@@ -37,14 +69,20 @@ export const ProductCard = ({ product }) => {
         <div className="product-price-wrapper">
           {enOferta && precioOriginal && precioOriginal > 0 && (
             <span className="product-price-original">
+<<<<<<< HEAD
               ${(precioOriginal || 0).toLocaleString()}
+=======
+              ${(precio_base || 0).toLocaleString('es-CO')}
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
             </span>
           )}
-          <span className="product-price">${(precio || 0).toLocaleString()}</span>
+          <span className="product-price">
+            ${(precio || 0).toLocaleString('es-CO')}
+          </span>
         </div>
 
-        <button onClick={() => addToCart(product)} className="add-to-cart-button">
-          Añadir al Carrito
+        <button onClick={handleAddToCart} className={`add-to-cart-button ${isAdded ? 'added' : ''}`}>
+          {isAdded ? '✓ Añadido' : 'Añadir al Carrito'}
         </button>
       </div>
     </div>

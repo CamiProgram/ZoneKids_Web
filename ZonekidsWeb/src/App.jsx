@@ -8,60 +8,86 @@ import { HomePage } from './pages/user/HomePage';
 import { LoginPage } from './pages/user/LoginPage';
 import { RegisterPage } from './pages/user/RegisterPage';
 import { ProductDetailPage } from './pages/user/ProductDetailPage';
-import { CategoryPage } from './pages/user/CategoryPage'; 
+import { CategoryPage } from './pages/user/CategoryPage';
 import { SearchPage } from './pages/user/SearchPage';
 import { CheckoutPage } from './pages/user/CheckoutPage';
+<<<<<<< HEAD
 import { BlogsPage } from './pages/user/BlogsPage';
+=======
+import { PurchaseHistoryPage } from './pages/user/PurchaseHistoryPage';
+import { OrderDetailPage } from './pages/user/OrderDetailPage';
+import { ContactPage } from './pages/user/ContactPage';
+import { AboutUsPage } from './pages/user/AboutUsPage';
+import { ShippingPage } from './pages/user/ShippingPage';
+import { ReturnsPage } from './pages/user/ReturnsPage';
+import { RefundsPage } from './pages/user/RefundsPage';
+import { ProductGuidePage } from './pages/user/ProductGuidePage';
+import { PointsPage } from './pages/user/PointsPage';
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
 
 // Páginas de Admin
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminProducts } from './pages/admin/AdminProducts';
 import { AdminUsers } from './pages/admin/AdminUsers';
-import { CrearProducto } from './pages/admin/CrearProducto';   // <-- Importar
-import { EditarProducto } from './pages/admin/EditarProducto'; // <-- Importar
-import { CrearUsuario } from './pages/admin/CrearUsuario';     // <-- Importar
-import { EditarUsuario } from './pages/admin/EditarUsuario';   // <-- Importar
+import { CrearProducto } from './pages/admin/CrearProducto';
+import { EditarProducto } from './pages/admin/EditarProducto';
+import { CrearUsuario } from './pages/admin/CrearUsuario';
+import { EditarUsuario } from './pages/admin/EditarUsuario';
 
 function App() {
   return (
     <Routes>
-      
       {/* --- RUTAS PÚBLICAS --- */}
       <Route path="/" element={<PublicLayout />}>
         <Route index element={<HomePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
+<<<<<<< HEAD
         {/* Cambié :categoryName a :slug para ser más genérico */}
         <Route path="categoria/:slug" element={<CategoryPage />} /> 
         <Route path="producto/:id" element={<ProductDetailPage />} /> 
         <Route path="buscar" element={<SearchPage />} /> {/* Cambié 'search' a 'buscar' */}
         <Route path="checkout" element={<CheckoutPage />} />
         <Route path="blogs" element={<BlogsPage />} />
+=======
+        <Route path="categoria/:slug" element={<CategoryPage />} />
+        <Route path="producto/:id" element={<ProductDetailPage />} />
+        <Route path="buscar" element={<SearchPage />} />
+        <Route path="checkout" element={<CheckoutPage />} />
+        <Route path="historial" element={<PurchaseHistoryPage />} />
+        <Route path="orden/:id" element={<OrderDetailPage />} />
+        <Route path="contacto" element={<ContactPage />} />
+        <Route path="sobre-nosotros" element={<AboutUsPage />} />
+        <Route path="envios" element={<ShippingPage />} />
+        <Route path="devoluciones" element={<ReturnsPage />} />
+        <Route path="reembolsos" element={<RefundsPage />} />
+        <Route path="guia-productos" element={<ProductGuidePage />} />
+        <Route path="puntos" element={<PointsPage />} />
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
       </Route>
 
       {/* --- RUTAS DE ADMIN (Protegidas) --- */}
       <Route
         path="/admin"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredRoles="ADMIN">
             <AdminLayout />
           </ProtectedRoute>
         }
       >
-        <Route index element={<AdminDashboard />} /> 
+        <Route index element={<AdminDashboard />} />
         <Route path="dashboard" element={<AdminDashboard />} />
-        
+
         {/* Rutas CRUD Productos */}
         <Route path="products" element={<AdminProducts />} />
-        <Route path="products/crear" element={<CrearProducto />} />   {/* <-- AÑADIDA */}
-        <Route path="products/editar/:id" element={<EditarProducto />} /> {/* <-- AÑADIDA */}
-        
+        <Route path="products/crear" element={<CrearProducto />} />
+        <Route path="products/editar/:id" element={<EditarProducto />} />
+
         {/* Rutas CRUD Usuarios */}
         <Route path="users" element={<AdminUsers />} />
-        <Route path="users/crear" element={<CrearUsuario />} />         {/* <-- AÑADIDA */}
-        <Route path="users/editar/:id" element={<EditarUsuario />} />   {/* <-- AÑADIDA */}
+        <Route path="users/crear" element={<CrearUsuario />} />
+        <Route path="users/editar/:id" element={<EditarUsuario />} />
       </Route>
-
     </Routes>
   );
 }

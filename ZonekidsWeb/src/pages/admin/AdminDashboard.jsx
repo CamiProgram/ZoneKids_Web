@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+<<<<<<< HEAD
 import axios from 'axios';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import '../../styles/pages/adminDashboard.css';
@@ -8,22 +9,51 @@ export const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
+=======
+import { LoadingSpinner } from '../../components/LoadingSpinner';
+import { productService } from '../../services/productService';
+import { userService } from '../../services/userService';
+import '../../styles/pages/adminDashboard.css';
+
+export const AdminDashboard = () => {
+  const [stats, setStats] = useState({
+    totalProducts: 0,
+    totalUsers: 0,
+    lowStockProducts: 0,
+    activeProducts: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+<<<<<<< HEAD
         // Fetch stats
         const [productsRes, usersRes] = await Promise.all([
           axios.get('http://localhost:8080/api/v1/productos'),
           axios.get('http://localhost:8080/api/users')
+=======
+        setLoading(true);
+        setError(null);
+        
+        const [products, users] = await Promise.all([
+          productService.getAll(),
+          userService.getAll(),
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
         ]);
-        const products = productsRes.data;
-        const users = usersRes.data;
+
+        const lowStockCount = products.filter(p => p.stock < 10).length;
+        const activeCount = products.filter(p => p.estado === 'activo').length;
+
         setStats({
           totalProducts: products.length,
           totalUsers: users.length,
-          lowStockProducts: products.filter(p => p.stock < 10).length
+          lowStockProducts: lowStockCount,
+          activeProducts: activeCount,
         });
+<<<<<<< HEAD
 
         // Fetch orders - simulado por ahora
         // En producción, obtener de: http://localhost:8080/api/v1/ordenes
@@ -59,11 +89,21 @@ export const AdminDashboard = () => {
         setOrders(mockOrders);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
+=======
+      } catch (err) {
+        console.error('Error fetching dashboard stats:', err);
+        setError('Error al cargar las estadísticas del dashboard.');
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
       } finally {
         setLoading(false);
       }
     };
+<<<<<<< HEAD
     fetchData();
+=======
+
+    fetchStats();
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
   }, []);
 
   const getStatusColor = (status) => {
@@ -103,11 +143,28 @@ export const AdminDashboard = () => {
   return (
     <div className="admin-dashboard-container">
       <h2>Dashboard Administrativo</h2>
+<<<<<<< HEAD
+=======
+      {error && <div className="error-message">{error}</div>}
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
       
       <div className="stats-grid">
-        <div className="stat-card"><h3>Total de Productos</h3><p>{stats.totalProducts}</p></div>
-        <div className="stat-card"><h3>Total de Usuarios</h3><p>{stats.totalUsers}</p></div>
-        <div className="stat-card low-stock"><h3>Productos con Stock Bajo (&lt;10)</h3><p>{stats.lowStockProducts}</p></div>
+        <div className="stat-card">
+          <h3>Total de Productos</h3>
+          <p>{stats.totalProducts}</p>
+        </div>
+        <div className="stat-card">
+          <h3>Productos Activos</h3>
+          <p>{stats.activeProducts}</p>
+        </div>
+        <div className="stat-card low-stock">
+          <h3>Stock Bajo (&lt;10)</h3>
+          <p>{stats.lowStockProducts}</p>
+        </div>
+        <div className="stat-card">
+          <h3>Total de Usuarios</h3>
+          <p>{stats.totalUsers}</p>
+        </div>
       </div>
 
       {/* --- SECCIÓN DE COMPRAS REALIZADAS --- */}

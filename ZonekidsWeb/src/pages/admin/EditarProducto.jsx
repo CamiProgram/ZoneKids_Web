@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import '../../styles/pages/editarProducto.css'; 
 import { LoadingSpinner } from '../../components/LoadingSpinner';
+import { productService } from '../../services/productService';
+import '../../styles/pages/editarProducto.css';
 
 export const EditarProducto = () => {
-    const { id } = useParams(); 
+    const { id } = useParams();
     const [nombre, setNombre] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [precio, setPrecio] = useState('');
     const [stock, setStock] = useState('');
     const [categoria, setCategoria] = useState('');
     const [estado, setEstado] = useState('activo');
+<<<<<<< HEAD
     const [imagenes, setImagenes] = useState([]);
     const [preview, setPreview] = useState([]);
     const [imagenesActuales, setImagenesActuales] = useState([]);
@@ -20,31 +21,54 @@ export const EditarProducto = () => {
     const [loading, setLoading] = useState(true);
     const [uploadingImages, setUploadingImages] = useState(false);
     const navigate = useNavigate();
+=======
+    const [imagen, setImagen] = useState(null);
+    const [imagenesActuales, setImagenesActuales] = useState([]);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(true);
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
     const [precioOriginal, setPrecioOriginal] = useState('');
     const [esNuevo, setEsNuevo] = useState(false);
     const [enOferta, setEnOferta] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
+<<<<<<< HEAD
                 const response = await axios.get(`http://localhost:8080/api/v1/productos/${id}`);
                 const product = response.data;
+=======
+                setLoading(true);
+                setError(null);
+                const product = await productService.getById(id);
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
                 setNombre(product.nombre);
                 setDescripcion(product.descripcion || '');
                 setPrecio(product.precio.toString());
                 setStock(product.stock.toString());
                 setCategoria(product.categoria || '');
                 setEstado(product.estado);
+<<<<<<< HEAD
                 setImagenesActuales(product.imagenes || []);
+=======
+                setImagenesActuales(product.imagenesUrl || []);
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
                 setPrecioOriginal(product.precioOriginal ? product.precioOriginal.toString() : '');
                 setEsNuevo(product.esNuevo || false);
                 setEnOferta(product.enOferta || false);
-            } catch (err) { setError("No se pudo cargar el producto."); } 
-            finally { setLoading(false); }
+            } catch (err) {
+                console.error('Error fetching product:', err);
+                setError('No se pudo cargar el producto.');
+            } finally {
+                setLoading(false);
+            }
         };
+
         fetchProduct();
     }, [id]);
 
+<<<<<<< HEAD
     const handleImagenesChange = (e) => {
         const files = Array.from(e.target.files || []);
         
@@ -108,11 +132,30 @@ export const EditarProducto = () => {
         } finally {
             setUploadingImages(false);
         }
+=======
+    const handleImagenChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setImagen(e.target.files[0]);
+        }
+    };
+
+    // Prevenir entrada de decimales en precio
+    const handlePrecioChange = (e) => {
+        const valor = e.target.value.replace(/[.,]/g, ''); // Eliminar puntos y comas
+        setPrecio(valor);
+    };
+
+    // Prevenir entrada de decimales en precio original
+    const handlePrecioOriginalChange = (e) => {
+        const valor = e.target.value.replace(/[.,]/g, ''); // Eliminar puntos y comas
+        setPrecioOriginal(valor);
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+<<<<<<< HEAD
         setSuccess('');
         setLoading(true);
 
@@ -139,6 +182,52 @@ export const EditarProducto = () => {
                 allImageUrls = allImageUrls.concat(newUrls);
             }
 
+=======
+
+        // Validar campos
+        if (!nombre || !precio || !stock || !categoria) {
+            setError('Por favor completa todos los campos obligatorios.');
+            return;
+        }
+
+        // Validar que precio no tenga decimales
+        if (precio.includes('.') || precio.includes(',')) {
+            setError('El precio no puede tener decimales. Solo se permiten números enteros.');
+            return;
+        }
+
+        // Validar que precio sea un número entero positivo
+        const precioNum = parseFloat(precio);
+        if (!Number.isInteger(precioNum) || precioNum <= 0) {
+            setError('El precio debe ser un número entero positivo.');
+            return;
+        }
+
+        // Validar que precioOriginal no tenga decimales si está ingresado
+        if (precioOriginal) {
+            if (precioOriginal.includes('.') || precioOriginal.includes(',')) {
+                setError('El precio original no puede tener decimales. Solo se permiten números enteros.');
+                return;
+            }
+
+            const precioOriginalNum = parseFloat(precioOriginal);
+            if (!Number.isInteger(precioOriginalNum) || precioOriginalNum <= 0) {
+                setError('El precio original debe ser un número entero positivo.');
+                return;
+            }
+        }
+
+        // Validar que stock sea un número entero
+        if (!Number.isInteger(parseInt(stock)) || parseInt(stock) < 0) {
+            setError('El stock debe ser un número entero sin decimales.');
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            // Preparar datos del producto como JSON puro
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
             const productData = {
                 nombre,
                 descripcion,
@@ -147,6 +236,7 @@ export const EditarProducto = () => {
                 categoria,
                 estado,
                 precioOriginal: precioOriginal ? parseFloat(precioOriginal) : null,
+<<<<<<< HEAD
                 esNuevo: esNuevo,
                 enOferta: enOferta,
                 imagenes: allImageUrls
@@ -158,60 +248,162 @@ export const EditarProducto = () => {
         } catch (err) {
             const errorMsg = err.response?.data?.message || 'Error al actualizar el producto';
             setError(errorMsg);
+=======
+                esNuevo,
+                enOferta,
+                imagenesUrl: imagenesActuales, // Mantener imágenes actuales
+            };
+
+            // Actualizar el producto (sin archivo)
+            // Si quieres agregar imagen, necesitarías endpoint separado
+            await productService.update(id, productData);
+
+            alert('¡Producto actualizado exitosamente!');
+            navigate('/admin/products');
+        } catch (err) {
+            console.error('Error al actualizar el producto:', err);
+            const errorMessage = typeof err === 'string' ? err : err.message || 'Error al actualizar el producto.';
+            setError(errorMessage);
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
         } finally {
             setLoading(false);
         }
     };
 
+<<<<<<< HEAD
     if (loading) return <LoadingSpinner />;
+=======
+    if (loading) {
+        return <LoadingSpinner />;
+    }
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
 
     return (
         <div className="admin-form-container">
             <h2>Editar Producto (ID: {id})</h2>
             <form onSubmit={handleSubmit}>
+<<<<<<< HEAD
                 {error && <p className="form-error">❌ {error}</p>}
                 {success && <p className="form-success">{success}</p>}
 
                 <div className="form-group">
                     <label htmlFor="nombre">Nombre</label>
                     <input type="text" id="nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
+=======
+                {error && <p className="form-error">{error}</p>}
+
+                <div className="form-group">
+                    <label htmlFor="nombre">Nombre *</label>
+                    <input
+                        type="text"
+                        id="nombre"
+                        value={nombre}
+                        onChange={(e) => setNombre(e.target.value)}
+                        required
+                    />
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="descripcion">Descripción</label>
+<<<<<<< HEAD
                     <textarea id="descripcion" value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
+=======
+                    <textarea
+                        id="descripcion"
+                        value={descripcion}
+                        onChange={(e) => setDescripcion(e.target.value)}
+                    />
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
                 </div>
 
                 <div className="form-group-inline">
                     <div className="form-group">
+<<<<<<< HEAD
                         <label htmlFor="precio">Precio Final (Oferta)</label>
                         <input type="number" id="precio" value={precio} onChange={(e) => setPrecio(e.target.value)} required step="0.01" min="0"/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="precioOriginal">Precio Original (Tachado)</label>
                         <input type="number" id="precioOriginal" value={precioOriginal} onChange={(e) => setPrecioOriginal(e.target.value)} step="0.01" min="0"/>
+=======
+                        <label htmlFor="precio">Precio Final * (números enteros)</label>
+                        <input
+                            type="number"
+                            id="precio"
+                            value={precio}
+                            onChange={handlePrecioChange}
+                            required
+                            step="1"
+                            min="0"
+                            placeholder="Ej: 50000"
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="precioOriginal">Precio Original (números enteros)</label>
+                        <input
+                            type="number"
+                            id="precioOriginal"
+                            value={precioOriginal}
+                            onChange={handlePrecioOriginalChange}
+                            step="1"
+                            min="0"
+                            placeholder="Ej: 60000"
+                        />
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
                     </div>
                 </div>
 
                 <div className="form-group-inline">
                     <div className="form-group">
+<<<<<<< HEAD
                         <label htmlFor="stock">Stock</label>
                         <input type="number" id="stock" value={stock} onChange={(e) => setStock(e.target.value)} required min="0"/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="categoria">Categoría</label>
                         <input type="text" id="categoria" value={categoria} onChange={(e) => setCategoria(e.target.value)} />
+=======
+                        <label htmlFor="stock">Stock *</label>
+                        <input
+                            type="number"
+                            id="stock"
+                            value={stock}
+                            onChange={(e) => setStock(e.target.value)}
+                            required
+                            min="0"
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="categoria">Categoría *</label>
+                        <input
+                            type="text"
+                            id="categoria"
+                            value={categoria}
+                            onChange={(e) => setCategoria(e.target.value)}
+                            required
+                        />
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
                     </div>
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="estado">Estado</label>
+<<<<<<< HEAD
                     <select id="estado" value={estado} onChange={(e) => setEstado(e.target.value)}>
+=======
+                    <select
+                        id="estado"
+                        value={estado}
+                        onChange={(e) => setEstado(e.target.value)}
+                    >
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
                         <option value="activo">Activo</option>
                         <option value="inactivo">Inactivo</option>
                     </select>
                 </div>
 
+<<<<<<< HEAD
                 {/* Imágenes actuales */}
                 {imagenesActuales.length > 0 && (
                     <div className="images-preview">
@@ -286,16 +478,68 @@ export const EditarProducto = () => {
                     </div>
                     <div className="form-check">
                         <input type="checkbox" id="enOferta" checked={enOferta} onChange={(e) => setEnOferta(e.target.checked)} />
+=======
+                <div className="form-group">
+                    <label>Imágenes Actuales</label>
+                    {imagenesActuales && imagenesActuales.length > 0 ? (
+                        <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                            {imagenesActuales.map((img, idx) => (
+                                <img
+                                    key={idx}
+                                    src={img}
+                                    alt={`Imagen ${idx}`}
+                                    style={{ maxWidth: '100px', maxHeight: '100px' }}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <p>Sin imágenes</p>
+                    )}
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="imagen">Cambiar Imagen (Opcional)</label>
+                    <input
+                        type="file"
+                        id="imagen"
+                        onChange={handleImagenChange}
+                        accept="image/*"
+                    />
+                </div>
+
+                <div className="form-group-inline">
+                    <div className="form-check">
+                        <input
+                            type="checkbox"
+                            id="esNuevo"
+                            checked={esNuevo}
+                            onChange={(e) => setEsNuevo(e.target.checked)}
+                        />
+                        <label htmlFor="esNuevo">Marcar como "Nuevo"</label>
+                    </div>
+                    <div className="form-check">
+                        <input
+                            type="checkbox"
+                            id="enOferta"
+                            checked={enOferta}
+                            onChange={(e) => setEnOferta(e.target.checked)}
+                        />
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
                         <label htmlFor="enOferta">Marcar como "Oferta"</label>
                     </div>
                 </div>
 
+<<<<<<< HEAD
                 <button 
                     type="submit" 
                     disabled={loading || uploadingImages || (imagenesActuales.length + imagenes.length) !== 3} 
                     className="btn-submit"
                 >
                     {loading ? 'Actualizando...' : uploadingImages ? 'Subiendo imágenes...' : 'Actualizar Producto'}
+=======
+                <button type="submit" disabled={loading} className="btn-submit">
+                    {loading ? 'Actualizando...' : 'Actualizar Producto'}
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
                 </button>
             </form>
         </div>
