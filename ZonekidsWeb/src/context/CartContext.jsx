@@ -3,6 +3,8 @@ import { useAuth } from './AuthContext';
 
 const CartContext = createContext();
 
+export { CartContext };
+
 export const CartProvider = ({ children }) => {
   const { user } = useAuth();
   const [cart, setCart] = useState([]);

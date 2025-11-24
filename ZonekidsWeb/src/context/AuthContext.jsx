@@ -3,6 +3,8 @@ import { authService } from '../services/authService';
 
 const AuthContext = createContext();
 
+export { AuthContext };
+
 export const AuthProvider = ({ children }) => {
   // Inicializar usuario desde localStorage si existe
   const [user, setUser] = useState(() => {
