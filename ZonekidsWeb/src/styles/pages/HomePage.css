@@ -72,12 +72,19 @@
 /* Estilos para los botones de categoría */
 .category-filter-list {
   display: flex;
-  justify-content: center;
-  flex-wrap: nowrap;
+  justify-content: flex-start;
   gap: 10px;
   order: 0;
   flex-grow: 1;
   overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0 10px;
+  /* Ocultar scrollbar */
+  scrollbar-width: none;
+}
+
+.category-filter-list::-webkit-scrollbar {
+  display: none;
 }
 
 .category-filter-list button {
@@ -91,6 +98,7 @@
   transition: all 0.2s ease;
   white-space: nowrap;
   flex-shrink: 0;
+  min-width: fit-content;
 }
 
 .category-filter-list button:hover {

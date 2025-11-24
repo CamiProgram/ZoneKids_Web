@@ -10,7 +10,6 @@ export const HomePage = () => {
   const [error, setError] = useState(null);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [carouselIndex, setCarouselIndex] = useState(0);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -32,19 +31,18 @@ export const HomePage = () => {
 
   const filteredProducts = selectedCategory ? products.filter(p => p.categoria === selectedCategory) : products;
 
-  // Carrusel de categorías - mostrar máximo 5 categorías a la vez
-  const categoriesToShow = 5;
-  const visibleCategories = categories.slice(carouselIndex, carouselIndex + categoriesToShow);
-
+  // Carrusel de categorías - desplazamiento suave
   const handleNextCategory = () => {
-    if (carouselIndex + categoriesToShow < categories.length) {
-      setCarouselIndex(carouselIndex + 1);
+    const carousel = document.querySelector('.category-filter-list');
+    if (carousel) {
+      carousel.scrollLeft += 200; // Desplazar 200px a la derecha
     }
   };
 
   const handlePrevCategory = () => {
-    if (carouselIndex > 0) {
-      setCarouselIndex(carouselIndex - 1);
+    const carousel = document.querySelector('.category-filter-list');
+    if (carousel) {
+      carousel.scrollLeft -= 200; // Desplazar 200px a la izquierda
     }
   };
 
@@ -65,7 +63,6 @@ export const HomePage = () => {
               <button 
                 className="carousel-arrow prev-arrow" 
                 onClick={handlePrevCategory}
-                disabled={carouselIndex === 0}
                 aria-label="Categoría anterior"
               >
                 ‹
@@ -78,7 +75,7 @@ export const HomePage = () => {
                 >
                   Todos
                 </button>
-                {visibleCategories.map(cat => (
+                {categories.map(cat => (
                   <button 
                     key={cat} 
                     onClick={() => setSelectedCategory(cat)}
@@ -92,7 +89,6 @@ export const HomePage = () => {
               <button 
                 className="carousel-arrow next-arrow" 
                 onClick={handleNextCategory}
-                disabled={carouselIndex + categoriesToShow >= categories.length}
                 aria-label="Siguiente categoría"
               >
                 ›
