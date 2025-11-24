@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +43,9 @@ public class AuthController {
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private EntityManager entityManager;
@@ -131,7 +135,8 @@ public class AuthController {
             User newUser = new User();
             newUser.setNombre(usuarioRequest.getNombre());
             newUser.setEmail(usuarioRequest.getEmail());
-            newUser.setContrasena(usuarioRequest.getContrasena());
+            // ⚠️ IMPORTANTE: Codificar la contraseña con BCrypt
+            newUser.setContrasena(passwordEncoder.encode(usuarioRequest.getContrasena()));
             
             // Asignar rol CLIENTE por defecto
             newUser.setRol(RoleEnum.CLIENTE);

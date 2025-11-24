@@ -68,15 +68,6 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Maneja NoResourceFoundException (Spring 6.1+)
-     */
-    @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<?> handleNoResourceFoundException(NoResourceFoundException ex, WebRequest request) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.error(String.format("Recurso no encontrado: %s", ex.getResourcePath())));
-    }
-
-    /**
      * Maneja excepciones de recurso no encontrado personalizadas
      */
     @ExceptionHandler(ResourceNotFoundException.class)
