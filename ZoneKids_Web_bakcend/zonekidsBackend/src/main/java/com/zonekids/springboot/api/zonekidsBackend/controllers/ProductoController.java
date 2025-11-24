@@ -146,6 +146,45 @@ public class ProductoController {
     }
 
     /**
+     * Deshabilitar/habilitar un producto (solo ADMIN)
+     * PATCH para cambiar el estado sin modificar otros campos
+     */
+    @PatchMapping("/{id}/estado")
+    @Operation(summary = "Cambiar estado del producto", description = "Deshabilita o habilita un producto (Solo ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> cambiarEstado(@PathVariable Long id, @RequestBody EstadoProductoRequest request) {
+        try {
+            Optional<Producto> productoOpt = productoServices.findProductById(id);
+            if (productoOpt.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.error("Producto no encontrado"));
+            }
+
+            String nuevoEstado = request.getEstado().toLowerCase();
+            if (!nuevoEstado.equals("activo") && !nuevoEstado.equals("inactivo")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(ApiResponse.error("El estado debe ser 'activo' o 'inactivo'"));
+            }
+
+            Producto producto = productoOpt.get();
+            String estadoAnterior = producto.getEstado();
+            producto.setEstado(nuevoEstado);
+
+            Producto updatedProducto = productoServices.saveProduct(producto);
+            
+            String mensaje = nuevoEstado.equals("activo") 
+                ? "Producto habilitado exitosamente" 
+                : "Producto deshabilitado exitosamente";
+            
+            return ResponseEntity.ok(ApiResponse.success(mensaje, convertirADto(updatedProducto)));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Error al cambiar el estado del producto"));
+        }
+    }
+
+    /**
      * Eliminar un producto (solo ADMIN)
      */
     @DeleteMapping("/{id}")
@@ -162,6 +201,21 @@ public class ProductoController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error("Error al eliminar el producto"));
+        }
+    }
+
+    /**
+     * Clase interna para recibir el estado en la solicitud
+     */
+    public static class EstadoProductoRequest {
+        private String estado;
+
+        public String getEstado() {
+            return estado;
+        }
+
+        public void setEstado(String estado) {
+            this.estado = estado;
         }
     }
 
