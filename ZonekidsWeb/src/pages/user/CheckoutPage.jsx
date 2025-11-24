@@ -8,6 +8,7 @@ export const CheckoutPage = () => {
     name: '',
     email: '',
     address: '',
+    rut: '',
     payment: 'tarjeta',
   });
 
@@ -25,13 +26,49 @@ export const CheckoutPage = () => {
     setTotal(totalCalc);
   }, [cartItems]);
 
+  // Formatear RUT automáticamente
+  const formatRUT = (value) => {
+    // Remover todo excepto números y la letra K
+    let cleaned = value.toUpperCase().replace(/[^0-9K]/g, '');
+    
+    // Si la última es letra, separarla
+    let dv = '';
+    if (cleaned.match(/K$/)) {
+      dv = 'K';
+      cleaned = cleaned.slice(0, -1);
+    }
+
+    // Agregar puntos cada 3 dígitos de derecha a izquierda
+    let formatted = cleaned.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    
+    // Agregar guión antes del dígito verificador
+    if (dv) {
+      formatted = formatted + '-' + dv;
+    }
+
+    return formatted;
+  };
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    let { name, value } = e.target;
+
+    if (name === 'rut') {
+      value = formatRUT(value);
+    }
+
+    setForm({ ...form, [name]: value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert(`Gracias por tu compra, ${form.name}! 🛍️`);
+    
+    // Validar RUT básicamente
+    if (!form.rut.includes('-')) {
+      alert('Por favor, ingresa un RUT válido (ej: 12.345.678-K)');
+      return;
+    }
+
+    alert(`Gracias por tu compra, ${form.name}! 🛍️\nRUT: ${form.rut}`);
   };
 
   return (
@@ -75,7 +112,20 @@ export const CheckoutPage = () => {
               value={form.name}
               onChange={handleChange}
               required
+              placeholder="Juan Pérez García"
             />
+
+            <label>RUT</label>
+            <input
+              type="text"
+              name="rut"
+              value={form.rut}
+              onChange={handleChange}
+              required
+              placeholder="12.345.678-K"
+              maxLength="13"
+            />
+            <small className="rut-help">Formato: XX.XXX.XXX-K (ej: 21.867.867-K)</small>
 
             <label>Correo electrónico</label>
             <input
@@ -84,6 +134,7 @@ export const CheckoutPage = () => {
               value={form.email}
               onChange={handleChange}
               required
+              placeholder="correo@ejemplo.com"
             />
 
             <label>Dirección</label>
@@ -93,6 +144,7 @@ export const CheckoutPage = () => {
               value={form.address}
               onChange={handleChange}
               required
+              placeholder="Calle Principal 123, Dpto 4B"
             />
 
             <label>Método de pago</label>

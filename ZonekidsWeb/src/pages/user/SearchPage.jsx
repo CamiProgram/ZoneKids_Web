@@ -19,7 +19,7 @@ export const SearchPage = () => {
     const fetchAllProducts = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:8080/api/products');
+        const response = await axios.get('http://localhost:8080/api/v1/productos');
         // Filtra solo productos válidos
         const validProducts = (response.data || []).filter(product => 
           product && product.id && product.nombre && product.precio !== undefined

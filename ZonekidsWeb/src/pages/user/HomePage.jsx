@@ -15,7 +15,7 @@ export const HomePage = () => {
     const fetchProducts = async () => {
       try { 
         setLoading(true); setError(null);
-        const response = await axios.get('http://localhost:8080/api/products');
+        const response = await axios.get('http://localhost:8080/api/v1/productos');
         setProducts(response.data);
         
         // Extrae categorías únicas de los productos

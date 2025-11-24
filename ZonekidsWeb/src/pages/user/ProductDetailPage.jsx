@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom'; 
 import { LoadingSpinner } from '../../components/LoadingSpinner';
+import { ImageCarousel } from '../../components/ImageCarousel';
 import { useCart } from '../../context/CartContext';
 import '../../styles/pages/productDetailPage.css'; 
 
@@ -17,7 +18,7 @@ export const ProductDetailPage = () => {
             try {
                 setLoading(true);
                 setError(null);
-                const response = await axios.get(`http://localhost:8080/api/products/${id}`);
+                const response = await axios.get(`http://localhost:8080/api/v1/productos/${id}`);
                 setProduct(response.data);
             } catch (err) {
                 console.error("Error fetching product details:", err);
@@ -43,7 +44,7 @@ export const ProductDetailPage = () => {
     }
 
     // --- Variables para descuento y etiquetas ---
-    const { nombre, precio, imagenUrl, precioOriginal, esNuevo, enOferta, descripcion, categoria, stock } = product;
+    const { nombre, precio, imagenes, precioOriginal, esNuevo, enOferta, descripcion, categoria, stock } = product;
     const tieneDescuento = precioOriginal && precioOriginal > precio;
 
     return (
@@ -54,7 +55,7 @@ export const ProductDetailPage = () => {
                     {esNuevo && <span className="badge-nuevo">NUEVO</span>}
                     {enOferta && <span className="badge-oferta">OFERTA</span>}
                 </div>
-                <img src={imagenUrl || "/assets/Zonekids_logo_web.webp"} alt={nombre} />
+                <ImageCarousel imagenes={imagenes} productName={nombre} />
             </div>
             <div className="product-detail-info">
                 <h1>{nombre}</h1>

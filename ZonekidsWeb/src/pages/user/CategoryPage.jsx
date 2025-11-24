@@ -1,26 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import { ProductCard } from '../../components/ProductCard';
+import { LoadingSpinner } from '../../components/LoadingSpinner';
 import '../../styles/pages/categoryPage.css';
 
 export const CategoryPage = () => {
   const { categoryName } = useParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Simulación de carga de productos (temporal, hasta conectar con backend)
-    setTimeout(() => {
-      setProducts([
-        { id: 1, name: `Producto 1 de ${categoryName}`, price: 19990, image: '/assets/product-placeholder.jpg' },
-        { id: 2, name: `Producto 2 de ${categoryName}`, price: 29990, image: '/assets/product-placeholder.jpg' },
-        { id: 3, name: `Producto 3 de ${categoryName}`, price: 39990, image: '/assets/product-placeholder.jpg' },
-      ]);
-      setLoading(false);
-    }, 1000);
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await axios.get('http://localhost:8080/api/v1/productos');
+        const filtered = response.data.filter(p => p.categoria === categoryName);
+        setProducts(filtered);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setError("No se pudieron cargar los productos de esta categoría.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
   }, [categoryName]);
 
-  if (loading) return <div className="loading-message">Cargando productos de {categoryName}...</div>;
+  if (loading) return <LoadingSpinner />;
+  if (error) return <div className="error-message">{error}</div>;
 
   return (
     <div className="category-page-container">
