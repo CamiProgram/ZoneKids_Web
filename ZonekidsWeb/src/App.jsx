@@ -11,6 +11,7 @@ import { ProductDetailPage } from './pages/user/ProductDetailPage';
 import { CategoryPage } from './pages/user/CategoryPage'; 
 import { SearchPage } from './pages/user/SearchPage';
 import { CheckoutPage } from './pages/user/CheckoutPage';
+import { BlogsPage } from './pages/user/BlogsPage';
 
 // Páginas de Admin
 import { AdminDashboard } from './pages/admin/AdminDashboard';
@@ -34,7 +35,8 @@ function App() {
         <Route path="categoria/:slug" element={<CategoryPage />} /> 
         <Route path="producto/:id" element={<ProductDetailPage />} /> 
         <Route path="buscar" element={<SearchPage />} /> {/* Cambié 'search' a 'buscar' */}
-        <Route path="checkout" element={<CheckoutPage />} />  
+        <Route path="checkout" element={<CheckoutPage />} />
+        <Route path="blogs" element={<BlogsPage />} />
       </Route>
 
       {/* --- RUTAS DE ADMIN (Protegidas) --- */}

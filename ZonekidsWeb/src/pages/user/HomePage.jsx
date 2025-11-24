@@ -10,6 +10,7 @@ export const HomePage = () => {
   const [error, setError] = useState(null);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [carouselIndex, setCarouselIndex] = useState(0);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -31,6 +32,22 @@ export const HomePage = () => {
 
   const filteredProducts = selectedCategory ? products.filter(p => p.categoria === selectedCategory) : products;
 
+  // Carrusel de categorías - mostrar máximo 5 categorías a la vez
+  const categoriesToShow = 5;
+  const visibleCategories = categories.slice(carouselIndex, carouselIndex + categoriesToShow);
+
+  const handleNextCategory = () => {
+    if (carouselIndex + categoriesToShow < categories.length) {
+      setCarouselIndex(carouselIndex + 1);
+    }
+  };
+
+  const handlePrevCategory = () => {
+    if (carouselIndex > 0) {
+      setCarouselIndex(carouselIndex - 1);
+    }
+  };
+
   if (loading) return <LoadingSpinner />;
   if (error) return <div className="error-message">{error}</div>;
 
@@ -42,24 +59,46 @@ export const HomePage = () => {
         </div>
 
         <div className="home-main-content">
-          {/* --- LISTA DE CATEGORÍAS --- */}
-          <div className="category-filter-list">
-            <button 
-              onClick={() => setSelectedCategory(null)}
-              className={selectedCategory === null ? 'active' : ''}
-            >
-              Todos
-            </button>
-            {categories.map(cat => (
+          {/* --- CARRUSEL DE CATEGORÍAS --- */}
+          {categories.length > 0 && (
+            <div className="category-carousel-container">
               <button 
-                key={cat} 
-                onClick={() => setSelectedCategory(cat)}
-                className={selectedCategory === cat ? 'active' : ''}
+                className="carousel-arrow prev-arrow" 
+                onClick={handlePrevCategory}
+                disabled={carouselIndex === 0}
+                aria-label="Categoría anterior"
               >
-                {cat}
+                ‹
               </button>
-            ))}
-          </div>
+
+              <div className="category-filter-list">
+                <button 
+                  onClick={() => setSelectedCategory(null)}
+                  className={selectedCategory === null ? 'active' : ''}
+                >
+                  Todos
+                </button>
+                {visibleCategories.map(cat => (
+                  <button 
+                    key={cat} 
+                    onClick={() => setSelectedCategory(cat)}
+                    className={selectedCategory === cat ? 'active' : ''}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+
+              <button 
+                className="carousel-arrow next-arrow" 
+                onClick={handleNextCategory}
+                disabled={carouselIndex + categoriesToShow >= categories.length}
+                aria-label="Siguiente categoría"
+              >
+                ›
+              </button>
+            </div>
+          )}
 
           {/* --- GRILLA DE PRODUCTOS --- */}
           {filteredProducts.length > 0 ? (

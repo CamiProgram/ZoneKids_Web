@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/components/footer.css';
 
 export const Footer = () => {
@@ -9,7 +10,7 @@ export const Footer = () => {
           <h3>SOBRE NOSOTROS</h3>
           <ul>
             <li><a href="#">Quiénes somos</a></li>
-            <li><a href="#">Blogs</a></li>
+            <li><Link to="/blogs">Blogs</Link></li>
           </ul>
         </div>
         <div className="footer-section">

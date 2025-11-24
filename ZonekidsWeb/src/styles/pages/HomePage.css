@@ -25,14 +25,61 @@
   display: none;
 }
 
+/* Carrusel de categorías */
+.category-carousel-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  justify-content: center;
+}
+
+.carousel-arrow {
+  background-color: #333;
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.carousel-arrow:hover:not(:disabled) {
+  background-color: #0d6efd;
+  transform: scale(1.1);
+}
+
+.carousel-arrow:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.carousel-arrow.prev-arrow {
+  order: -1;
+}
+
+.carousel-arrow.next-arrow {
+  order: 1;
+}
+
 /* Estilos para los botones de categoría */
 .category-filter-list {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 10px;
-  margin-bottom: 24px;
+  order: 0;
+  flex-grow: 1;
+  overflow-x: auto;
 }
+
 .category-filter-list button {
   background-color: #ffffff;
   border: 1px solid #ddd;
@@ -42,11 +89,15 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
+
 .category-filter-list button:hover {
   background-color: #f0f0f0;
   border-color: #ccc;
 }
+
 .category-filter-list button.active {
   background-color: #333; 
   color: white;
@@ -78,6 +129,21 @@
     margin: 0 20px;
   }
 
+  .category-carousel-container {
+    gap: 12px;
+  }
+
+  .carousel-arrow {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+
+  .category-filter-list button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
   .products-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
@@ -87,6 +153,21 @@
 @media (max-width: 576px) {
   .home-content-wrapper {
     margin: 0;
+  }
+
+  .category-carousel-container {
+    gap: 8px;
+  }
+
+  .carousel-arrow {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+  }
+
+  .category-filter-list button {
+    padding: 4px 10px;
+    font-size: 11px;
   }
 
   .products-grid {
