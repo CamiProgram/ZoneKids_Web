@@ -61,9 +61,11 @@ export const userService = {
         rawPassword: userData.rawPassword && userData.rawPassword.trim() ? userData.rawPassword : ''
       };
       
-      console.log(`📦 PAYLOAD EXACTO que se envía al PUT:`, JSON.stringify(updateData, null, 2));
-      console.log(`   - Claves en el payload:`, Object.keys(updateData));
-      console.log(`   - ¿Contiene 'rol'?`, 'rol' in updateData);
+      console.log(`📦 Datos para PUT:`, { 
+        nombre: updateData.nombre, 
+        email: updateData.email, 
+        rawPassword: updateData.rawPassword ? '(proporcionada)' : '(vacía - sin cambios)' 
+      });
       
       const response = await api.put(`/usuarios/${id}`, updateData);
       console.log(`✅ Usuario actualizado:`, response.data.data);
@@ -77,7 +79,6 @@ export const userService = {
       return response.data.data;
     } catch (error) {
       console.error(`❌ Error en update:`, error);
-      console.error(`   Payload enviado:`, error.config?.data);
       throw error.response?.data || error.message;
     }
   },

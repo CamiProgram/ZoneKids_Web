@@ -8,8 +8,9 @@ export const EditarUsuario = () => {
     const { id } = useParams();
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');
-    const [rol, setRol] = useState('CLIENTE');
+    const [rol, setRol] = useState('cliente');
     const [estado, setEstado] = useState('activo');
+    const [rawPassword, setRawPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
@@ -25,6 +26,7 @@ export const EditarUsuario = () => {
                 setEmail(user.email);
                 setRol(user.rol);
                 setEstado(user.estado);
+                setRawPassword(''); // Campo de contraseña vacío al cargar
             } catch (err) {
                 console.error('Error fetching user:', err);
                 setError('No se pudo cargar el usuario.');
@@ -52,11 +54,32 @@ export const EditarUsuario = () => {
         setIsSaving(true);
 
         try {
-            const userData = { nombre, email, rol, estado };
-            await userService.update(id, userData);
+            console.log('📝 Iniciando actualización de usuario...');
+            console.log('  - Nombre:', nombre);
+            console.log('  - Email:', email);
+            console.log('  - Rol (NO se envía):', rol);
+            console.log('  - Estado:', estado);
+            console.log('  - Password: ', rawPassword ? '(proporcionada)' : '(no proporcionada)');
+            
+            // Actualizar nombre, email y contraseña
+            // El rol se ignora en el PUT, solo se envían nombre, email y rawPassword
+            const userData = { 
+                nombre, 
+                email, 
+                estado,
+                rawPassword: rawPassword || ''
+            };
+            
+            console.log('📤 Datos a enviar a userService.update():', JSON.stringify(userData, null, 2));
+            console.log('   ¿Contiene ROL?:', 'rol' in userData);
+            
+            const updatedUser = await userService.update(id, userData);
+            
+            console.log('✅ Usuario actualizado:', updatedUser);
             alert('¡Usuario actualizado exitosamente!');
             navigate('/admin/users');
         } catch (err) {
+            console.error('❌ Error al actualizar:', err);
             const errorMessage = typeof err === 'string' ? err : err.message || 'Error al actualizar el usuario.';
             setError(errorMessage);
         } finally {
@@ -97,12 +120,31 @@ export const EditarUsuario = () => {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="rol">Rol</label>
-                    <select id="rol" value={rol} onChange={(e) => setRol(e.target.value)}>
-                        <option value="CLIENTE">Cliente</option>
-                        <option value="VENDEDOR">Vendedor</option>
-                        <option value="ADMIN">Admin</option>
-                    </select>
+                    <label htmlFor="rawPassword">Contraseña (dejar vacío para no cambiar)</label>
+                    <input
+                        type="password"
+                        id="rawPassword"
+                        value={rawPassword}
+                        onChange={(e) => setRawPassword(e.target.value)}
+                        placeholder="Nueva contraseña (opcional)"
+                    />
+                    <small style={{ color: '#666', marginTop: '4px', display: 'block' }}>
+                        Si dejas este campo vacío, la contraseña no se cambiará.
+                    </small>
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="rol">Rol (Solo lectura - No se puede cambiar)</label>
+                    <input
+                        type="text"
+                        id="rol"
+                        value={rol === 'cliente' ? 'Cliente' : rol === 'vendedor' ? 'Vendedor' : 'Admin'}
+                        disabled
+                        readOnly
+                    />
+                    <small style={{ color: '#999', marginTop: '4px', display: 'block' }}>
+                        El rol de un usuario solo puede ser modificado por el administrador del sistema.
+                    </small>
                 </div>
 
                 <div className="form-group">

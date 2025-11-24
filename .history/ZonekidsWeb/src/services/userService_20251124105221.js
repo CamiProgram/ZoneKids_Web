@@ -54,16 +54,18 @@ export const userService = {
       console.log(`📝 Actualizando usuario ${id}:`, userData);
       
       // Preparar datos para el PUT
-      // El backend solo espera: nombre, email, rawPassword
       const updateData = {
         nombre: userData.nombre,
         email: userData.email,
-        rawPassword: userData.rawPassword && userData.rawPassword.trim() ? userData.rawPassword : ''
+        // rawPassword es requerido por el backend
+        rawPassword: userData.rawPassword || null
       };
       
-      console.log(`📦 PAYLOAD EXACTO que se envía al PUT:`, JSON.stringify(updateData, null, 2));
-      console.log(`   - Claves en el payload:`, Object.keys(updateData));
-      console.log(`   - ¿Contiene 'rol'?`, 'rol' in updateData);
+      console.log(`📦 Datos para PUT:`, { 
+        nombre: updateData.nombre, 
+        email: updateData.email, 
+        rawPassword: updateData.rawPassword ? '(proporcionada)' : '(null)' 
+      });
       
       const response = await api.put(`/usuarios/${id}`, updateData);
       console.log(`✅ Usuario actualizado:`, response.data.data);
@@ -77,7 +79,6 @@ export const userService = {
       return response.data.data;
     } catch (error) {
       console.error(`❌ Error en update:`, error);
-      console.error(`   Payload enviado:`, error.config?.data);
       throw error.response?.data || error.message;
     }
   },

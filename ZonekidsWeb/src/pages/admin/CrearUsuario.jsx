@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userService } from '../../services/userService';
+import { authService } from '../../services/authService';
 import '../../styles/pages/crearUsuario.css';
 
 export const CrearUsuario = () => {
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');
     const [contrasena, setContrasena] = useState('');
-    const [rol, setRol] = useState('CLIENTE');
+    const [rol, setRol] = useState('cliente');
     const [estado, setEstado] = useState('activo');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    
+    // Verificar si el usuario actual es el jefe
+    const isJefe = authService.isJefe();
 
     const validateField = (field, value) => {
         switch (field) {
@@ -44,10 +48,26 @@ export const CrearUsuario = () => {
             return;
         }
 
+        // Validar que solo el jefe pueda crear admins
+        if (rol === 'admin' && !isJefe) {
+            setError('❌ Solo el administrador jefe puede crear usuarios con rol ADMIN.');
+            return;
+        }
+
         setLoading(true);
 
         try {
-            const userData = { nombre, email, contrasena, rol, estado };
+            const userData = { 
+                nombre, 
+                email, 
+                contrasena, 
+                rol: rol.toLowerCase(),  // Asegurar que está en minúsculas
+                estado 
+            };
+            console.log('📝 Creando usuario:', userData);
+            console.log('   - Usuario actual es jefe:', isJefe);
+            console.log('   - Rol a crear:', userData.rol);
+            
             await userService.create(userData);
             alert('¡Usuario creado exitosamente!');
             navigate('/admin/users');
@@ -100,11 +120,28 @@ export const CrearUsuario = () => {
 
                 <div className="form-group">
                     <label htmlFor="rol">Rol *</label>
-                    <select id="rol" value={rol} onChange={(e) => setRol(e.target.value)}>
-                        <option value="CLIENTE">Cliente</option>
-                        <option value="VENDEDOR">Vendedor</option>
-                        <option value="ADMIN">Admin</option>
-                    </select>
+                    {isJefe ? (
+                        <>
+                            <select id="rol" value={rol} onChange={(e) => setRol(e.target.value)}>
+                                <option value="cliente">Cliente</option>
+                                <option value="vendedor">Vendedor</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                            <small style={{ color: '#0c5aa0', marginTop: '4px', display: 'block' }}>
+                                ✓ Tienes permisos para asignar cualquier rol.
+                            </small>
+                        </>
+                    ) : (
+                        <>
+                            <select id="rol" value={rol} onChange={(e) => setRol(e.target.value)}>
+                                <option value="cliente">Cliente</option>
+                                <option value="vendedor">Vendedor</option>
+                            </select>
+                            <small style={{ color: '#666', marginTop: '4px', display: 'block' }}>
+                                ℹ️ Solo puedes crear usuarios con rol Cliente o Vendedor.
+                            </small>
+                        </>
+                    )}
                 </div>
 
                 <div className="form-group">

@@ -46,27 +46,30 @@ export const userService = {
    * Actualizar usuario (Requiere autenticación)
    * Puede actualizar su propio perfil
    * @param {number} id - ID del usuario
-   * @param {object} userData - Datos a actualizar (nombre, email, rawPassword opcional)
+   * @param {object} userData - Datos a actualizar
    * @returns {Promise} Usuario actualizado
    */
   update: async (id, userData) => {
     try {
       console.log(`📝 Actualizando usuario ${id}:`, userData);
       
-      // Preparar datos para el PUT
-      // El backend solo espera: nombre, email, rawPassword
+      // Separar datos: solo nombre y email van al PUT
+      // rol y estado se actualizan con endpoints separados
       const updateData = {
         nombre: userData.nombre,
-        email: userData.email,
-        rawPassword: userData.rawPassword && userData.rawPassword.trim() ? userData.rawPassword : ''
+        email: userData.email
       };
       
-      console.log(`📦 PAYLOAD EXACTO que se envía al PUT:`, JSON.stringify(updateData, null, 2));
-      console.log(`   - Claves en el payload:`, Object.keys(updateData));
-      console.log(`   - ¿Contiene 'rol'?`, 'rol' in updateData);
-      
+      console.log(`📦 Datos para PUT:`, updateData);
       const response = await api.put(`/usuarios/${id}`, updateData);
       console.log(`✅ Usuario actualizado:`, response.data.data);
+      
+      // Si el rol cambió, actualizar con endpoint separado
+      if (userData.rol && userData.rol !== response.data.data.rol) {
+        console.log(`🔄 Rol diferente detectado, actualizando...`);
+        // El rol podría no ser editable vía PUT, solo vía endpoint especial
+        // Por ahora no lo intentamos cambiar
+      }
       
       // Si el estado cambió, actualizar con endpoint separado
       if (userData.estado && userData.estado !== response.data.data.estado) {
@@ -77,7 +80,6 @@ export const userService = {
       return response.data.data;
     } catch (error) {
       console.error(`❌ Error en update:`, error);
-      console.error(`   Payload enviado:`, error.config?.data);
       throw error.response?.data || error.message;
     }
   },
