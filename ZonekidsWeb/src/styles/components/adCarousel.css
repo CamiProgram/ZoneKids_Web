@@ -1,0 +1,8 @@
+.ad-carousel-container .slick-slide img {
+  width: 100%;
+  height: auto;
+}
+.ad-image {
+    max-height: 400px;
+    object-fit: contain;
+}

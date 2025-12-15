@@ -1,0 +1,33 @@
+/* 1. Reseteo Básico */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%; /* Asegura que ocupen todo el ancho */
+  min-height: 100%; /* Asegura que ocupen toda la altura */
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fce0e5; /* Fondo rosa pastel global */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root { /* Asegura que el contenedor de React también ocupe el espacio */
+  width: 100%;
+  min-height: 100vh;
+  display: flex; /* Puede ayudar con layouts internos */
+  flex-direction: column; /* Puede ayudar con layouts internos */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* 2. Estilos Globales */
+a { color: #0d6efd; text-decoration: none; }
+a:hover { text-decoration: underline; }
+button { font-family: inherit; }
+img { max-width: 100%; height: auto; display: block; }

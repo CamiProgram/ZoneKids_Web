@@ -1,0 +1,365 @@
+.about-us-container {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fff5f8 0%, #fff 100%);
+  padding: 40px 20px;
+}
+
+.about-content {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Intro section */
+.about-intro {
+  text-align: center;
+  margin-bottom: 60px;
+  animation: fadeInDown 0.6s ease;
+}
+
+.about-intro h1 {
+  font-size: 2.8rem;
+  color: #333;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.about-intro p {
+  font-size: 1.2rem;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Main section */
+.about-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  align-items: center;
+  margin-bottom: 80px;
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  animation: fadeInUp 0.6s ease 0.1s backwards;
+}
+
+.about-text h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.about-text p {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.8;
+  margin-bottom: 15px;
+}
+
+.about-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder-image {
+  width: 100%;
+  aspect-ratio: 1;
+  background: linear-gradient(135deg, #ff9ec5 0%, #ffb3d9 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  box-shadow: 0 8px 25px rgba(255, 158, 197, 0.3);
+}
+
+/* Values section */
+.about-values {
+  margin-bottom: 80px;
+}
+
+.about-values h2 {
+  font-size: 2rem;
+  color: #333;
+  text-align: center;
+  margin-bottom: 50px;
+  font-weight: 600;
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.value-card {
+  background: white;
+  padding: 30px 25px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.6s ease 0.2s backwards;
+}
+
+.value-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(255, 158, 197, 0.2);
+}
+
+.value-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.value-card h3 {
+  font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.value-card p {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Stats section */
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 25px;
+  margin-bottom: 80px;
+  background: linear-gradient(135deg, #ff9ec5 0%, #ffb3d9 100%);
+  padding: 50px 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(255, 158, 197, 0.3);
+  animation: fadeInUp 0.6s ease 0.3s backwards;
+}
+
+.stat-card {
+  text-align: center;
+  color: white;
+}
+
+.stat-card h3 {
+  font-size: 2.5rem;
+  margin: 0 0 10px 0;
+  font-weight: 700;
+}
+
+.stat-card p {
+  font-size: 0.95rem;
+  margin: 0;
+  opacity: 0.95;
+}
+
+/* Team section */
+.about-team {
+  margin-bottom: 80px;
+}
+
+.about-team h2 {
+  font-size: 2rem;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.team-intro {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 40px;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+}
+
+.team-member {
+  background: white;
+  padding: 30px 25px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.6s ease 0.4s backwards;
+}
+
+.team-member:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(255, 158, 197, 0.2);
+}
+
+.member-avatar {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.team-member h3 {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 10px 0 5px 0;
+  font-weight: 600;
+}
+
+.team-member p {
+  font-size: 0.9rem;
+  color: #ff9ec5;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Mission and Vision */
+.about-mission {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.mission-card,
+.vision-card {
+  background: white;
+  padding: 35px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  animation: fadeInUp 0.6s ease 0.5s backwards;
+}
+
+.mission-card {
+  border-left: 4px solid #ff9ec5;
+}
+
+.vision-card {
+  border-left: 4px solid #ffb3d9;
+}
+
+.mission-card h3,
+.vision-card h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.mission-card p,
+.vision-card p {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.8;
+  margin: 0;
+}
+
+/* Animaciones */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .about-us-container {
+    padding: 20px 15px;
+  }
+
+  .about-intro h1 {
+    font-size: 2rem;
+  }
+
+  .about-intro p {
+    font-size: 1rem;
+  }
+
+  .about-main {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 25px;
+    margin-bottom: 50px;
+  }
+
+  .about-values h2,
+  .about-team h2 {
+    font-size: 1.5rem;
+  }
+
+  .values-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .about-stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 30px 20px;
+  }
+
+  .stat-card h3 {
+    font-size: 2rem;
+  }
+
+  .team-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .about-mission {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .mission-card,
+  .vision-card {
+    padding: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-intro h1 {
+    font-size: 1.5rem;
+  }
+
+  .about-text h2 {
+    font-size: 1.3rem;
+  }
+
+  .values-grid,
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card h3 {
+    font-size: 1.8rem;
+  }
+}

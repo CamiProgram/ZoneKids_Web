@@ -1,0 +1,139 @@
+.navbar-container {
+  background-color: transparent; 
+  width: 100%;
+}
+
+.navbar-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  /* --- CAMBIO AQUÍ: Padding vertical aumentado --- */
+  padding: 20px 24px; /* Era 12px 24px, ahora es más alto */
+  
+  background-color: #fff; /* Fondo blanco */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.navbar-greeting {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #333;
+  min-width: 200px;
+  flex-shrink: 0;
+}
+
+.navbar-greeting span {
+  display: block;
+}
+
+.logo { text-decoration: none; }
+.logo-image { 
+  height: 45px; /* --- Opcional: Aumentar un poco si es necesario --- */
+  width: auto; 
+}
+
+.search-bar {
+  display: flex;
+  flex-grow: 1;
+  margin: 0 32px;
+  max-width: 600px; /* Ancho máximo de la barra de búsqueda */
+}
+.search-bar input {
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px 0 0 8px;
+}
+.search-bar button {
+  padding: 10px 16px;
+  border: none;
+  background-color: #0d6efd;
+  color: white;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-weight: 600;
+}
+
+/* Iconos */
+.icon-button {
+  font-size: 1.5rem;
+  text-decoration: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  transition: all 0.3s;
+  background-color: #f0f0f0;
+}
+
+.icon-button:hover {
+  background-color: #ff9ec5;
+  transform: scale(1.1);
+}
+
+.cart-icon {
+  background-color: #ffe5f0;
+}
+
+.cart-icon:hover {
+  background-color: #ff9ec5;
+}
+
+/* La promo ocupa 100% del ancho */
+.navbar-promo {
+  background: linear-gradient(90deg, #440099 0%, #8B00D0 100%);
+  color: white;
+  text-align: center;
+  padding: 12px 24px;
+  margin-top: 10px; 
+}
+.navbar-promo h1 { margin: 0; font-size: 1.8em; }
+
+/* --- ESTILOS RESPONSIVOS --- */
+.mobile-menu-toggle { display: none; font-size: 28px; background: none; border: none; cursor: pointer; }
+.mobile-menu { display: none; }
+.mobile-search { display: none; }
+
+@media (max-width: 768px) {
+  .desktop-actions,
+  .desktop-search {
+    display: none;
+  }
+  .mobile-menu-toggle {
+    display: block;
+  }
+  /* navbar-top ya es 100% width */
+  .mobile-menu {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #fff;
+    border-top: 1px solid #eee;
+    gap: 15px;
+    margin: 0 auto;
+  }
+  .mobile-menu a,
+  .mobile-menu span {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .search-bar.mobile-search {
+    display: flex;
+    margin: 0 0 10px 0;
+    max-width: 100%;
+  }
+  .navbar-promo h1 {
+    font-size: 1.2em;
+  }
+}
