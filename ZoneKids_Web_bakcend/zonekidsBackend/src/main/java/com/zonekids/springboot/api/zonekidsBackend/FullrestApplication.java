@@ -120,9 +120,9 @@ public class FullrestApplication {
                     };
 
                     Double[] precios = {
-                            29.99, 35.99, 45.99, 39.99,
-                            49.99, 55.99, 32.99, 28.99,
-                            42.99, 52.99
+                            12990.0, 15990.0, 19990.0, 17990.0,
+                            22990.0, 24990.0, 14990.0, 12990.0,
+                            18990.0, 23990.0
                     };
 
                     int productosCreados = 0;
@@ -138,14 +138,60 @@ public class FullrestApplication {
                         producto.setEnOferta(i % 2 == 0);
                         producto.setPrecioOriginal(precios[i] * 1.2);
                         
-                        // Agregar 2 o 3 imágenes según el índice (para variar)
+                        // Agregar 3 imágenes específicas para cada producto
                         List<String> imagenes = new ArrayList<>();
-                        imagenes.add("https://via.placeholder.com/300x300?text=Ropa+Bebe+Frente+" + i);
-                        imagenes.add("https://via.placeholder.com/300x300?text=Ropa+Bebe+Detalle+" + i);
                         
-                        // Agregar una 3ª imagen solo en algunos productos (alternado)
-                        if (i % 2 == 0) {
-                            imagenes.add("https://via.placeholder.com/300x300?text=Ropa+Bebe+Espalda+" + i);
+                        switch(i) {
+                            case 0: // Body Manga Larga Blanco
+                                imagenes.add("https://images.unsplash.com/photo-1516634305792-3bdfdbf57598?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1503994434240-e4e19a04e69f?w=300&h=300&fit=crop");
+                                break;
+                            case 1: // Pantalón de Algodón Azul
+                                imagenes.add("https://images.unsplash.com/photo-1464645033556-6812c9d1c72e?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1542272604-787c62d465d1?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1542407692-96854a3f4eaa?w=300&h=300&fit=crop");
+                                break;
+                            case 2: // Vestido Flores Niña
+                                imagenes.add("https://images.unsplash.com/photo-1619852884515-759bcc457b67?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&h=300&fit=crop");
+                                break;
+                            case 3: // Enterizo Rayado Bebé
+                                imagenes.add("https://images.unsplash.com/photo-1487915807519-e21cc028cb29?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1539533057440-7d8f2edfb386?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1578674387341-242eabf41b1b?w=300&h=300&fit=crop");
+                                break;
+                            case 4: // Cardigan Tejido Suave
+                                imagenes.add("https://images.unsplash.com/photo-1551028719-00167b16ebc5?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1515139552976-fcfe339d0bd0?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1551651186-e1c00e5ded7d?w=300&h=300&fit=crop");
+                                break;
+                            case 5: // Conjunto 2 Piezas Rosa
+                                imagenes.add("https://images.unsplash.com/photo-1557804506-669214d2e601?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1519046904884-53103b34b206?w=300&h=300&fit=crop");
+                                break;
+                            case 6: // Pants Deportivo Gris
+                                imagenes.add("https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1506251613332-f1c559323721?w=300&h=300&fit=crop");
+                                break;
+                            case 7: // Remera Estampada Colores
+                                imagenes.add("https://images.unsplash.com/photo-1556821552-5f394a60becc?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1503342217505-b21f49d1eddb?w=300&h=300&fit=crop");
+                                break;
+                            case 8: // Pollera Tutú Blanco
+                                imagenes.add("https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1595813707802-463e5b72c0a6?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1591584505900-e96ebe4c35da?w=300&h=300&fit=crop");
+                                break;
+                            case 9: // Jumpsuit Jean Bebé
+                                imagenes.add("https://images.unsplash.com/photo-1542272201-b1dd41bab2d2?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1545628346-915dfe2e7657?w=300&h=300&fit=crop");
+                                imagenes.add("https://images.unsplash.com/photo-1598288553439-a0a87eb2baf2?w=300&h=300&fit=crop");
+                                break;
                         }
                         
                         producto.setImagenesUrl(imagenes);

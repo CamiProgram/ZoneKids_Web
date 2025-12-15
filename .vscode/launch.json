@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-FullrestApplication<zonekidsBackend>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.zonekids.springboot.api.zonekidsBackend.FullrestApplication",
+            "projectName": "zonekidsBackend",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

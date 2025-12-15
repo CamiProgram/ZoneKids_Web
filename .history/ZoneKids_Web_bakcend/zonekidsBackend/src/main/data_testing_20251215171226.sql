@@ -121,7 +121,7 @@ INSERT INTO productos (nombre, descripcion, precio, stock, categoria, estado, es
 VALUES (
     'Pantalón Deportivo Gris',
     'Pantalón deportivo cómodo en color gris, ideal para actividades físicas',
-    8900,
+    1800,
     60,
     'Pantalones',
     'activo',
@@ -129,7 +129,7 @@ VALUES (
     false,
     NOW(),
     NOW(),
-    8900
+    1800
 );
 
 -- Agregar imágenes al producto 3
@@ -142,7 +142,7 @@ INSERT INTO productos (nombre, descripcion, precio, stock, categoria, estado, es
 VALUES (
     'Camiseta Estampada Arcoíris',
     'Camiseta de algodón con estampado colorido tipo arcoíris',
-    7990,
+    1500,
     75,
     'Camisetas',
     'activo',
@@ -150,7 +150,7 @@ VALUES (
     false,
     NOW(),
     NOW(),
-    9990
+    2000
 );
 
 -- Agregar imágenes al producto 4
@@ -162,7 +162,7 @@ INSERT INTO productos (nombre, descripcion, precio, stock, categoria, estado, es
 VALUES (
     'Abrigo de Lana Rojo',
     'Abrigo abrigador de lana pura, color rojo brillante, cierre con botones',
-    24990,
+    5500,
     20,
     'Abrigos',
     'activo',
@@ -170,7 +170,7 @@ VALUES (
     true,
     NOW(),
     NOW(),
-    31490
+    7000
 );
 
 -- Agregar imágenes al producto 5
@@ -183,7 +183,7 @@ INSERT INTO productos (nombre, descripcion, precio, stock, categoria, estado, es
 VALUES (
     'Shorts Denim Azul',
     'Shorts de denim azul clásico, cómodos y duraderos',
-    10990,
+    2200,
     45,
     'Shorts',
     'activo',
@@ -191,7 +191,7 @@ VALUES (
     false,
     NOW(),
     NOW(),
-    10990
+    2200
 );
 
 -- Agregar imágenes al producto 6
