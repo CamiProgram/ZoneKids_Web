@@ -4,19 +4,13 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { productService } from '../../services/productService';
 import { userService } from '../../services/userService';
+import { getImageUrl } from '../../utils/imageUtils';
 import '../../styles/pages/checkoutPage.css';
 
 export const CheckoutPage = () => {
   const { cartItems, removeFromCart, getTotalPrice, setCartItems, closeCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
-  
-  // 🖼️ Función para construir URLs de imágenes
-  const getImageUrl = (imagenUrl) => {
-    if (!imagenUrl) return '/assets/Zonekids_logo_web.webp';
-    if (imagenUrl.startsWith('http')) return imagenUrl;
-    return `http://localhost:8080${imagenUrl.startsWith('/') ? '' : '/'}${imagenUrl}`;
-  };
 
   const [quantities, setQuantities] = useState({});
   const [userFullData, setUserFullData] = useState(null);

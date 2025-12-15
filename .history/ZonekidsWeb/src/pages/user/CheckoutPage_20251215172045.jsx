@@ -3,7 +3,6 @@ import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { productService } from '../../services/productService';
-import { userService } from '../../services/userService';
 import '../../styles/pages/checkoutPage.css';
 
 export const CheckoutPage = () => {
@@ -19,7 +18,6 @@ export const CheckoutPage = () => {
   };
 
   const [quantities, setQuantities] = useState({});
-  const [userFullData, setUserFullData] = useState(null);
   const [form, setForm] = useState({
     name: user?.nombre || '',
     email: user?.email || '',
@@ -40,35 +38,6 @@ export const CheckoutPage = () => {
   useEffect(() => {
     if (!user) {
       navigate('/login', { state: { from: '/checkout' } });
-    } else {
-      // Cargar datos del usuario autenticado automáticamente
-      setForm(prev => ({
-        ...prev,
-        name: user.nombre || prev.name,
-        email: user.email || prev.email,
-        rut: user.rut || prev.rut,
-        address: user.direccion || prev.address,
-      }));
-
-      // Cargar datos completos del usuario desde el backend (incluye rut y direccion)
-      if (user.id) {
-        userService.getById(user.id)
-          .then(fullUserData => {
-            setUserFullData(fullUserData);
-            // Actualizar el formulario con los datos completos
-            setForm(prev => ({
-              ...prev,
-              name: fullUserData.nombre || prev.name,
-              email: fullUserData.email || prev.email,
-              rut: fullUserData.rut || prev.rut,
-              address: fullUserData.direccion || prev.address,
-            }));
-          })
-          .catch(err => {
-            console.error('Error cargando datos del usuario:', err);
-            // Si falla, al menos tenemos los datos básicos
-          });
-      }
     }
   }, [user, navigate]);
 
@@ -620,8 +589,8 @@ export const CheckoutPage = () => {
 
           <div className="cart-total">
             <p>Subtotal: ${subtotal.toLocaleString('es-CO')}</p>
-            <p>IVA (19%): ${iva.toLocaleString('es-CO')}</p>
-            <p>Subtotal + IVA: ${subtotalWithIVA.toLocaleString('es-CO')}</p>
+            <p>IVA (5%): ${iva.toLocaleString('es-CO')}</p>
+            <p>Subto19al + IVA: ${subtotalWithIVA.toLocaleString('es-CO')}</p>
             
             {discountAmount > 0 && (
               <p className="discount-line">Descuento ({couponDiscount}%): -${discountAmount.toLocaleString('es-CO')}</p>

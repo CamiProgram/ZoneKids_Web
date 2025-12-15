@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
+import { getImageUrl } from '../utils/imageUtils';
 import '../styles/components/productCard.css';
 
 export const ProductCard = ({ product }) => {
@@ -19,20 +20,7 @@ export const ProductCard = ({ product }) => {
   } = product;
   
   // Obtener primera imagen del array o usar logo por defecto
-  const getImageUrl = () => {
-    if (!Array.isArray(imagenesUrl) || imagenesUrl.length === 0) {
-      return '/assets/Zonekids_logo_web.webp';
-    }
-    const firstImage = imagenesUrl[0];
-    // Si es URL absoluta, devolverla tal cual
-    if (firstImage.startsWith('http')) {
-      return firstImage;
-    }
-    // Si es ruta relativa, agregar base URL del backend
-    return `http://localhost:8080${firstImage.startsWith('/') ? '' : '/'}${firstImage}`;
-  };
-
-  const imagenPrincipal = getImageUrl();
+  const imagenPrincipal = getImageUrl(imagenesUrl, 0);
 
   const tieneDescuento = precioOriginal && precioOriginal > precio;
 
@@ -66,6 +54,7 @@ export const ProductCard = ({ product }) => {
           src={imagenPrincipal} 
           alt={nombre || 'Producto'} 
           className="product-image"
+          loading="lazy"
           onError={(e) => {
             console.error('❌ Error loading product image:', imagenPrincipal);
             e.target.src = '/assets/Zonekids_logo_web.webp';

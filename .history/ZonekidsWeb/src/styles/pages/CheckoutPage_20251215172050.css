@@ -370,17 +370,10 @@
   box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
 }
 
-.print-button {
-  background-color: #007bff;
-  color: white;
-}
-
-.print-button:hover {
-  background-color: #0056b3;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-}
-
+<<<<<<< HEAD
+.checkout-button:active {
+  transform: translateY(0);
+=======
 .continue-button {
   background-color: #28a745;
   color: white;
@@ -471,6 +464,7 @@
     align-items: center;
   }
 
+<<<<<<< HEAD
   .checkout-page-container {
     padding: 1rem;
   }
@@ -478,8 +472,7 @@
   .cart-summary, .checkout-form-container {
     width: 100%;
     max-width: 100%;
-  }
-
+=======
   .cart-item-checkout {
     flex-direction: column;
     align-items: flex-start;
@@ -500,6 +493,7 @@
 
   .print-button, .continue-button {
     width: 100%;
+>>>>>>> d99599658d0ef567e8cb530231754aeb6b09437d
   }
 }
 
